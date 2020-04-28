@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.apps-in:AudioRecorderView:1.0.9@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f9e6e4e98dbdb0971fcf114f2363cdcb/jetified-AudioRecorderView-1.0.9/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f9e6e4e98dbdb0971fcf114f2363cdcb/jetified-AudioRecorderView-1.0.9/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.apps-in/AudioRecorderView/1.0.9/ff2656bc3676e0598d27128977eb55c5c1080a55/AudioRecorderView-1.0.9-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

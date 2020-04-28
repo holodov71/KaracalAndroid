@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.apps-in:logger:0.6.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/768fd64c661c539e29fce472c31c3e8a/jetified-logger-0.6.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/768fd64c661c539e29fce472c31c3e8a/jetified-logger-0.6.0/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.apps-in/logger/0.6.0/1020e01c7f1054df6a19fdaaa3a4e03b23604ba7/logger-0.6.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

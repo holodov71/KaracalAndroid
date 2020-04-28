@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.apps-in:WaveRecorder:1.0.5@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6763c1426bd25dec18082eeceb81c501/jetified-WaveRecorder-1.0.5/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/6763c1426bd25dec18082eeceb81c501/jetified-WaveRecorder-1.0.5/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.apps-in/WaveRecorder/1.0.5/6b9ed24a33c67d6d61e226defa43d5c651d2df2f/WaveRecorder-1.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

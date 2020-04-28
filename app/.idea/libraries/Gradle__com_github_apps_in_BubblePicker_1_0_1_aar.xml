@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.apps-in:BubblePicker:1.0.1@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8d7b493080cbdf4a0712dc813dc71723/jetified-BubblePicker-1.0.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8d7b493080cbdf4a0712dc813dc71723/jetified-BubblePicker-1.0.1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8d7b493080cbdf4a0712dc813dc71723/jetified-BubblePicker-1.0.1/jars/libs/jbox2d-library-2.1.2.2.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8d7b493080cbdf4a0712dc813dc71723/jetified-BubblePicker-1.0.1/jars/libs/slf4j-api-1.7.22.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.apps-in/BubblePicker/1.0.1/a593d582719870469307ca0d2e9757d283366796/BubblePicker-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
