@@ -10,12 +10,23 @@ android {
 
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+
+    signingConfigs {
+        config {
+            storeFile file('karacal_developer.jks')
+            storePassword 'karacal'
+            keyAlias = 'karacal'
+            keyPassword 'karacal'
+        }
+    }
+
     defaultConfig {
         applicationId "app.karacal"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode code
         versionName "V ${versionMajor}.${versionMinor}.${versionPatch}"
+        signingConfig signingConfigs.config
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -39,14 +50,14 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     //Google Play
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth:18.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     //Map utils
     implementation 'com.google.maps.android:android-maps-utils:0.5'
     //Navigation
-    implementation "androidx.navigation:navigation-fragment:2.2.1"
-    implementation "androidx.navigation:navigation-ui:2.2.1"
+    implementation "androidx.navigation:navigation-fragment:2.2.2"
+    implementation "androidx.navigation:navigation-ui:2.2.2"
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
@@ -60,7 +71,7 @@ dependencies {
     //Retrofit 2
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
     //Logger
     implementation 'com.github.apps-in:logger:0.6.0'
     //Bubble Picker
