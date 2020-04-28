@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    app:startDestination="@id/mainHomeFragment">
+
+    <fragment
+        android:id="@+id/mainHomeFragment"
+        android:name="app.karacal.fragments.MainHomeFragment"
+        android:label="fragment_main_home"
+        tools:layout="@layout/fragment_main_home" />
+    <fragment
+        android:id="@+id/mainSearchFragment"
+        android:name="app.karacal.fragments.MainSearchFragment"
+        android:label="fragment_main_search"
+        tools:layout="@layout/fragment_main_search" />
+    <fragment
+        android:id="@+id/mainLocationFragment"
+        android:name="app.karacal.fragments.MainLocationFragment"
+        android:label="fragment_main_location"
+        tools:layout="@layout/fragment_main_location" />
+    <fragment
+        android:id="@+id/mainNotificationFragment"
+        android:name="app.karacal.fragments.MainNotificationFragment"
+        android:label="fragment_main_notification"
+        tools:layout="@layout/fragment_main_notification" />
+    <fragment
+        android:id="@+id/mainMenuFragment"
+        android:name="app.karacal.fragments.MainMenuFragment"
+        android:label="framgent_main_menu"
+        tools:layout="@layout/fragment_main_menu" />
+</navigation>

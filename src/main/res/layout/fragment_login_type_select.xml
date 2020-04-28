@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/buttonConnectFacebook"
+        style="@style/Button.Facebook"
+        android:layout_width="0dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/connect_via_facebook"
+        app:layout_constraintBottom_toTopOf="@+id/buttonConnectGoogle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonConnectGoogle"
+        style="@style/Button.Google"
+        android:layout_width="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/connect_via_google"
+        app:layout_constraintBottom_toTopOf="@+id/buttonConnectEmail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonConnectEmail"
+        style="@style/Button.Email"
+        android:layout_width="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/connect_via_email"
+        app:layout_constraintBottom_toTopOf="@+id/textViewBySigning"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewBySigning"
+        style="@style/TextWhite.Secondary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/by_signing"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@id/linearLayoutText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </TextView>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textViewPrivacyPolicy"
+            style="@style/TextWhite.Secondary.Clickable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/privacy_policy" />
+
+        <TextView
+            style="@style/TextWhite.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/and" />
+
+        <TextView
+            android:id="@+id/textViewTermsOfService"
+            style="@style/TextWhite.Secondary.Clickable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/terms_of_service" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.95"
+        android:background="@color/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/popup_background">
+
+        <TextView
+            style="@style/TextWhite.SectionTitle.HalfTransparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report_a_problem"
+            android:layout_margin="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/buttonTechnicalProblem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                style="@style/PopupIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_technical_problem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/a_technical_problem"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            style="@style/Divider"
+            android:layout_marginStart="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/buttonMistake"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                style="@style/PopupIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_mistake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/a_mistake_of_course"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            style="@style/Divider"
+            android:layout_marginStart="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/buttonError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                style="@style/PopupIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_error_guide_says"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/an_error_in_what_the_guide_says"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            style="@style/Divider"
+            android:layout_marginStart="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/buttonSomethingElse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                style="@style/PopupIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_something_else"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/something_else"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/buttonCancel"
+            style="@style/Button"
+            android:layout_width="match_parent"
+            android:text="@string/cancel"
+            android:layout_margin="16dp"/>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

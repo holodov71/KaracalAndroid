@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.95"
+        android:background="@color/colorPrimary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/popup_background">
+
+        <TextView
+            style="@style/TextWhite.SectionTitle.HalfTransparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_action"
+            android:layout_margin="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/buttonLikeIt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                style="@style/PopupIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/i_like_it"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            style="@style/Divider"
+            android:layout_marginStart="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/buttonDownloadAllAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                style="@style/PopupIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_download_album"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/download_all_album"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            style="@style/Divider"
+            android:layout_marginStart="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/buttonShareThisTrack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                style="@style/PopupIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_share_track"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share_this_track"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            style="@style/Divider"
+            android:layout_marginStart="16dp"/>
+
+        <LinearLayout
+            android:id="@+id/buttonReportProblem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                style="@style/PopupIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/report_a_problem"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

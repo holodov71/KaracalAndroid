@@ -1,0 +1,342 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/colorHint</item>
+        <item name="colorControlActivated">@color/colorHint</item>
+        <item name="colorControlHighlight">@color/colorHint</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/colorHint</item>
+        <item name="colorControlActivated">@color/colorHint</item>
+        <item name="colorControlHighlight">@color/colorHint</item>
+    </style>
+
+    <style name="TextWhite">
+        <item name="android:textColor">@color/colorTextWhite</item>
+    </style>
+
+    <style name="TextWhite.HeadingBig">
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+    </style>
+
+    <style name="TextWhite.HeadingMedium">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+    </style>
+
+    <style name="TextWhite.HeadingSmall">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+    </style>
+
+    <style name="TextWhite.Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+    </style>
+
+    <style name="TextWhite.AppBarTitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+    </style>
+
+    <style name="TextWhite.Clickable">
+        <item name="android:textSize">14sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="android:textColor">@drawable/selector_white_text_color</item>
+    </style>
+
+    <style name="TextWhite.Selectable">
+        <item name="android:textSize">12sp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:textColor">@drawable/selector_item_interest_text_color</item>
+    </style>
+
+    <style name="TextWhite.CategoryTitle">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/montserrat_black</item>
+        <item name="android:alpha">0.9</item>
+    </style>
+
+    <style name="TextWhite.ItemTitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+    </style>
+
+    <style name="TextWhite.Subtitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+    </style>
+
+    <style name="TextWhite.Alert">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+    </style>
+
+    <style name="TextWhite.ItemInfo">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="TextWhite.ItemDescription">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+        <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="TextWhite.Secondary">
+        <item name="android:textSize">12sp</item>
+        <item name="android:alpha">0.7</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+    </style>
+
+    <style name="TextWhite.Secondary.Clickable">
+        <item name="android:textColor">@drawable/selector_white_text_color</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="TextWhite.SectionTitle">
+        <item name="android:textSize">10sp</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextWhite.SectionTitle.HalfTransparent">
+        <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="SettingsTitle">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/colorTextWhite</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="TextOrange">
+        <item name="android:textColor">@color/colorMain</item>
+    </style>
+
+    <style name="TextOrange.HeadingBig">
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+    </style>
+
+    <style name="TextOrange.HeadingSmall">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+    </style>
+
+    <style name="TextOrange.Subtitle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+    </style>
+
+    <style name="TextOrange.Subtitle.Clickable">
+        <item name="android:textColor">@drawable/selector_orange_text_color</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="TextOrange.Price">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+    </style>
+
+    <style name="TextOrange.Price.WithBackground">
+        <item name="android:paddingTop">4sp</item>
+        <item name="android:paddingBottom">4sp</item>
+        <item name="android:paddingStart">8sp</item>
+        <item name="android:paddingEnd">8sp</item>
+        <item name="android:background">@drawable/text_price_background</item>
+    </style>
+
+
+    <style name="SmallButton">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="SmallButton.DarkBackground">
+        <item name="android:background">@drawable/small_button_ripple_effect</item>
+    </style>
+
+    <style name="SmallButton.LightBackground">
+        <item name="android:background">@drawable/small_button_light_ripple_effect</item>
+    </style>
+
+    <style name="Button">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorTextWhite</item>
+        <item name="android:fontFamily">@font/montserrat_bold</item>
+        <item name="android:background">@drawable/button_ripple_effect</item>
+    </style>
+
+    <style name="Button.Facebook">
+        <item name="android:background">@drawable/button_facebook_ripple_effect</item>
+    </style>
+
+    <style name="Button.Google">
+        <item name="android:background">@drawable/button_google_ripple_effect</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="Button.Email">
+        <item name="android:background">@drawable/button_email_ripple_effect</item>
+    </style>
+
+    <style name="Button.Transparent">
+        <item name="android:textColor">@color/colorTextOrange</item>
+        <item name="android:background">@drawable/button_transparent_ripple_effect</item>
+    </style>
+
+    <style name="TextInput">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColorHint">@color/colorHint</item>
+        <item name="android:textColor">@color/colorTextWhite</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="hintTextAppearance">@style/TextAppearance.App.TextInputLayoutHint</item>
+        <item name="errorTextAppearance">@style/TextAppearance.App.TextInputLayoutError</item>
+    </style>
+
+    <style name="TextInput.TextButton">
+        <item name="android:textColor">@drawable/selector_orange_text_color</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="TextInput.Button">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="TextInput.SideText">
+        <item name="android:layout_width">18dp</item>
+        <item name="android:layout_height">18dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorTextOrange</item>
+    </style>
+
+    <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+    </style>
+
+    <style name="TextAppearance.App.TextInputLayoutHint" parent="TextAppearance.App.TextInputLayout">
+        <item name="android:textColor">@color/colorHint</item>
+    </style>
+
+    <style name="TextAppearance.App.TextInputLayoutError" parent="TextAppearance.App.TextInputLayout">
+        <item name="android:textColor">@color/colorError</item>
+    </style>
+
+    <style name="ReferralCode">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/colorTextWhite</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+        <item name="android:background">@null</item>
+    </style>
+
+    <style name="MapClusterTextAppearance">
+        <item name="android:textColor">@color/colorTextWhite</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="ImageNotification">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="Switch">
+        <item name="android:colorControlActivated">@color/colorControlActivated</item>
+        <item name="android:colorControlNormal">@color/colorControlNormal</item>
+    </style>
+
+    <style name="RoundButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:background">@drawable/round_button_ripple_effect</item>
+    </style>
+
+    <style name="RoundButton.TransparentBackground">
+        <item name="android:background">@drawable/round_button_transparent_ripple_effect</item>
+    </style>
+
+    <style name="CheckableButton">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@drawable/selector_checkable_button_text_color</item>
+        <item name="android:background">@drawable/checkable_button_ripple_effect</item>
+    </style>
+
+    <style name="RoundButton.Big">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/colorTextWhite</item>
+        <item name="android:alpha">0.1</item>
+    </style>
+
+    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressTint">@color/colorMain</item>
+        <item name="android:progressTintMode">src_in</item>
+    </style>
+
+    <style name="Avatar">
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">120dp</item>
+    </style>
+
+    <style name="PopupIcon">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="TabTitle">
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="CropActivity" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@color/colorTextOrange</item>
+    </style>
+
+</resources>

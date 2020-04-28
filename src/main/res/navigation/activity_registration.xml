@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_registration"
+    app:startDestination="@id/registrationPersonalDataFragment">
+    <fragment
+        android:id="@+id/registrationPersonalDataFragment"
+        android:name="app.karacal.fragments.RegistrationPersonalDataFragment"
+        android:label="dummy"
+        tools:layout="@layout/fragment_registration_personal_data" />
+    <fragment
+        android:id="@+id/registrationInterestsFragment"
+        android:name="app.karacal.fragments.RegistrationInterestsFragment"
+        android:label="dummy"
+        tools:layout="@layout/item_interests_list" />
+    <fragment
+        android:id="@+id/registrationReferalCodeFragment"
+        android:name="app.karacal.fragments.RegistrationReferralCodeFragment"
+        android:label="dummy"
+        tools:layout="@layout/fragment_registration_referral_code" />
+    <fragment
+        android:id="@+id/registrationContactsFragment"
+        android:name="app.karacal.fragments.RegistrationContactsFragment"
+        android:label="dummy"
+        tools:layout="@layout/fragment_registration_contacts" />
+    <fragment
+        android:id="@+id/registrationPasswordFragment"
+        android:name="app.karacal.fragments.RegistrationPasswordFragment"
+        android:label="RegistrationPasswordFragment"
+        tools:layout="@layout/fragment_registration_password"/>
+</navigation>

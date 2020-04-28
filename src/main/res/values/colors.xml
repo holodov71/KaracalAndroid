@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0C0B1D</color>
+    <color name="colorPrimaryDark">#181B2B</color>
+    <color name="colorAccent">#EF4516</color>
+    <color name="colorMainBackground">#494949</color>
+    <color name="colorTextWhite">#FFFFFF</color>
+    <color name="colorTextWhitePressed">#80FFFFFF</color>
+    <color name="colorTextOrange">#FF3700</color>
+    <color name="colorTextOrangePressed">#80FF3700</color>
+    <color name="colorHint">#99FFFFFF</color>
+    <color name="colorMain">#EF4516</color>
+    <color name="colorError">#D30808</color>
+    <color name="colorSuccess">#4AA440</color>
+    <color name="colorDisabled">#555461</color>
+    <color name="colorControlActivated">#EF4516</color>
+    <color name="colorControlNormal">#BDBDBD</color>
+</resources>
