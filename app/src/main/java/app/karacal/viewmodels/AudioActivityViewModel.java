@@ -1,8 +1,12 @@
 package app.karacal.viewmodels;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -46,6 +50,7 @@ public class AudioActivityViewModel extends ViewModel {
     private final Player player;
 
     public AudioActivityViewModel(int tourId) {
+        Log.v("AudioActivityViewModel", "tourId = "+tourId);
         App.getAppComponent().inject(this);
         tour = tourRepository.getTourById(tourId);
         album = albumRepository.getAlbumByTourId(tourId);

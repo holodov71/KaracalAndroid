@@ -318,6 +318,10 @@
         <item name="android:progressTintMode">src_in</item>
     </style>
 
+    <style name="AppTheme.ProgressBarCircle">
+        <item name="colorControlActivated">@color/colorAccent</item>
+    </style>
+
     <style name="Avatar">
         <item name="android:layout_width">120dp</item>
         <item name="android:layout_height">120dp</item>

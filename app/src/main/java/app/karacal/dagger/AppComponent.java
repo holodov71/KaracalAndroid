@@ -16,6 +16,7 @@ import app.karacal.activities.ReferFriendActivity;
 import app.karacal.activities.SettingsActivity;
 import app.karacal.fragments.DashboardTourItemFragment;
 import app.karacal.fragments.EmailLoginFragment;
+import app.karacal.fragments.LoginTypeSelectFragment;
 import app.karacal.fragments.MainHomeFragment;
 import app.karacal.fragments.MainLocationFragment;
 import app.karacal.fragments.MainMenuFragment;
@@ -48,6 +49,8 @@ public interface AppComponent {
     void inject(EditGuideActivity activity);
 
     void inject(EditAudioActivity activity);
+
+    void inject(LoginTypeSelectFragment fragment);
 
     void inject(EmailLoginFragment fragment);
 

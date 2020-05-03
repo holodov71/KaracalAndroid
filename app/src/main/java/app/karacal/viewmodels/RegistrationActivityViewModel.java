@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 import app.karacal.helpers.LocationHelper;
 import app.karacal.models.Interest;
-import app.karacal.retrofit.LoginRequest;
-import app.karacal.retrofit.RegisterRequest;
+import app.karacal.retrofit.models.LoginRequest;
+import app.karacal.retrofit.models.RegisterRequest;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 

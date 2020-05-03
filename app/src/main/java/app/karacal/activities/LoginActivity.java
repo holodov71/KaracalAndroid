@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
-import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 
@@ -21,6 +20,7 @@ import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.TokenHelper;
 import app.karacal.navigation.NavigationHelper;
 import apps.in.android_logger.LogActivity;
+import apps.in.android_logger.Logger;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -55,6 +55,7 @@ public class LoginActivity extends LogActivity {
 
     private void tryToAuthorize(){
         String token = tokenHelper.getToken();
+        Logger.log(this, "token = "+token);
         if (token != null){
             apiHelper.getProfile(token)
                     .subscribeOn(Schedulers.io())

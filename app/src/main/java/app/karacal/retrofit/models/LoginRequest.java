@@ -1,4 +1,4 @@
-package app.karacal.retrofit;
+package app.karacal.retrofit.models;
 
 import retrofit2.http.Path;
 

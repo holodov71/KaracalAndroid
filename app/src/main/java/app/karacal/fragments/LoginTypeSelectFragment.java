@@ -3,19 +3,25 @@ package app.karacal.fragments;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -25,12 +31,27 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-import java.util.Arrays;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import javax.inject.Inject;
+
+import app.karacal.App;
 import app.karacal.R;
+import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.ProfileHolder;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.retrofit.models.LoginRequest;
+import app.karacal.retrofit.models.SocialLoginRequest;
 import apps.in.android_logger.LogFragment;
 import apps.in.android_logger.Logger;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class LoginTypeSelectFragment extends LogFragment {
 
@@ -38,6 +59,18 @@ public class LoginTypeSelectFragment extends LogFragment {
 
     private GoogleSignInClient googleSignInClient;
     private LoginManager facebookLoginManager;
+    private CallbackManager callbackManager;
+
+    private Disposable loginDisposable;
+
+    @Inject
+    ApiHelper apiHelper;
+
+    @Inject
+    ProfileHolder profileHolder;
+
+    private View progressLoading;
+
 
     @Nullable
     @Override
@@ -47,12 +80,14 @@ public class LoginTypeSelectFragment extends LogFragment {
         setupGoogleButton(view);
         setupEmailButton(view);
         setupTextViews(view);
+        setupProgress(view);
         return view;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.getAppComponent().inject(this);
         setupFacebookLogin();
         setupGoogleLogin();
     }
@@ -67,7 +102,7 @@ public class LoginTypeSelectFragment extends LogFragment {
     }
 
     private void setupFacebookLogin() {
-        CallbackManager callbackManager = CallbackManager.Factory.create();
+        callbackManager = CallbackManager.Factory.create();
         facebookLoginManager = LoginManager.getInstance();
         facebookLoginManager.registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -125,21 +160,34 @@ public class LoginTypeSelectFragment extends LogFragment {
         textView.setOnClickListener(listener);
     }
 
+    private void setupProgress(View view) {
+        progressLoading = view.findViewById(R.id.progressLoading);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GOOGLE_SIGN_IN_REQUEST_CODE) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             processGoogleLoginResult(task);
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     private void processGoogleLoginResult(Task<GoogleSignInAccount> task) {
         try {
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            //TODO implement
-            Logger.log(LoginTypeSelectFragment.this, "Google login success");
-            NavigationHelper.startMainActivity(getActivity());
+
+            if (account != null) {
+                String firstName = account.getGivenName();
+                String secondName = account.getFamilyName();
+                String email = account.getEmail();
+                String personId = account.getId();
+                makeServerLogin(personId, firstName, secondName, email);
+            } else {
+                ToastHelper.showToast(getContext(), "Google sign in error");
+            }
         } catch (ApiException e) {
             Logger.log(LoginTypeSelectFragment.this, "Google login failed, status code - " + e.getStatusCode(), e);
         }
@@ -148,11 +196,51 @@ public class LoginTypeSelectFragment extends LogFragment {
 
     private void processFacebookLoginResult(LoginResult loginResult) {
         if (loginResult.getAccessToken() != null) {
-            //TODO implement
-            Logger.log(LoginTypeSelectFragment.this, "Facebook login success");
-            NavigationHelper.startMainActivity(getActivity());
+            GraphRequest request = GraphRequest.newMeRequest(
+                    loginResult.getAccessToken(),
+                    (object, response) -> {
+                        try {
+                            String id = object.getString("id");
+                            String firstName = object.getString("first_name");
+                            String lastName = object.getString("last_name");
+                            String email = object.getString("email");
+
+                            makeServerLogin(id, firstName, lastName, email);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    });
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "id,first_name,last_name,email"); // id,first_name,last_name,email,gender,birthday,cover,picture.type(large)
+            request.setParameters(parameters);
+            request.executeAsync();
         } else {
             Logger.log(LoginTypeSelectFragment.this, "Facebook login failed");
+        }
+    }
+
+    private void makeServerLogin(String userId, String firstName, String secondName, String email) {
+        if (loginDisposable == null) {
+            progressLoading.setVisibility(View.VISIBLE);
+            SocialLoginRequest loginRequest = new SocialLoginRequest(userId, firstName, secondName, email);
+
+            loginDisposable = apiHelper.socialLogin(loginRequest).flatMap(apiHelper::getProfile)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(profile -> {
+                        profileHolder.setProfile(profile);
+                        NavigationHelper.startMainActivity(getActivity());
+                        FragmentActivity activity = getActivity();
+                        if (activity != null) {
+                            activity.finish();
+                        }
+                        loginDisposable = null;
+                    }, throwable -> {
+                        progressLoading.setVisibility(View.GONE);
+                        ToastHelper.showToast(getContext(), throwable.getMessage());
+                        loginDisposable = null;
+                    });
         }
     }
 }
