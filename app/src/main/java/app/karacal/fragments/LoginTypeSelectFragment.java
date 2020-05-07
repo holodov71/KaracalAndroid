@@ -3,25 +3,21 @@ package app.karacal.fragments;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -32,10 +28,8 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -45,7 +39,6 @@ import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
-import app.karacal.retrofit.models.LoginRequest;
 import app.karacal.retrofit.models.SocialLoginRequest;
 import apps.in.android_logger.LogFragment;
 import apps.in.android_logger.Logger;
@@ -186,9 +179,10 @@ public class LoginTypeSelectFragment extends LogFragment {
                 String personId = account.getId();
                 makeServerLogin(personId, firstName, secondName, email);
             } else {
-                ToastHelper.showToast(getContext(), "Google sign in error");
+                ToastHelper.showToast(getContext(), getString(R.string.google_sign_in_error));
             }
         } catch (ApiException e) {
+            ToastHelper.showToast(getContext(), getString(R.string.google_sign_in_error));
             Logger.log(LoginTypeSelectFragment.this, "Google login failed, status code - " + e.getStatusCode(), e);
         }
     }
@@ -216,6 +210,7 @@ public class LoginTypeSelectFragment extends LogFragment {
             request.setParameters(parameters);
             request.executeAsync();
         } else {
+            ToastHelper.showToast(getContext(), getString(R.string.facebook_sign_in_error));
             Logger.log(LoginTypeSelectFragment.this, "Facebook login failed");
         }
     }

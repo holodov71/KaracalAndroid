@@ -28,6 +28,7 @@
     <string name="location">Location</string>
     <string name="say_more_about_you">Say more about you!</string>
     <string name="permission_denied">The application does not have permissions for this action.</string>
+    <string name="permission_needed">The application need this permission for more suitable content.</string>
     <string name="error_obtaining_location">Error obtaining location</string>
     <string name="enter_code">Enter code</string>
     <string name="to_add_unlimited_access">To add unlimited access\nto resources for 1 month</string>
@@ -184,4 +185,6 @@
     <string name="connection_problem">Connection problem…</string>
     <string name="password_configuration">Password configuration</string>
     <string name="password_confirmation">Password confirmation</string>
+    <string name="google_sign_in_error">Google sign in error</string>
+    <string name="facebook_sign_in_error">Facebook sign in error</string>
 </resources>

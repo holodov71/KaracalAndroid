@@ -8,7 +8,7 @@
     <app.karacal.views.StarsView
         android:id="@+id/starsView"
         android:layout_width="wrap_content"
-        android:layout_height="18sp"
+        android:layout_height="18dp"
         android:layout_marginStart="16dp"
         android:foregroundTint="@color/colorMain"
         app:layout_constraintBottom_toBottomOf="@id/textViewDuration"

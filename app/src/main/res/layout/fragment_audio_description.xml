@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@null"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -94,7 +94,7 @@
     <app.karacal.views.StarsView
         android:id="@+id/starsViewTop"
         android:layout_width="wrap_content"
-        android:layout_height="12sp"
+        android:layout_height="12dp"
         android:layout_marginStart="16dp"
         android:foregroundTint="@color/colorMain"
         app:layout_constraintStart_toStartOf="parent"
@@ -210,7 +210,7 @@
             <app.karacal.views.StarsView
                 android:id="@+id/starsViewDescription"
                 android:layout_width="wrap_content"
-                android:layout_height="12sp"
+                android:layout_height="12dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:ellipsize="end"

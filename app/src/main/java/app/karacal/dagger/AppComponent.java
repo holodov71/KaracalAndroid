@@ -1,7 +1,5 @@
 package app.karacal.dagger;
 
-import android.app.Application;
-
 import javax.inject.Singleton;
 
 import app.karacal.App;
@@ -25,6 +23,7 @@ import app.karacal.fragments.RegistrationContactsFragment;
 import app.karacal.fragments.RegistrationInterestsFragment;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import app.karacal.viewmodels.CategoryActivityViewModel;
+import app.karacal.viewmodels.MainActivityViewModel;
 import dagger.BindsInstance;
 import dagger.Component;
 
@@ -67,6 +66,8 @@ public interface AppComponent {
     void inject(MainSearchFragment fragment);
 
     void inject(DashboardTourItemFragment fragment);
+
+    void inject (MainActivityViewModel viewModel);
 
     void inject(CategoryActivityViewModel viewModel);
 

@@ -6,13 +6,19 @@ import com.google.maps.android.clustering.ClusterItem;
 public class TourMarker implements ClusterItem {
 
     private final LatLng position;
+    private final int tourId;
 
-    public TourMarker(LatLng position) {
-        this.position = position;
-    }
+//    public TourMarker(LatLng position) {
+//        this.position = position;
+//    }
 
     public TourMarker(Tour tour){
+        this.tourId = tour.getId();
         this.position = tour.getLocation();
+    }
+
+    public int getTourId() {
+        return tourId;
     }
 
     @Override

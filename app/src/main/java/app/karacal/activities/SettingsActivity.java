@@ -107,7 +107,11 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
     private void setupChangePasswordButton() {
         LinearLayout buttonChangePassword = findViewById(R.id.buttonChangePassword);
-        buttonChangePassword.setOnClickListener(v -> NavigationHelper.startChangePasswordActivity(this));
+        if(profileHolder.getProfile().getSocialId() != null){
+            buttonChangePassword.setVisibility(View.GONE);
+        }else {
+            buttonChangePassword.setOnClickListener(v -> NavigationHelper.startChangePasswordActivity(this));
+        }
     }
 
     private void setupTermsButton() {
@@ -155,7 +159,9 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
     private void setupBirthDateInput() {
         textInputLayoutBirthDate = findViewById(R.id.textInputLayoutBirthDate);
-        textInputLayoutBirthDate.getEditText().setText(dateFormat.format(birthDate));
+        if (birthDate != null) {
+            textInputLayoutBirthDate.getEditText().setText(dateFormat.format(birthDate));
+        }
         ImageView buttonCalendar = findViewById(R.id.buttonCalendar);
         buttonCalendar.setOnClickListener(v -> showDatePickerDialog());
     }
@@ -223,7 +229,8 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
                 () -> Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show()));
         viewModel.subscribeLocationUpdates(this, location -> {
             if (location != null) {
-                textInputLayoutLocation.getEditText().setText(location);
+                String locationText = String.format(Locale.getDefault(), "%f, %f", location.getLatitude(), location.getLongitude());
+                textInputLayoutLocation.getEditText().setText(locationText);
             } else {
                 Toast.makeText(this, R.string.error_obtaining_location, Toast.LENGTH_LONG).show();
             }

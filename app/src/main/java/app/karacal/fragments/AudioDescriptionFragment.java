@@ -135,11 +135,12 @@ public class AudioDescriptionFragment extends LogFragment {
         int count = 3;
         TextView textView = view.findViewById(R.id.textViewReviews);
         textView.setText(getContext().getString(R.string.comments_count_format, count, getContext().getString(count != 1 ? R.string.comments : R.string.comment)));
-        textView.setOnClickListener(v -> NavigationHelper.startCommentsActivity(getActivity()));
+//        textView.setOnClickListener(v -> NavigationHelper.startCommentsActivity(getActivity()));
     }
 
     private void setupAuthor(View view){
-        String author = "Alexander McQueen";
+//        String author = "Alexander McQueen";
+        String author = viewModel.getTour().getAuthor();
         int count = 14;
         ImageView imageView = view.findViewById(R.id.imageViewAuthor);
         imageView.setImageResource(R.mipmap.notification_item_example_1);
@@ -148,10 +149,10 @@ public class AudioDescriptionFragment extends LogFragment {
         TextView textViewGuidesCount = view.findViewById(R.id.textViewGuidesCount);
         textViewGuidesCount.setText(getContext().getString(R.string.guide_count_format, count, getContext().getString(count != 1 ? R.string.guides : R.string.guide)));
         ImageView imageViewAlert = view.findViewById(R.id.imageViewAuthorAlert);
-        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
+//        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
         ConstraintLayout buttonAuthor = view.findViewById(R.id.buttonAuthor);
         buttonAuthor.setOnClickListener(v -> {
-            NavigationHelper.startProfileActivity(getActivity());
+//            NavigationHelper.startProfileActivity(getActivity());
         });
     }
 }

@@ -22,6 +22,7 @@
             android:clickable="true"
             android:contentDescription="@null"
             android:focusable="true"
+            android:scaleType="centerCrop"
             android:foreground="@drawable/tour_title_image_ripple_effect" />
 
     </androidx.cardview.widget.CardView>

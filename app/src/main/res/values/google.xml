@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <string name="server_client_id">AIzaSyCEyUvyTll9A3K6zJzEU9FaYy9wWS_-1m4</string>-->
-    <string name="server_client_id">984078101391-tvvo7fjilb0fd8kmkgio971cl0p14sf3.apps.googleusercontent.com</string>
-<!--    Client ID-->
-
-<!--    984078101391-tvvo7fjilb0fd8kmkgio971cl0p14sf3.apps.googleusercontent.com-->
-
-<!--    Client Secret-->
-
-<!--    N6c4_5uRnVCBGxFXSm0uOPmW-->
+    <string name="server_client_id">734867170563-aaot1pbscnac8im8af0hol48r39si1bu.apps.googleusercontent.com</string>
 </resources>

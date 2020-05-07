@@ -1,10 +1,15 @@
 package app.karacal.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 public class Profile {
 
     private int id;
+
+    @SerializedName("social_id")
+    private String socialId;
     private String firstName;
     private String secondName;
     private Date birthDate;
@@ -19,6 +24,10 @@ public class Profile {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getSocialId() {
+        return socialId;
     }
 
     public String getFirstName() {

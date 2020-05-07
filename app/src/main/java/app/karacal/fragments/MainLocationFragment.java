@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
 
@@ -27,6 +26,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.ClusterManager;
 
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.adapters.TourVerticalListAdapter;
 import app.karacal.data.TourRepository;
+import app.karacal.helpers.LocationHelper;
 import app.karacal.helpers.PermissionHelper;
 import app.karacal.helpers.TextInputHelper;
 import app.karacal.helpers.TourMarkerRender;
@@ -43,9 +45,13 @@ import app.karacal.models.Tour;
 import app.karacal.models.TourMarker;
 import app.karacal.navigation.NavigationHelper;
 import apps.in.android_logger.Logger;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
-public class MainLocationFragment extends Fragment implements OnMapReadyCallback {
+public class MainLocationFragment extends Fragment implements OnMapReadyCallback,
+           ClusterManager.OnClusterItemClickListener<TourMarker> {
 
+    private static final int MAP_ZOOM_LEVEL = 10;
 
     @Inject
     TourRepository tourRepository;
@@ -126,11 +132,10 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         applyMapStyle();
-        setupMyLocationButton();
+        setupLocation();
         setupClusterManager();
         setMarkers();
-        //TODO replace
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(48.853636, 2.348795), 10));
+        map.moveCamera(CameraUpdateFactory.zoomTo(MAP_ZOOM_LEVEL));
     }
 
     private void setMarkers(){
@@ -142,12 +147,13 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
 
     private void setupClusterManager() {
         clusterManager = new ClusterManager<>(getContext(), map);
+        clusterManager.setOnClusterItemClickListener(this);
         map.setOnCameraIdleListener(clusterManager);
         map.setOnMarkerClickListener(clusterManager);
         clusterManager.setRenderer(new TourMarkerRender(getContext(), map, clusterManager));
     }
 
-    private void setupMyLocationButton() {
+    private void setupLocation() {
         permissionHelper.checkPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION,
                 () -> {
                     map.setMyLocationEnabled(true);
@@ -159,13 +165,12 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
                         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
                         layoutParams.setMargins(0, 0, 30, 90);
                     }
-                    //TODO uncomment
-//                    LocationHelper.getLastKnownLocation()
-//                            .subscribeOn(Schedulers.io())
-//                            .observeOn(AndroidSchedulers.mainThread())
-//                            .map(location -> new LatLng(location.getLatitude(), location.getLongitude()))
-//                            .subscribe(location -> map.moveCamera(CameraUpdateFactory.newLatLng(location)),
-//                                    throwable -> Logger.log(this, "Error obtaining location", throwable));
+                    LocationHelper.getLastKnownLocation()
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .map(location -> new LatLng(location.getLatitude(), location.getLongitude()))
+                            .subscribe(location -> map.moveCamera(CameraUpdateFactory.newLatLng(location)),
+                                    throwable -> Logger.log(this, "Error obtaining location", throwable));
                 },
                 () -> {
                     map.setMyLocationEnabled(false);
@@ -214,4 +219,9 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     }
 
 
+    @Override
+    public boolean onClusterItemClick(TourMarker tourMarker) {
+        showTour(tourMarker.getTourId());
+        return true;
+    }
 }

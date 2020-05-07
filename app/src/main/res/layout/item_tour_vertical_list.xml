@@ -27,6 +27,7 @@
             android:id="@+id/imageViewTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="centerCrop"
             android:contentDescription="@null" />
 
     </androidx.cardview.widget.CardView>
@@ -90,7 +91,7 @@
     <app.karacal.views.StarsView
         android:id="@+id/starsView"
         android:layout_width="wrap_content"
-        android:layout_height="16sp"
+        android:layout_height="16dp"
         android:layout_marginStart="16dp"
         android:foregroundTint="@color/colorMain"
         app:layout_constraintBottom_toBottomOf="@+id/textViewDuration"

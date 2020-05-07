@@ -71,7 +71,8 @@
                 android:id="@+id/categoryRecommended"/>
 
             <include layout="@layout/tour_horizontal_list"
-                android:id="@+id/categoryNear"/>
+                android:id="@+id/categoryNear"
+                android:visibility="gone"/>
 
             <include layout="@layout/tour_horizontal_list"
                 android:id="@+id/categoryOriginals"/>

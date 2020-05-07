@@ -1,6 +1,7 @@
 package app.karacal.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import apps.in.android_logger.LogFragment;
 
 public class AudioPlayerFragment extends LogFragment {
 
+    private static final String TAG = "AudioPlayerFragment";
+
     private AudioActivityViewModel viewModel;
 
     private TrackListAdapter adapter;
@@ -34,6 +37,7 @@ public class AudioPlayerFragment extends LogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "onCreate");
         viewModel = new ViewModelProvider(getActivity()).get(AudioActivityViewModel.class);
         viewModel.getPlayer().bindLifecycle(this);
     }
@@ -89,7 +93,7 @@ public class AudioPlayerFragment extends LogFragment {
         int count = 3;
         commentsTextView.setText(getString(R.string.comments_count_format, count, getString(count != 1 ? R.string.comments : R.string.comment)));
         commentsTextView.setOnClickListener(v -> {
-            NavigationHelper.startCommentsActivity(getActivity());
+//            NavigationHelper.startCommentsActivity(getActivity());
         });
     }
 
@@ -98,7 +102,7 @@ public class AudioPlayerFragment extends LogFragment {
         adapter = new TrackListAdapter(getContext());
         adapter.setTracks(viewModel.getAlbum().getTracks());
         adapter.setClickListener(position -> viewModel.getPlayer().playTrack(position));
-        viewModel.getPlayer().getPositionInfoLiveData().observe(this, (positionInfo) -> adapter.updateProgress(viewModel.getPlayer().getCurrentTrack(), positionInfo));
+        viewModel.getPlayer().getPositionInfoLiveData().observe(getViewLifecycleOwner(), (positionInfo) -> adapter.updateProgress(viewModel.getPlayer().getCurrentTrack(), positionInfo));
         recyclerView.setAdapter(adapter);
     }
 
@@ -107,18 +111,19 @@ public class AudioPlayerFragment extends LogFragment {
         ImageView imageView = view.findViewById(R.id.imageViewAlbumTitle);
         imageView.setImageResource(viewModel.getTour().getImage());
         TextView textViewAlbumTitle = view.findViewById(R.id.textViewAlbumTitle);
-        textViewAlbumTitle.setText(viewModel.getAlbum().getTitle());
+        textViewAlbumTitle.setText(viewModel.getTour().getTitle());
+//        textViewAlbumTitle.setText(viewModel.getAlbum().getTitle());
         TextView textViewTrackTitle = view.findViewById(R.id.textViewTrackTitle);
         ImageView buttonPause = view.findViewById(R.id.buttonPause);
         buttonPause.setOnClickListener(v -> viewModel.getPlayer().pause());
         ImageView buttonNext = view.findViewById(R.id.buttonNext);
         buttonNext.setOnClickListener(v -> viewModel.getPlayer().nextTrack());
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
-        viewModel.getPlayer().getPlayerStateLiveData().observe(this, playerState -> {
+        viewModel.getPlayer().getPlayerStateLiveData().observe(getViewLifecycleOwner(), playerState -> {
             TransitionManager.beginDelayedTransition(view.findViewById(R.id.layoutRoot));
             constraintLayoutPlayer.setVisibility(playerState == Player.PlayerState.IDLE ? View.GONE : View.VISIBLE);
         });
-        viewModel.getPlayer().getCurrentTrackLiveData().observe(this, currentTrack -> {
+        viewModel.getPlayer().getCurrentTrackLiveData().observe(getViewLifecycleOwner(), currentTrack -> {
             if (currentTrack != null) {
                 textViewTrackTitle.setText(viewModel.getAlbum().getTracks().get(currentTrack).getTitle());
                 textViewTrackTitle.setVisibility(View.VISIBLE);
@@ -126,7 +131,7 @@ public class AudioPlayerFragment extends LogFragment {
                 textViewTrackTitle.setVisibility(View.INVISIBLE);
             }
         });
-        viewModel.getPlayer().getPositionInfoLiveData().observe(this, positionInfo -> {
+        viewModel.getPlayer().getPositionInfoLiveData().observe(getViewLifecycleOwner(), positionInfo -> {
             if (positionInfo != null) {
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.setMax(positionInfo.getDuration());

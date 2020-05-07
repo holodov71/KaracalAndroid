@@ -3,6 +3,7 @@ package app.karacal.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,8 +48,10 @@ public class DashboardActivity extends LogActivity {
                     .start(this);
         });
         Button buttonFollowListenings = findViewById(R.id.buttonFollowMyListenings);
+        buttonFollowListenings.setVisibility(View.GONE);
         buttonFollowListenings.setOnClickListener(v -> NavigationHelper.startFollowMyListeningsActivity(this));
         Button buttonCreateTour = findViewById(R.id.buttonCreateTour);
+        buttonCreateTour.setVisibility(View.GONE);
         buttonCreateTour.setOnClickListener(v -> NavigationHelper.startEditGuideActivity(this,  new EditGuideActivity.Args(null)));
     }
 
