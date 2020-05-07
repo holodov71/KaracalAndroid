@@ -14,10 +14,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -28,6 +31,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -97,6 +101,8 @@ public class LoginTypeSelectFragment extends LogFragment {
     private void setupFacebookLogin() {
         callbackManager = CallbackManager.Factory.create();
         facebookLoginManager = LoginManager.getInstance();
+        facebookLoginManager.setLoginBehavior(LoginBehavior.WEB_ONLY);
+
         facebookLoginManager.registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
@@ -119,8 +125,17 @@ public class LoginTypeSelectFragment extends LogFragment {
     private void setupFacebookButton(View view) {
         Button button = view.findViewById(R.id.buttonConnectFacebook);
         button.setOnClickListener(v -> {
-            facebookLoginManager.logIn(this, Arrays.asList("public_profile", "email"));
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            if(accessToken != null) {
+                parseFacebookProfile(accessToken);
+            } else {
+                callFacebookAuth();
+            }
         });
+    }
+
+    private void callFacebookAuth(){
+        facebookLoginManager.logIn(this, Arrays.asList("public_profile", "email"));
     }
 
     private void setupGoogleButton(View view) {
@@ -190,29 +205,33 @@ public class LoginTypeSelectFragment extends LogFragment {
 
     private void processFacebookLoginResult(LoginResult loginResult) {
         if (loginResult.getAccessToken() != null) {
-            GraphRequest request = GraphRequest.newMeRequest(
-                    loginResult.getAccessToken(),
-                    (object, response) -> {
-                        try {
-                            String id = object.getString("id");
-                            String firstName = object.getString("first_name");
-                            String lastName = object.getString("last_name");
-                            String email = object.getString("email");
-
-                            makeServerLogin(id, firstName, lastName, email);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    });
-            Bundle parameters = new Bundle();
-            parameters.putString("fields", "id,first_name,last_name,email"); // id,first_name,last_name,email,gender,birthday,cover,picture.type(large)
-            request.setParameters(parameters);
-            request.executeAsync();
+            parseFacebookProfile(loginResult.getAccessToken());
         } else {
             ToastHelper.showToast(getContext(), getString(R.string.facebook_sign_in_error));
             Logger.log(LoginTypeSelectFragment.this, "Facebook login failed");
         }
+    }
+
+    private void parseFacebookProfile(AccessToken accessToken){
+        GraphRequest request = GraphRequest.newMeRequest(accessToken,
+                (object, response) -> {
+                    try {
+                        String id = object.getString("id");
+                        String firstName = object.getString("first_name");
+                        String lastName = object.getString("last_name");
+                        String email = object.getString("email");
+
+                        makeServerLogin(id, firstName, lastName, email);
+
+                    } catch (JSONException e) {
+                        ToastHelper.showToast(getContext(), getString(R.string.facebook_sign_in_error));
+                        e.printStackTrace();
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,first_name,last_name,email"); // id,first_name,last_name,email,gender,birthday,cover,picture.type(large)
+        request.setParameters(parameters);
+        request.executeAsync();
     }
 
     private void makeServerLogin(String userId, String firstName, String secondName, String email) {
