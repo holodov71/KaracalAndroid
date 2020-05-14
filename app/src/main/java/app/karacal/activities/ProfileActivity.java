@@ -4,18 +4,22 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.io.Serializable;
 
 import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.TourVerticalListAdapter;
-import app.karacal.data.TourRepository;
+import app.karacal.data.repository.GuideRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ShareHelper;
+import app.karacal.models.Guide;
+import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
 import app.karacal.popups.ReportProblemPopup;
@@ -25,6 +29,19 @@ import apps.in.android_logger.LogActivity;
 
 public class ProfileActivity extends LogActivity {
 
+    public static class Args extends ActivityArgs implements Serializable {
+
+        private final int guideId;
+
+        public Args(int guideId) {
+            this.guideId = guideId;
+        }
+
+        public int getGuideId() {
+            return guideId;
+        }
+
+    }
 
     private SelectActionPopup.SelectActionPopupCallbacks selectActionPopupCallbacks = new SelectActionPopup.SelectActionPopupCallbacks() {
         @Override
@@ -76,12 +93,22 @@ public class ProfileActivity extends LogActivity {
     @Inject
     TourRepository tourRepository;
 
+    @Inject
+    GuideRepository guideRepository;
+
+    private Guide author;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
         setContentView(R.layout.activity_profile);
         layoutRoot = findViewById(R.id.layoutRoot);
+
+        Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
+        int guideId = args.getGuideId();
+        author = guideRepository.getGuide(guideId);
+
         setupButtons();
         setupAuthor();
         setupRecyclerView();
@@ -95,20 +122,24 @@ public class ProfileActivity extends LogActivity {
     }
 
     private void setupAuthor(){
-        int avatarResId = R.mipmap.avatar_example;
-        String name = "Alexander McQueen";
-        String location = "Paris, France";
-        String description = "Les considérations idéologiques d'ordre supérieur, ainsi que la mise en œuvre des objectifs planifiés, nécessitent la définition et le perfectionnement du système de formation du personnel répondant aux besoins urgents. Ainsi, la consultation avec un atout large détermine dans une large mesure la création de systèmes participatifs.";
+//        int avatarResId = R.mipmap.avatar_example;
+//        String name = "Alexander McQueen";
+//        String location = "Paris, France";
+//        String description = "Les considérations idéologiques d'ordre supérieur, ainsi que la mise en œuvre des objectifs planifiés, nécessitent la définition et le perfectionnement du système de formation du personnel répondant aux besoins urgents. Ainsi, la consultation avec un atout large détermine dans une large mesure la création de systèmes participatifs.";
         ImageView avatar = findViewById(R.id.imageViewAvatar);
-        avatar.setImageResource(avatarResId);
+        if (author.getAvatarId() != -1) {
+            avatar.setImageResource(author.getAvatarId());
+        } else {
+            avatar.setImageResource(R.drawable.ic_person);
+        }
         TextView textViewName = findViewById(R.id.textViewGuideName);
-        textViewName.setText(name);
+        textViewName.setText(author.getName());
         TextView textViewLocation = findViewById(R.id.textViewGuideLocation);
-        textViewLocation.setText(location);
+        textViewLocation.setText(author.getLocalization());
         TextView textViewDescription = findViewById(R.id.textViewAuthorDescription);
-        textViewDescription.setText(description);
+        textViewDescription.setText(author.getDescription());
         ImageView buttonShare = findViewById(R.id.buttonShare);
-        buttonShare.setOnClickListener(v -> ShareHelper.share(this, "Share guide", String.format("%s (%s)", name, location), description));
+        buttonShare.setOnClickListener(v -> ShareHelper.share(this, "Share guide", String.format("%s (%s)", author.getName(), author.getLocalization()), author.getDescription()));
         ImageView buttonLike = findViewById(R.id.buttonLike);
         buttonLike.setOnClickListener(v -> buttonLike.setSelected(!buttonLike.isSelected()));
     }

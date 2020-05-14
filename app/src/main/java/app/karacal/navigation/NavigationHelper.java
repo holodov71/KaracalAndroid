@@ -35,8 +35,9 @@ public class NavigationHelper {
         context.startActivity(intent);
     }
 
-    public static void startProfileActivity(Activity context) {
+    public static void startProfileActivity(Activity context, ProfileActivity.Args args) {
         Intent intent = new Intent(context, ProfileActivity.class);
+        intent.putExtras(args.toBundle());
         context.startActivity(intent);
     }
 

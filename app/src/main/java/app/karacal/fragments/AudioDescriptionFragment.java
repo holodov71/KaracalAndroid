@@ -11,15 +11,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
 import java.util.Locale;
 
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
+import app.karacal.activities.ProfileActivity;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ShareHelper;
+import app.karacal.models.Guide;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import app.karacal.views.StarsView;
@@ -61,6 +62,7 @@ public class AudioDescriptionFragment extends LogFragment {
 
     private void setupDownloadButton(View view) {
         ImageView buttonDownload = view.findViewById(R.id.buttonDownload);
+        buttonDownload.setVisibility(View.GONE);
         buttonDownload.setOnClickListener(v -> DummyHelper.dummyAction(getContext()));
     }
 
@@ -140,19 +142,24 @@ public class AudioDescriptionFragment extends LogFragment {
 
     private void setupAuthor(View view){
 //        String author = "Alexander McQueen";
-        String author = viewModel.getTour().getAuthor();
-        int count = 14;
+        Guide author = viewModel.getAuthor();
+        int count = viewModel.getCountGuides();
         ImageView imageView = view.findViewById(R.id.imageViewAuthor);
-        imageView.setImageResource(R.mipmap.notification_item_example_1);
+        if (author.getAvatarId() == -1){
+            imageView.setImageResource(R.drawable.ic_person);
+        } else {
+            imageView.setImageResource(author.getAvatarId());
+        }
         TextView textViewAuthor = view.findViewById(R.id.textViewAuthor);
-        textViewAuthor.setText(author);
+        textViewAuthor.setText(author.getName());
         TextView textViewGuidesCount = view.findViewById(R.id.textViewGuidesCount);
         textViewGuidesCount.setText(getContext().getString(R.string.guide_count_format, count, getContext().getString(count != 1 ? R.string.guides : R.string.guide)));
         ImageView imageViewAlert = view.findViewById(R.id.imageViewAuthorAlert);
 //        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
         ConstraintLayout buttonAuthor = view.findViewById(R.id.buttonAuthor);
         buttonAuthor.setOnClickListener(v -> {
-//            NavigationHelper.startProfileActivity(getActivity());
+            ProfileActivity.Args args = new ProfileActivity.Args(author.getId());
+            NavigationHelper.startProfileActivity(getActivity(), args);
         });
     }
 }

@@ -34,6 +34,9 @@ public class AudioPlayerFragment extends LogFragment {
 
     private TrackListAdapter adapter;
 
+    private ImageView playButton;
+    private ImageView buttonPause;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +67,7 @@ public class AudioPlayerFragment extends LogFragment {
 
     private void setupDownloadButton(View view) {
         ImageView buttonDownload = view.findViewById(R.id.buttonDownload);
+        buttonDownload.setVisibility(View.GONE);
         buttonDownload.setOnClickListener(v -> DummyHelper.dummyAction(getContext()));
     }
 
@@ -78,8 +82,8 @@ public class AudioPlayerFragment extends LogFragment {
         rewindButton.setOnClickListener(v -> viewModel.getPlayer().seekBack());
         ImageView forwardButton = view.findViewById(R.id.buttonAudioForward);
         forwardButton.setOnClickListener(v -> viewModel.getPlayer().seekForward());
-        ImageView playButton = view.findViewById(R.id.buttonPlay);
-        playButton.setOnClickListener(v -> viewModel.getPlayer().playTrack());
+        playButton = view.findViewById(R.id.buttonPlay);
+        playButton.setOnClickListener(v -> onPlayPauseClick());
     }
 
     private void setupTracksTextView(View view) {
@@ -90,6 +94,7 @@ public class AudioPlayerFragment extends LogFragment {
 
     private void setupCommentsTextView(View view) {
         TextView commentsTextView = view.findViewById(R.id.textViewComments);
+        commentsTextView.setVisibility(View.GONE);
         int count = 3;
         commentsTextView.setText(getString(R.string.comments_count_format, count, getString(count != 1 ? R.string.comments : R.string.comment)));
         commentsTextView.setOnClickListener(v -> {
@@ -114,14 +119,29 @@ public class AudioPlayerFragment extends LogFragment {
         textViewAlbumTitle.setText(viewModel.getTour().getTitle());
 //        textViewAlbumTitle.setText(viewModel.getAlbum().getTitle());
         TextView textViewTrackTitle = view.findViewById(R.id.textViewTrackTitle);
-        ImageView buttonPause = view.findViewById(R.id.buttonPause);
-        buttonPause.setOnClickListener(v -> viewModel.getPlayer().pause());
+        buttonPause = view.findViewById(R.id.buttonPause);
+        buttonPause.setOnClickListener(v -> onPlayPauseClick());
         ImageView buttonNext = view.findViewById(R.id.buttonNext);
         buttonNext.setOnClickListener(v -> viewModel.getPlayer().nextTrack());
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
         viewModel.getPlayer().getPlayerStateLiveData().observe(getViewLifecycleOwner(), playerState -> {
             TransitionManager.beginDelayedTransition(view.findViewById(R.id.layoutRoot));
             constraintLayoutPlayer.setVisibility(playerState == Player.PlayerState.IDLE ? View.GONE : View.VISIBLE);
+            if (playerState == Player.PlayerState.PLAY){
+                Log.v(TAG, "getPlayerState() == Player.PlayerState.PLAY");
+                buttonPause.setImageResource(R.drawable.ic_pause);
+                playButton.setImageResource(R.drawable.ic_pause);
+//                viewModel.getPlayer().pause();
+//                buttonPause.setImageResource(R.drawable.ic_play);
+//                playButton.setImageResource(R.drawable.ic_play);
+            }else {
+                Log.v(TAG, "getPlayerState() == Another");
+                buttonPause.setImageResource(R.drawable.ic_play);
+                playButton.setImageResource(R.drawable.ic_play);
+//                viewModel.getPlayer().playTrack();
+//                buttonPause.setImageResource(R.drawable.ic_pause);
+//                playButton.setImageResource(R.drawable.ic_pause);
+            }
         });
         viewModel.getPlayer().getCurrentTrackLiveData().observe(getViewLifecycleOwner(), currentTrack -> {
             if (currentTrack != null) {
@@ -140,6 +160,16 @@ public class AudioPlayerFragment extends LogFragment {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    private void onPlayPauseClick(){
+        if (viewModel.getPlayer().getPlayerState() == Player.PlayerState.PLAY){
+            Log.v(TAG, "getPlayerState() == Player.PlayerState.PLAY");
+            viewModel.getPlayer().pause();
+        }else {
+            Log.v(TAG, "getPlayerState() == Another");
+            viewModel.getPlayer().playTrack();
+        }
     }
 
 

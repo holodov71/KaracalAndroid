@@ -1,4 +1,4 @@
-package app.karacal.data;
+package app.karacal.data.repository;
 
 import java.util.ArrayList;
 

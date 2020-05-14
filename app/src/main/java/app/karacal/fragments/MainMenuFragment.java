@@ -10,8 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -22,9 +20,11 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CategoryActivity;
+import app.karacal.activities.ProfileActivity;
 import app.karacal.adapters.GuideHorizontalListAdapter;
 import app.karacal.adapters.TourHorizontalListAdapter;
-import app.karacal.data.TourRepository;
+import app.karacal.data.repository.GuideRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.EmailHelper;
 import app.karacal.helpers.WebLinkHelper;
@@ -35,6 +35,9 @@ public class MainMenuFragment extends Fragment {
 
     @Inject
     TourRepository tourRepository;
+
+    @Inject
+    GuideRepository guideRepository;
 
     private TourHorizontalListAdapter.TourClickListener tourClickListener = this::showTour;
 
@@ -63,6 +66,7 @@ public class MainMenuFragment extends Fragment {
         LinearLayout buttonSettings = view.findViewById(R.id.buttonSettings);
         buttonSettings.setOnClickListener(v -> NavigationHelper.startSettingsActivity(getActivity()));
         LinearLayout buttonDashboard = view.findViewById(R.id.buttonDashboardGuide);
+        buttonDashboard.setVisibility(View.GONE);
         buttonDashboard.setOnClickListener(v -> NavigationHelper.startDashboardActivity(getActivity()));
     }
 
@@ -99,7 +103,11 @@ public class MainMenuFragment extends Fragment {
         RecyclerView recyclerView = categoryView.findViewById(R.id.recyclerView);
         GuideHorizontalListAdapter adapter = new GuideHorizontalListAdapter(getContext());
         recyclerView.setAdapter(adapter);
-        adapter.setClickListener(() -> NavigationHelper.startProfileActivity(getActivity()));
+        adapter.setClickListener((guideId) -> {
+            ProfileActivity.Args args = new ProfileActivity.Args(guideId);
+            NavigationHelper.startProfileActivity(getActivity(), args);
+        });
+        adapter.setGuidesList(guideRepository.getGuides());
     }
 
     private void showCategory(int categoryId, String categoryName) {

@@ -6,14 +6,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 
 import app.karacal.App;
-import app.karacal.data.AlbumRepository;
-import app.karacal.data.TourRepository;
+import app.karacal.data.repository.AlbumRepository;
+import app.karacal.data.repository.GuideRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.models.Album;
+import app.karacal.models.Guide;
 import app.karacal.models.Player;
 import app.karacal.models.Tour;
 
@@ -41,9 +41,14 @@ public class AudioActivityViewModel extends ViewModel {
     TourRepository tourRepository;
 
     @Inject
+    GuideRepository guideRepository;
+
+    @Inject
     AlbumRepository albumRepository;
 
     private final Tour tour;
+
+    private final Guide author;
 
     private final Album album;
 
@@ -53,6 +58,7 @@ public class AudioActivityViewModel extends ViewModel {
         Log.v("AudioActivityViewModel", "tourId = "+tourId);
         App.getAppComponent().inject(this);
         tour = tourRepository.getTourById(tourId);
+        author = guideRepository.getGuide(tour.getAuthorId());
         album = albumRepository.getAlbumByTourId(tourId);
         player = new Player(album);
     }
@@ -73,5 +79,19 @@ public class AudioActivityViewModel extends ViewModel {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Guide getAuthor(){
+        return author;
+    }
+
+    public int getCountGuides(){
+        int count = 0;
+        for (Tour tour: tourRepository.getAllTours()){
+            if (tour.getAuthorId() == author.getId()){
+                count ++;
+            }
+        }
+        return count;
     }
 }

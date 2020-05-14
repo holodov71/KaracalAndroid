@@ -17,7 +17,7 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.DashboardTourListAdapter;
 import app.karacal.adapters.DashboardTourPagerAdapter;
-import app.karacal.data.TourRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.models.Tour;
 import apps.in.android_logger.LogFragment;
 

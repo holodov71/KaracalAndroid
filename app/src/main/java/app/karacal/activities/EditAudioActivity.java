@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.TrackEditListAdapter;
-import app.karacal.data.AlbumRepository;
+import app.karacal.data.repository.AlbumRepository;
 import app.karacal.dialogs.AudioTitleDialog;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.models.Track;

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import app.karacal.App;
-import app.karacal.data.TourRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.models.Tour;
 
 public class MainActivityViewModel extends BaseLocationViewModel {

@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.ListeningsListAdapter;
-import app.karacal.data.TourRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.DummyHelper;
 import apps.in.android_logger.LogActivity;
 

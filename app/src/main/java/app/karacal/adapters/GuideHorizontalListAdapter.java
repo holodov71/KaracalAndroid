@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import app.karacal.R;
 import app.karacal.helpers.DummyHelper;
@@ -20,7 +21,7 @@ import app.karacal.models.Guide;
 public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizontalListAdapter.ViewHolder> {
 
     public interface GuideClickListener {
-        void onGuideClick();
+        void onGuideClick(int guideId);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -38,10 +39,14 @@ public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizo
 
         void bind(Guide guide) {
             textViewName.setText(guide.getName());
-            imageViewAvatar.setImageResource(guide.getAvatarId());
+            if (guide.getAvatarId() != -1) {
+                imageViewAvatar.setImageResource(guide.getAvatarId());
+            } else {
+                imageViewAvatar.setImageResource(R.drawable.ic_person);
+            }
             itemView.setOnClickListener(view -> {
                 if (listener != null) {
-                    listener.onGuideClick();
+                    listener.onGuideClick(guide.getId());
                 }
             });
         }
@@ -49,7 +54,8 @@ public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizo
 
     private final Context context;
     private final LayoutInflater inflater;
-    private final ArrayList<Guide> guides = new ArrayList<>(Arrays.asList(new Guide("Micheal", R.mipmap.guide_avatar_example_01), new Guide("Anita", R.mipmap.guide_avatar_example_02), new Guide("Jackie", R.mipmap.guide_avatar_example_03), new Guide("Alexander", R.mipmap.guide_avatar_example_04)));
+//    private final ArrayList<Guide> guides = new ArrayList<>(Arrays.asList(new Guide(1, "Micheal", R.mipmap.guide_avatar_example_01), new Guide(2, "Anita", R.mipmap.guide_avatar_example_02), new Guide(3,"Jackie", R.mipmap.guide_avatar_example_03), new Guide(4, "Alexander", R.mipmap.guide_avatar_example_04)));
+    private final List<Guide> guides = new ArrayList<>();
     private GuideClickListener listener;
 
     public GuideHorizontalListAdapter(Context context) {
@@ -67,6 +73,12 @@ public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.bind(guides.get(position));
+    }
+
+    public void setGuidesList(List<Guide> guides){
+        this.guides.clear();
+        this.guides.addAll(guides);
+        notifyDataSetChanged();
     }
 
     @Override

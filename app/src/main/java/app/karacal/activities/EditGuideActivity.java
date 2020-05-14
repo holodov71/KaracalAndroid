@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.HelpfulInformationPagerAdapter;
-import app.karacal.data.TourRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.TextInputHelper;
 import app.karacal.models.Tour;

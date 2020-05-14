@@ -28,7 +28,7 @@ import dagger.BindsInstance;
 import dagger.Component;
 
 @Singleton
-@Component(modules = AppModule.class)
+@Component(modules = {AppModule.class, DatabaseModule.class})
 public interface AppComponent {
 
     void inject(PermissionActivity permissionActivity);

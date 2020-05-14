@@ -23,7 +23,7 @@ import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CategoryActivity;
 import app.karacal.adapters.TourHorizontalListAdapter;
-import app.karacal.data.TourRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
