@@ -12,6 +12,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -27,11 +35,14 @@ import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.EmailHelper;
+import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
 
 public class MainMenuFragment extends Fragment {
+
+    private GoogleSignInClient mGoogleApiClient;
 
     @Inject
     TourRepository tourRepository;
@@ -39,12 +50,16 @@ public class MainMenuFragment extends Fragment {
     @Inject
     GuideRepository guideRepository;
 
+    @Inject
+    ProfileHolder profileHolder;
+
     private TourHorizontalListAdapter.TourClickListener tourClickListener = this::showTour;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
+        setupGoogleClient();
     }
 
     @Nullable
@@ -55,6 +70,17 @@ public class MainMenuFragment extends Fragment {
         setupCategories(view);
         return view;
     }
+
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        mGoogleApiClient.connect();
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//    }
 
     private void setupButtons(View view) {
         LinearLayout buttonRefer = view.findViewById(R.id.buttonReferFriend);
@@ -68,6 +94,8 @@ public class MainMenuFragment extends Fragment {
         LinearLayout buttonDashboard = view.findViewById(R.id.buttonDashboardGuide);
         buttonDashboard.setVisibility(View.GONE);
         buttonDashboard.setOnClickListener(v -> NavigationHelper.startDashboardActivity(getActivity()));
+        LinearLayout buttonLogout = view.findViewById(R.id.buttonLogout);
+        buttonLogout.setOnClickListener(v -> logout());
     }
 
     private void setupCategories(View view) {
@@ -118,5 +146,28 @@ public class MainMenuFragment extends Fragment {
     private void showTour(int tourId) {
         AudioActivity.Args args = new AudioActivity.Args(tourId);
         NavigationHelper.startAudioActivity(getActivity(), args);
+    }
+
+    private void setupGoogleClient() {
+        String serverClientId = getString(R.string.server_client_id);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestServerAuthCode(serverClientId)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = GoogleSignIn.getClient(getActivity(), gso);
+    }
+
+    private void logout(){
+        try {
+            LoginManager.getInstance().logOut();
+            mGoogleApiClient.signOut();
+            profileHolder.removeProfile();
+            if (getActivity() != null){
+                getActivity().finish();
+            }
+            System.exit(0);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 }

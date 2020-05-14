@@ -2,6 +2,7 @@ package app.karacal.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -35,5 +36,9 @@ public class PreferenceHelper {
 
     public void saveToken(String token){
         preferences.edit().putString(AUTH_TOKEN_KEY, token).apply();
+    }
+
+    public void deleteToken(){
+        preferences.edit().remove(AUTH_TOKEN_KEY).apply();
     }
 }

@@ -338,4 +338,14 @@ public class TourRepository {
         }
         return filteredTours;
     }
+
+    public ArrayList<Tour> getToursByAuthor(int guideId) {
+        ArrayList<Tour> filteredTours = new ArrayList<>();
+        for (Tour tour: tours){
+            if (tour.getAuthorId() == guideId) {
+                filteredTours.add(tour);
+            }
+        }
+        return filteredTours;
+    }
 }

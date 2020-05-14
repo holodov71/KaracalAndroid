@@ -51,6 +51,7 @@ public class LoginTypeSelectFragment extends LogFragment {
     private static final int GOOGLE_SIGN_IN_REQUEST_CODE = 1703;
 
     private GoogleSignInClient googleSignInClient;
+
     private LoginManager facebookLoginManager;
     private CallbackManager callbackManager;
 

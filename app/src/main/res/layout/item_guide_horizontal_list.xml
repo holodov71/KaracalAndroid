@@ -19,10 +19,8 @@
             android:id="@+id/imageViewAvatar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            android:focusable="true"
             app:srcCompat="@drawable/ic_person"
             android:foreground="@drawable/tour_title_image_ripple_effect" />
 

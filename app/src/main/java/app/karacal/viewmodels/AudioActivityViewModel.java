@@ -86,12 +86,6 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public int getCountGuides(){
-        int count = 0;
-        for (Tour tour: tourRepository.getAllTours()){
-            if (tour.getAuthorId() == author.getId()){
-                count ++;
-            }
-        }
-        return count;
+        return tourRepository.getToursByAuthor(author.getId()).size();
     }
 }

@@ -24,4 +24,8 @@ public class TokenHelper {
         preferenceHelper.saveToken(token);
     }
 
+    public void deleteToken(){
+        preferenceHelper.deleteToken();
+    }
+
 }

@@ -25,4 +25,9 @@ public class ProfileHolder {
         this.profile = profile;
         tokenHelper.updateToken(profile.getAuthKey());
     }
+
+    public void removeProfile(){
+        this.profile = null;
+        tokenHelper.deleteToken();
+    }
 }

@@ -2,6 +2,7 @@ package app.karacal.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -57,6 +58,8 @@ public class LoginActivity extends LogActivity {
         String token = tokenHelper.getToken();
         Logger.log(this, "token = "+token);
         if (token != null){
+            Log.v("this", "tryToAuthorize token = "+token);
+
             apiHelper.getProfile(token)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

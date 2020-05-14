@@ -1,7 +1,10 @@
 package app.karacal.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -25,6 +28,7 @@ import app.karacal.popups.BasePopup;
 import app.karacal.popups.ReportProblemPopup;
 import app.karacal.popups.SelectActionPopup;
 import app.karacal.popups.ShareImpressionPopup;
+import app.karacal.views.NoScrollLinearLayoutManager;
 import apps.in.android_logger.LogActivity;
 
 public class ProfileActivity extends LogActivity {
@@ -146,13 +150,16 @@ public class ProfileActivity extends LogActivity {
 
     private void setupRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        ScrollView scrollView = findViewById(R.id.scrollView);
         TourVerticalListAdapter adapter = new TourVerticalListAdapter(this);
-        adapter.setTours(tourRepository.getAllTours());
+        adapter.setTours(tourRepository.getToursByAuthor(author.getId()));
         adapter.setClickListener(tourId -> {
             AudioActivity.Args args = new AudioActivity.Args(tourId);
             NavigationHelper.startAudioActivity(this, args);
         });
         recyclerView.setAdapter(adapter);
+
+        new Handler().postDelayed(() -> scrollView.fullScroll(View.FOCUS_UP), 300);
 
     }
 
