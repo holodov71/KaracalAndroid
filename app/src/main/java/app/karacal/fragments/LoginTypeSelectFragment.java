@@ -18,6 +18,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
+import com.facebook.login.LoginBehavior;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -98,7 +99,9 @@ public class LoginTypeSelectFragment extends LogFragment {
     private void setupFacebookLogin() {
         callbackManager = CallbackManager.Factory.create();
         facebookLoginManager = LoginManager.getInstance();
-        facebookLoginManager.registerCallback(callbackManager,
+        facebookLoginManager
+                .setLoginBehavior(LoginBehavior.WEB_ONLY)
+                .registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
