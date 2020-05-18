@@ -14,6 +14,7 @@ import app.karacal.activities.DonateActivity;
 import app.karacal.activities.EditAudioActivity;
 import app.karacal.activities.EditGuideActivity;
 import app.karacal.activities.FollowMyListeningsActivity;
+import app.karacal.activities.LoginActivity;
 import app.karacal.activities.MainActivity;
 import app.karacal.activities.PasswordHasBeenResetActivity;
 import app.karacal.activities.PrivacyPolicyActivity;
@@ -48,6 +49,11 @@ public class NavigationHelper {
 
     public static void startRegistrationActivity(Activity context) {
         Intent intent = new Intent(context, RegistrationActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void startLoginActivity(Activity context) {
+        Intent intent = new Intent(context, LoginActivity.class);
         context.startActivity(intent);
     }
 

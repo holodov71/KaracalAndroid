@@ -29,13 +29,13 @@ public class GuideRepository {
         guides.add(new Guide(11, "Lydia ALVAREZ", "", "Bonjour, je suis Lydia ! Je possède une licence en histoire de l'art et je suis, actuellement, en pleine préparation d'un doctorat en histoire ancienne. Je suis passionnée par l'Histoire, notamment par l'antiquité gréco-romaine et égyptienne. Je m'intéresse, également, au Moyen-âge, à l'art de la Renaissance, à la période révolutionnaire ainsi qu'aux différents mystères et affaires criminelles qui émaillent notre histoire.", R.mipmap.guide_avatar_11));
         guides.add(new Guide(12, "Charlotte DURAND", "", "Coucou, je suis Charlotte,  actuellement plus ou moins étudiante en histoire des religions à la Sorbonne. Mon sujet de prédilection est l'antiquité mésopotamienne mais je m'intéresse à beaucoup d'autres sujets plus récents. Accessoirement je suis aussi la co-fondatrice de Karacal.", R.mipmap.guide_avatar_12));
         guides.add(new Guide(13, "Hanna FEYLER", "", "Je m'appelle Hanna et je suis spécialiste de l'expertise d'objet d'art. J'ai plein de périodes préférées et de petites obsessions, mais pour les découvrir il faudra écouter mes audios :) Quand même, un indice : une de mes obsessions est Karacal... et oui, j'ai co-fondé l'entreprise !", R.mipmap.guide_avatar_13));
-        guides.add(new Guide(14, "Alexander McQueen", "Paris, France", "", R.mipmap.guide_avatar_example_01));
-        guides.add(new Guide(15, "Jennifer KERNER", "", "", -1));
-        guides.add(new Guide(16, "Rémi Hamot", "", "", -1));
-        guides.add(new Guide(17, "Quentin BIDAULT", "", "", -1));
-        guides.add(new Guide(18, "Chloé NGUYEN", "", "", -1));
-        guides.add(new Guide(19, "Maxime PARI", "", "", -1));
-        guides.add(new Guide(20, "Valentin KERAVEL", "", "", -1));
+//        guides.add(new Guide(14, "Alexander McQueen", "Paris, France", "", R.mipmap.guide_avatar_example_01));
+        guides.add(new Guide(14, "Jennifer KERNER", "", "", -1));
+        guides.add(new Guide(15, "Rémi Hamot", "", "", -1));
+        guides.add(new Guide(16, "Quentin BIDAULT", "", "", -1));
+        guides.add(new Guide(17, "Chloé NGUYEN", "", "", -1));
+        guides.add(new Guide(18, "Maxime PARI", "", "", -1));
+        guides.add(new Guide(19, "Valentin KERAVEL", "", "", -1));
     }
 
     public List<Guide> getGuides(){

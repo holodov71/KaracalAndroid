@@ -89,7 +89,7 @@ public class RegistrationInterestsFragment extends LogFragment {
 
     private void setupInterestsCount(View view) {
         textViewInterestsCount = view.findViewById(R.id.textViewInterestsCount);
-        viewModel.getInterestCount().observe(this, count -> {
+        viewModel.getInterestCount().observe(getViewLifecycleOwner(), count -> {
             textViewInterestsCount.setText(String.format(Locale.getDefault(), "%02d / %02d", count, viewModel.MAX_INTERESTS));
             buttonContinue.setEnabled(count > 0);
         });

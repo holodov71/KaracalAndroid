@@ -18,14 +18,14 @@ import apps.in.android_logger.LogActivity;
 
 public class ApplyPrivacyPolicyActivity extends LogActivity {
 
-    @Inject
-    PreferenceHelper preferenceHelper;
+//    @Inject
+//    PreferenceHelper preferenceHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
-        if (preferenceHelper.isPrivacyPolicyApplied()){
+        if (PreferenceHelper.isPrivacyPolicyApplied()){
             proceed();
         } else {
             setContentView(R.layout.activity_apply_privacy_policy);
@@ -53,7 +53,7 @@ public class ApplyPrivacyPolicyActivity extends LogActivity {
     }
 
     private void apply(){
-        preferenceHelper.setPrivacyPolicyApplied(true);
+        PreferenceHelper.setPrivacyPolicyApplied(true);
         proceed();
     }
 

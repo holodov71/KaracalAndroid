@@ -13,12 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.login.LoginManager;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
@@ -71,17 +68,6 @@ public class MainMenuFragment extends Fragment {
         return view;
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        mGoogleApiClient.connect();
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//    }
-
     private void setupButtons(View view) {
         LinearLayout buttonRefer = view.findViewById(R.id.buttonReferFriend);
         buttonRefer.setOnClickListener(v -> NavigationHelper.startReferFriendActivity(getActivity()));
@@ -100,11 +86,13 @@ public class MainMenuFragment extends Fragment {
 
     private void setupCategories(View view) {
         View categoryRecommended = view.findViewById(R.id.categoryRecommended);
-        setupTourCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tourRepository.getRecommendedTours());
+        categoryRecommended.setVisibility(View.GONE);
+//        setupTourCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tourRepository.getRecommendedTours());
         View categoryRecommendedGuide = view.findViewById(R.id.categoryRecommendedGuides);
         setupGuideCategory(categoryRecommendedGuide, 1, getString(R.string.recommended_for_you));
         View categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
-        setupTourCategory(categoryDownloaded, 2, getString(R.string.already_downloaded), tourRepository.getOriginalTours());
+        categoryDownloaded.setVisibility(View.GONE);
+//        setupTourCategory(categoryDownloaded, 2, getString(R.string.already_downloaded), tourRepository.getOriginalTours());
     }
 
     private void setupTourCategory(View categoryView, int id, String title, ArrayList<Tour> tours) {
@@ -161,11 +149,13 @@ public class MainMenuFragment extends Fragment {
         try {
             LoginManager.getInstance().logOut();
             mGoogleApiClient.signOut();
-            profileHolder.removeProfile();
+
             if (getActivity() != null){
+                profileHolder.removeProfile(getActivity());
+
+                NavigationHelper.startLoginActivity(getActivity());
                 getActivity().finish();
             }
-            System.exit(0);
         } catch (Exception ex){
             ex.printStackTrace();
         }

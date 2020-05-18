@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.TokenHelper;
 import app.karacal.navigation.NavigationHelper;
@@ -55,7 +56,7 @@ public class LoginActivity extends LogActivity {
     }
 
     private void tryToAuthorize(){
-        String token = tokenHelper.getToken();
+        String token = PreferenceHelper.loadToken(this);
         Logger.log(this, "token = "+token);
         if (token != null){
             Log.v("this", "tryToAuthorize token = "+token);

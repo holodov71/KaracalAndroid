@@ -85,7 +85,8 @@ public class MainSearchFragment extends Fragment {
             //TODO implement
             TransitionManager.beginDelayedTransition(searchFieldLayout);
             buttonClear.setVisibility(search.length() < 2 ? View.GONE : View.VISIBLE);
-            recyclerViewTags.setVisibility(search.length() < 2 ? View.VISIBLE : View.INVISIBLE);
+//            recyclerViewTags.setVisibility(search.length() < 2 ? View.VISIBLE : View.INVISIBLE);
+            recyclerViewTags.setVisibility(View.INVISIBLE);
             searchByText(search);
         }, (throwable) -> {
             //TODO implement
@@ -99,17 +100,25 @@ public class MainSearchFragment extends Fragment {
         adapterTags = new SearchTagsAdapter(getContext());
         adapterTags.setTagClickListener(tag -> editTextSearch.setText(tag));
         recyclerViewTags.setAdapter(adapterTags);
+        recyclerViewTags.setVisibility(View.INVISIBLE);
         recyclerViewResults = view.findViewById(R.id.recyclerViewResults);
         ArrayList<Tour> tours = tourRepository.getAllTours();
         adapterResults = new TourVerticalListAdapter(getContext());
+        adapterResults.setTours(tours);
         adapterResults.setClickListener(this::showTour);
         recyclerViewResults.setAdapter(adapterResults);
+        recyclerViewResults.setVisibility(View.VISIBLE);
     }
 
     private void searchByText(String query){
-        ArrayList<Tour> tours = tourRepository.searchToursByText(query);
+        ArrayList<Tour> tours = new ArrayList<>();
+        if (query.isEmpty()){
+            tours.addAll(tourRepository.getAllTours());
+        } else {
+            tours.addAll(tourRepository.searchToursByText(query));
+        }
         adapterResults.setTours(tours);
-        recyclerViewResults.setVisibility(query.length() < 2 ? View.INVISIBLE : View.VISIBLE);
+//        recyclerViewResults.setVisibility(query.length() < 2 ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void showTour(int tourId){

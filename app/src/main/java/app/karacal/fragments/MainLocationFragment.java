@@ -119,7 +119,7 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     private void setupSearchResults(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
         adapter = new TourVerticalListAdapter(getContext());
-//        adapter.setTours(tourRepository.getAllTours());
+        adapter.setTours(tourRepository.getAllTours());
         adapter.setClickListener(this::showTour);
         recyclerView.setAdapter(adapter);
     }

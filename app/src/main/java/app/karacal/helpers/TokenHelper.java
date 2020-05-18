@@ -1,18 +1,18 @@
 package app.karacal.helpers;
 
+import android.content.Context;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class TokenHelper {
 
-    private PreferenceHelper preferenceHelper;
     private String token;
 
     @Inject
-    public TokenHelper(PreferenceHelper preferenceHelper){
-        this.preferenceHelper = preferenceHelper;
-        token = preferenceHelper.loadToken();
+    public TokenHelper(){
+        token = PreferenceHelper.loadToken();
     }
 
     public String getToken(){
@@ -21,11 +21,11 @@ public class TokenHelper {
 
     public void updateToken(String token){
         this.token = token;
-        preferenceHelper.saveToken(token);
+        PreferenceHelper.saveToken(token);
     }
 
-    public void deleteToken(){
-        preferenceHelper.deleteToken();
+    public void deleteToken(Context context){
+        PreferenceHelper.deleteToken(context);
     }
 
 }

@@ -1,5 +1,7 @@
 package app.karacal.helpers;
 
+import android.content.Context;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -26,8 +28,8 @@ public class ProfileHolder {
         tokenHelper.updateToken(profile.getAuthKey());
     }
 
-    public void removeProfile(){
+    public void removeProfile(Context context){
         this.profile = null;
-        tokenHelper.deleteToken();
+        tokenHelper.deleteToken(context);
     }
 }

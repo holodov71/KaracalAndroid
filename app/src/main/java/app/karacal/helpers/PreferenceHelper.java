@@ -4,41 +4,48 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import app.karacal.App;
 
-@Singleton
 public class PreferenceHelper {
 
     private static final String PREFERENCES_FILE_NAME = "karacal.pref";
     private static final String PRIVACY_POLICY_APPLIED_KEY = "PRIVACY_POLICY_APPLIED";
     private static final String AUTH_TOKEN_KEY = "AUTH_TOKEN";
-    private final SharedPreferences preferences;
 
-    @Inject
-    public PreferenceHelper(App context){
-        preferences = context.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
+    private static SharedPreferences getSharedPreferences() {
+        return getSharedPreferences(App.getInstance());
     }
 
-    public boolean isPrivacyPolicyApplied(){
-        return preferences.getBoolean(PRIVACY_POLICY_APPLIED_KEY, false);
+    private static SharedPreferences getSharedPreferences(Context context) {
+        return context.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE);
     }
 
-    public void setPrivacyPolicyApplied(boolean isApplied){
-        preferences.edit().putBoolean(PRIVACY_POLICY_APPLIED_KEY, isApplied).apply();
+    public static boolean isPrivacyPolicyApplied(){
+        return getSharedPreferences().getBoolean(PRIVACY_POLICY_APPLIED_KEY, false);
     }
 
-    public String loadToken(){
-        return preferences.getString(AUTH_TOKEN_KEY, null);
+    public static void setPrivacyPolicyApplied(boolean isApplied){
+        getSharedPreferences().edit().putBoolean(PRIVACY_POLICY_APPLIED_KEY, isApplied).apply();
     }
 
-    public void saveToken(String token){
-        preferences.edit().putString(AUTH_TOKEN_KEY, token).apply();
+    public static String loadToken(){
+        return loadToken(App.getInstance());
     }
 
-    public void deleteToken(){
-        preferences.edit().remove(AUTH_TOKEN_KEY).apply();
+    public static String loadToken(Context context){
+        return getSharedPreferences(context).getString(AUTH_TOKEN_KEY, null);
+    }
+
+    public static void saveToken(String token){
+        getSharedPreferences().edit().putString(AUTH_TOKEN_KEY, token).apply();
+    }
+
+    public static void deleteToken(Context context){
+        getSharedPreferences(context).edit().remove(AUTH_TOKEN_KEY).apply();
     }
 }
