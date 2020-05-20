@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 
 android {
 
-    def versionMajor = 0
-    def versionMinor = 3
-    def versionPatch = 3
+    def versionMajor = 1
+    def versionMinor = 0
+    def versionPatch = 0
 
     def code = versionMajor * 100 + versionMinor
 
@@ -30,7 +30,7 @@ android {
     }
     buildTypes {
         release {
-            debuggable true
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config

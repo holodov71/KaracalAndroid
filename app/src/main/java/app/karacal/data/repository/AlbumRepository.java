@@ -40,9 +40,9 @@ public class AlbumRepository {
             case 6:
                 tracks.add(new Track("Colonnede Juillet", R.raw.track_15_1));
                 break;
-            case 7:
-                tracks.add(new Track("Musée d'Orsay", R.raw.track_16_1));
-                break;
+//            case 7:
+//                tracks.add(new Track("Musée d'Orsay", R.raw.track_16_1));
+//                break;
             case 8:
                 tracks.add(new Track("La place des Terreaux", R.raw.track_17_1));
                 break;
@@ -64,9 +64,9 @@ public class AlbumRepository {
                 tracks.add(new Track("3.L'ingrédient secret", R.raw.track_22_3));
                 tracks.add(new Track("4.Conseils de visite et conclusion", R.raw.track_22_4));
                 break;
-            case 14:
-                tracks.add(new Track("Tombeau de Philippe Pot chef doeuvre funraire du XVe", R.raw.track_23_1));
-                break;
+//            case 14:
+//                tracks.add(new Track("Tombeau de Philippe Pot chef doeuvre funraire du XVe", R.raw.track_23_1));
+//                break;
             case 15:
                 tracks.add(new Track("La redoutable allgorie de la Mort", R.raw.track_24_1));
                 break;

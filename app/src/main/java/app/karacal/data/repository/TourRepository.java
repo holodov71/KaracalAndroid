@@ -113,12 +113,12 @@ public class TourRepository {
                 "Mais quelle est donc cette colonne, place de la Bastille ? Vous vous l'êtes souvent demandé mais vous n'avez jamais eu le temps de répondre à votre question ? Karacal vous le raconte !",
                 null, 10, 3, 13, 48.853306, 2.369111));
 
-        tours.add(new Tour(7, R.mipmap.tour_image_orsay,
-                "Musée d'Orsay - Episode 1 des \"Visites Guidées Privées\"",
-                "Découvrez l’histoire du Musée D’Orsay, le contexte de création du bâtiment, ses singularités architecturales et son évolution ! -> de 1900 à aujourd’hui ! Nous évoquerons le contexte des expositions universelles, les différentes vies du bâtiments et la sélection des oeuvres disponibles dans cet édifice." +
-                        "\n" +
-                        "Point de départ : 1 Rue de la Légion d'Honneur, 75007 Paris, Parvis principal de l'entrée du Musée. Cet audio peut tout à fait être écouté dans une file d'attente.",
-                null, 10, 8, 7, 48.86075, 2.325306));
+//        tours.add(new Tour(7, R.mipmap.tour_image_orsay,
+//                "Musée d'Orsay - Episode 1 des \"Visites Guidées Privées\"",
+//                "Découvrez l’histoire du Musée D’Orsay, le contexte de création du bâtiment, ses singularités architecturales et son évolution ! -> de 1900 à aujourd’hui ! Nous évoquerons le contexte des expositions universelles, les différentes vies du bâtiments et la sélection des oeuvres disponibles dans cet édifice." +
+//                        "\n" +
+//                        "Point de départ : 1 Rue de la Légion d'Honneur, 75007 Paris, Parvis principal de l'entrée du Musée. Cet audio peut tout à fait être écouté dans une file d'attente.",
+//                null, 10, 8, 7, 48.86075, 2.325306));
 
         tours.add(new Tour(8, R.mipmap.tour_image_terreaux,
                 "La place des Terreaux",
@@ -152,12 +152,12 @@ public class TourRepository {
                         "Rendez-vous dans l'aîle Sully, au 2e étage dans la salle 938.",
                 null, 10, 6, 14, 48.860639, 2.337417));
 
-        tours.add(new Tour(14, R.mipmap.tour_image_philippe_pot,
-                "Le tombeau de Philippe Pot : un chef-d'oeuvre funéraire du XVe siècle",
-                "Les visiteurs du Louvre étaient en deuil car le plus beau gisant du musée était parti sous les pinceaux des restaurateurs... Maintenant qu'il est de retour, profitons-en pour admirer ensemble un tombeau spectaculaire qui a révolutionné l'art funéraire de la fin du XVe siècle !" +
-                        "\n" +
-                        "Vous trouverez cette oeuvre dans l'Aile Richelieu, au ez-de-chaussée et dans la salle 210.",
-                null, 10, 11, 14, 48.861583, 2.335861));
+//        tours.add(new Tour(14, R.mipmap.tour_image_philippe_pot,
+//                "Le tombeau de Philippe Pot : un chef-d'oeuvre funéraire du XVe siècle",
+//                "Les visiteurs du Louvre étaient en deuil car le plus beau gisant du musée était parti sous les pinceaux des restaurateurs... Maintenant qu'il est de retour, profitons-en pour admirer ensemble un tombeau spectaculaire qui a révolutionné l'art funéraire de la fin du XVe siècle !" +
+//                        "\n" +
+//                        "Vous trouverez cette oeuvre dans l'Aile Richelieu, au ez-de-chaussée et dans la salle 210.",
+//                null, 10, 11, 14, 48.861583, 2.335861));
 
         tours.add(new Tour(15, R.mipmap.tour_image_mort,
                 "La redoutable allégorie de la Mort",

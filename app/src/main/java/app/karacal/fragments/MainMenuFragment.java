@@ -71,7 +71,7 @@ public class MainMenuFragment extends Fragment {
     private void setupButtons(View view) {
         LinearLayout buttonRefer = view.findViewById(R.id.buttonReferFriend);
         buttonRefer.setOnClickListener(v -> NavigationHelper.startReferFriendActivity(getActivity()));
-        LinearLayout buttonHowWeChoose = view.findViewById(R.id.buttonHowWeChoose);
+        View buttonHowWeChoose = view.findViewById(R.id.buttonHowWeChoose);
         buttonHowWeChoose.setOnClickListener(v -> WebLinkHelper.howWeChooseOurGuide(getActivity()));
         LinearLayout buttonContact = view.findViewById(R.id.buttonContactKaracal);
         buttonContact.setOnClickListener(v -> EmailHelper.contactKaracal(getActivity()));
@@ -89,7 +89,9 @@ public class MainMenuFragment extends Fragment {
         categoryRecommended.setVisibility(View.GONE);
 //        setupTourCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tourRepository.getRecommendedTours());
         View categoryRecommendedGuide = view.findViewById(R.id.categoryRecommendedGuides);
-        setupGuideCategory(categoryRecommendedGuide, 1, getString(R.string.recommended_for_you));
+//        setupGuideCategory(categoryRecommendedGuide, 1, getString(R.string.recommended_for_you));
+        categoryRecommendedGuide.setVisibility(View.GONE);
+
         View categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
         categoryDownloaded.setVisibility(View.GONE);
 //        setupTourCategory(categoryDownloaded, 2, getString(R.string.already_downloaded), tourRepository.getOriginalTours());

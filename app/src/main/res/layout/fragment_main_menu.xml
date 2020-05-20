@@ -7,7 +7,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,6 +23,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -70,45 +71,99 @@
                 android:layout_width="match_parent"
                 android:layout_marginStart="16dp" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/buttonHowWeChoose"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
-                android:orientation="horizontal">
+                >
 
                 <ImageView
+                    android:id="@+id/imgHowWeChoose"
                     style="@style/PopupIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="16dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/ic_board_check" />
+                    android:src="@drawable/ic_board_check"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
 
                 <TextView
                     style="@style/TextWhite.ItemTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_margin="16dp"
-                    android:text="@string/how_we_choose_our_guide" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="16dp"
+                    android:text="@string/how_we_choose_our_guide"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/imgHowWeChoose"
+                    app:layout_constraintEnd_toStartOf="@+id/imgArrowEnd"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
 
                 <ImageView
+                    android:id="@+id/imgArrowEnd"
                     style="@style/PopupIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="16dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/ic_arrow_right" />
+                    android:src="@drawable/ic_arrow_right"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
 
-            </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/buttonHowWeChoose"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="?attr/selectableItemBackground"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <ImageView-->
+<!--                    style="@style/PopupIcon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center_vertical"-->
+<!--                    android:layout_margin="16dp"-->
+<!--                    android:contentDescription="@null"-->
+<!--                    android:src="@drawable/ic_board_check" />-->
+
+<!--                <TextView-->
+<!--                    style="@style/TextWhite.ItemTitle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center_vertical"-->
+<!--                    android:layout_margin="16dp"-->
+<!--                    android:text="@string/how_we_choose_our_guide" />-->
+
+<!--                <View-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="1" />-->
+
+<!--                <ImageView-->
+<!--                    style="@style/PopupIcon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center_vertical"-->
+<!--                    android:layout_margin="16dp"-->
+<!--                    android:contentDescription="@null"-->
+<!--                    android:src="@drawable/ic_arrow_right" />-->
+
+<!--            </LinearLayout>-->
 
             <View
                 style="@style/Divider"
@@ -289,6 +344,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
+                android:paddingBottom="32dp"
                 android:orientation="vertical">
 
                 <include

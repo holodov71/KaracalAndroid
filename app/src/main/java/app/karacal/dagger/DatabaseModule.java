@@ -95,10 +95,10 @@ public class DatabaseModule {
                 "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
                 0, 10, 14, "Alexander McQueen", 48.832326, 2.369280, 6));
 
-        tours.add(new TourEntity(7, R.mipmap.tour_image_example_03,
-                "The little secrets of the grand palace",
-                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-                0, 6, 14, "Alexander McQueen", 48.854111, 2.365951, 7));
+//        tours.add(new TourEntity(7, R.mipmap.tour_image_example_03,
+//                "The little secrets of the grand palace",
+//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
+//                0, 6, 14, "Alexander McQueen", 48.854111, 2.365951, 7));
 
         tours.add(new TourEntity(8, R.mipmap.tour_image_example_05,
                 "Graph techniques with steph",
@@ -142,12 +142,12 @@ public class DatabaseModule {
                 "Mais quelle est donc cette colonne, place de la Bastille ? Vous vous l'êtes souvent demandé mais vous n'avez jamais eu le temps de répondre à votre question ? Karacal vous le raconte !",
                 0, 10, 3, "Hanna FEYLER", 48.853306, 2.369111, 15));
 
-        tours.add(new TourEntity(16, R.mipmap.tour_image_orsay,
-                "Musée d'Orsay - Episode 1 des \"Visites Guidées Privées\"",
-                "Découvrez l’histoire du Musée D’Orsay, le contexte de création du bâtiment, ses singularités architecturales et son évolution ! -> de 1900 à aujourd’hui ! Nous évoquerons le contexte des expositions universelles, les différentes vies du bâtiments et la sélection des oeuvres disponibles dans cet édifice." +
-                        "\n" +
-                        "Point de départ : 1 Rue de la Légion d'Honneur, 75007 Paris, Parvis principal de l'entrée du Musée. Cet audio peut tout à fait être écouté dans une file d'attente.",
-                0, 10, 8, "Marie PLAINFOSSE", 48.86075, 2.325306, 16));
+//        tours.add(new TourEntity(16, R.mipmap.tour_image_orsay,
+//                "Musée d'Orsay - Episode 1 des \"Visites Guidées Privées\"",
+//                "Découvrez l’histoire du Musée D’Orsay, le contexte de création du bâtiment, ses singularités architecturales et son évolution ! -> de 1900 à aujourd’hui ! Nous évoquerons le contexte des expositions universelles, les différentes vies du bâtiments et la sélection des oeuvres disponibles dans cet édifice." +
+//                        "\n" +
+//                        "Point de départ : 1 Rue de la Légion d'Honneur, 75007 Paris, Parvis principal de l'entrée du Musée. Cet audio peut tout à fait être écouté dans une file d'attente.",
+//                0, 10, 8, "Marie PLAINFOSSE", 48.86075, 2.325306, 16));
 
         tours.add(new TourEntity(17, R.mipmap.tour_image_terreaux,
                 "La place des Terreaux",
@@ -181,12 +181,12 @@ public class DatabaseModule {
                         "Rendez-vous dans l'aîle Sully, au 2e étage dans la salle 938.",
                 0, 10, 6, "Jennifer KERNER", 48.860639, 2.337417, 22));
 
-        tours.add(new TourEntity(23, R.mipmap.tour_image_philippe_pot,
-                "Le tombeau de Philippe Pot : un chef-d'oeuvre funéraire du XVe siècle",
-                "Les visiteurs du Louvre étaient en deuil car le plus beau gisant du musée était parti sous les pinceaux des restaurateurs... Maintenant qu'il est de retour, profitons-en pour admirer ensemble un tombeau spectaculaire qui a révolutionné l'art funéraire de la fin du XVe siècle !" +
-                        "\n" +
-                        "Vous trouverez cette oeuvre dans l'Aile Richelieu, au ez-de-chaussée et dans la salle 210.",
-                0, 10, 11, "Jennifer KERNER", 48.861583, 2.335861, 23));
+//        tours.add(new TourEntity(23, R.mipmap.tour_image_philippe_pot,
+//                "Le tombeau de Philippe Pot : un chef-d'oeuvre funéraire du XVe siècle",
+//                "Les visiteurs du Louvre étaient en deuil car le plus beau gisant du musée était parti sous les pinceaux des restaurateurs... Maintenant qu'il est de retour, profitons-en pour admirer ensemble un tombeau spectaculaire qui a révolutionné l'art funéraire de la fin du XVe siècle !" +
+//                        "\n" +
+//                        "Vous trouverez cette oeuvre dans l'Aile Richelieu, au ez-de-chaussée et dans la salle 210.",
+//                0, 10, 11, "Jennifer KERNER", 48.861583, 2.335861, 23));
 
         tours.add(new TourEntity(24, R.mipmap.tour_image_mort,
                 "La redoutable allégorie de la Mort",

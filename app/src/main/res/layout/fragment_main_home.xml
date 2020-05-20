@@ -13,18 +13,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
         <ImageView
             android:id="@+id/imageTitle"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="350dp"
             android:contentDescription="@null"
-            android:scaleType="fitXY"
-            android:src="@mipmap/main_title">
+            android:scaleType="centerCrop"/>
 
-        </ImageView>
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imageTitle"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:contentDescription="@null"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@mipmap/main_title"/>-->
 
         <TextView
             android:id="@+id/textViewGreetings"
