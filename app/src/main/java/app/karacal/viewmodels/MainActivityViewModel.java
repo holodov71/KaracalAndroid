@@ -9,11 +9,14 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import app.karacal.App;
+import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
+import app.karacal.models.Guide;
 import app.karacal.models.Tour;
 
 public class MainActivityViewModel extends BaseLocationViewModel {
@@ -37,6 +40,9 @@ public class MainActivityViewModel extends BaseLocationViewModel {
     @Inject
     TourRepository tourRepository;
 
+    @Inject
+    GuideRepository guideRepository;
+
     private MutableLiveData<ArrayList<Tour>> nearTours = new MutableLiveData<>();
 
     public MainActivityViewModel() {
@@ -50,5 +56,22 @@ public class MainActivityViewModel extends BaseLocationViewModel {
     public void obtainNearTours(Location location){
         nearTours.setValue(tourRepository.getNearTours(location));
     }
+
+    public void loadGuides() {
+        guideRepository.loadGuides();
+    }
+
+    public LiveData<List<Guide>> getGuides(){
+        return guideRepository.guidesLiveData;
+    }
+
+    public void loadTours() {
+        tourRepository.loadTours();
+    }
+
+    public LiveData<List<Tour>> getTours(){
+        return tourRepository.toursLiveData;
+    }
+
 
 }

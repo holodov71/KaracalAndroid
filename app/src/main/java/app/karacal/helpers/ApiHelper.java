@@ -4,19 +4,30 @@ import android.util.Log;
 
 import com.google.gson.JsonObject;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.models.Profile;
+import app.karacal.retrofit.GuideService;
 import app.karacal.retrofit.InitService;
+import app.karacal.retrofit.TourService;
+import app.karacal.retrofit.TracksService;
+import app.karacal.retrofit.models.GuideResponse;
 import app.karacal.retrofit.models.LoginRequest;
 import app.karacal.retrofit.ProfileService;
 import app.karacal.retrofit.models.RegisterRequest;
 import app.karacal.retrofit.models.SocialLoginRequest;
+import app.karacal.retrofit.models.TourResponse;
+import app.karacal.retrofit.models.TrackResponse;
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 
@@ -26,14 +37,24 @@ public class ApiHelper {
     private App context;
 
     private InitService initService;
-
     private ProfileService profileService;
+    private GuideService guideService;
+    private TourService tourService;
+    private TracksService tracksService;
 
     @Inject
-    public ApiHelper(App context, InitService initService, ProfileService profileService){
+    public ApiHelper(App context,
+                     InitService initService,
+                     ProfileService profileService,
+                     GuideService guideService,
+                     TourService tourService,
+                     TracksService tracksService){
         this.context = context;
         this.initService = initService;
         this.profileService = profileService;
+        this.guideService = guideService;
+        this.tourService = tourService;
+        this.tracksService = tracksService;
     }
 
     public Single<Profile> getProfile(String token){
@@ -110,6 +131,24 @@ public class ApiHelper {
             }
             emitter.onError(new Exception(context.getString(R.string.connection_problem)));
         });
+    }
+
+    public Observable<List<GuideResponse>> loadGuides(String token) {
+        return guideService.getGuidesList("Bearer " + token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<List<TourResponse>> loadTours(String token) {
+        return tourService.getToursList("Bearer " + token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<List<TrackResponse>> loadTracks(String token, String tourId) {
+        return tracksService.getTracksList("Bearer " + token, tourId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
 }

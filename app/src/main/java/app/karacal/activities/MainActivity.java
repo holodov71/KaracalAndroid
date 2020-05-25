@@ -37,6 +37,11 @@ public class MainActivity extends PermissionActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()){
             fragment.onActivityResult(requestCode, resultCode, data);

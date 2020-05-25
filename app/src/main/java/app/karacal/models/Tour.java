@@ -1,17 +1,20 @@
 package app.karacal.models;
 
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 
 import app.karacal.data.entity.TourEntity;
+import app.karacal.retrofit.models.TourResponse;
 
 public class Tour implements Serializable {
 
     private int id;
-    private int image;
+    private int image = -1;
+    private String imageUrl;
     private String title;
     private String description;
     private Double price;
@@ -32,6 +35,21 @@ public class Tour implements Serializable {
         this.authorId = authorId;
         this.lat = lat;
         this.lng = lng;
+    }
+
+    public Tour(TourResponse tourResponse) {
+        Log.v("TourResponse", "Tour(TourResponse tourResponse)");
+        Log.v("TourResponse", "tourResponse = "+tourResponse);
+        this.id = tourResponse.getId();
+        this.imageUrl = tourResponse.getImage();
+        this.title = tourResponse.getTitle();
+        this.description = tourResponse.getDescription();
+        this.price = null;
+        this.rating = tourResponse.getStars();
+        this.duration = Integer.parseInt(tourResponse.getDuration());
+        this.authorId = tourResponse.getGuideId();
+        this.lat = tourResponse.getLatitude();
+        this.lng = tourResponse.getLongitude();
     }
 
     public Tour(TourEntity entity) {

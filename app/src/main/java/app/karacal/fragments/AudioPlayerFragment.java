@@ -36,6 +36,7 @@ public class AudioPlayerFragment extends LogFragment {
 
     private ImageView playButton;
     private ImageView buttonPause;
+    private TextView tracksTextView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +58,9 @@ public class AudioPlayerFragment extends LogFragment {
         setupTracksList(view);
         setupAudioButtons(view);
         setupPlayerControls(view);
+        viewModel.loadTracks();
+        observeTracks();
+
         return view;
     }
 
@@ -87,9 +91,7 @@ public class AudioPlayerFragment extends LogFragment {
     }
 
     private void setupTracksTextView(View view) {
-        TextView tracksTextView = view.findViewById(R.id.textViewTracks);
-        int count = viewModel.getAlbum().getTracks().size();
-        tracksTextView.setText(getString(R.string.tracks_count_format, count, getString(count != 1 ? R.string.tracks : R.string.track)));
+        tracksTextView = view.findViewById(R.id.textViewTracks);
     }
 
     private void setupCommentsTextView(View view) {
@@ -105,7 +107,6 @@ public class AudioPlayerFragment extends LogFragment {
     private void setupTracksList(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         adapter = new TrackListAdapter(getContext());
-        adapter.setTracks(viewModel.getAlbum().getTracks());
         adapter.setClickListener(position -> viewModel.getPlayer().playTrack(position));
         viewModel.getPlayer().getPositionInfoLiveData().observe(getViewLifecycleOwner(), (positionInfo) -> adapter.updateProgress(viewModel.getPlayer().getCurrentTrack(), positionInfo));
         recyclerView.setAdapter(adapter);
@@ -145,7 +146,7 @@ public class AudioPlayerFragment extends LogFragment {
         });
         viewModel.getPlayer().getCurrentTrackLiveData().observe(getViewLifecycleOwner(), currentTrack -> {
             if (currentTrack != null) {
-                textViewTrackTitle.setText(viewModel.getAlbum().getTracks().get(currentTrack).getTitle());
+                textViewTrackTitle.setText(viewModel.getTrackTitle(currentTrack));
                 textViewTrackTitle.setVisibility(View.VISIBLE);
             } else {
                 textViewTrackTitle.setVisibility(View.INVISIBLE);
@@ -160,6 +161,11 @@ public class AudioPlayerFragment extends LogFragment {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
+        viewModel.getPlayer().getCurrentTrackDurationLiveData().observe(getViewLifecycleOwner(), durationInfo -> {
+            if (durationInfo != null) {
+                adapter.updateItem(durationInfo.getCurrentPosition(), durationInfo.getTrackDuration());
+            }
+        });
     }
 
     private void onPlayPauseClick(){
@@ -172,6 +178,13 @@ public class AudioPlayerFragment extends LogFragment {
         }
     }
 
-
+    private void observeTracks(){
+        viewModel.getAlbum().observe(getViewLifecycleOwner(), album -> {
+            Log.v("observeTracks", "album = "+album);
+            adapter.setTracks(album.getTracks());
+            int count = album.getTracks().size();
+            tracksTextView.setText(getString(R.string.tracks_count_format, count, getString(count != 1 ? R.string.tracks : R.string.track)));
+        });
+    }
 
 }

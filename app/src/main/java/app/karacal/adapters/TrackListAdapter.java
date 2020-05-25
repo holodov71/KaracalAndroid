@@ -66,16 +66,25 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
         }
 
         private void setDurationText(Track track) {
-            try {
-                Uri mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
-                metaRetriever.setDataSource(context, mediaPath);
-                String metadata = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                int duration = (int) (Long.parseLong(metadata) / 1000);
+
+            int duration = track.getDuration();
+            if (duration == 0) {
+                try {
+                    Uri mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
+                    metaRetriever.setDataSource(context, mediaPath);
+                    String metadata = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                    duration = (int) (Long.parseLong(metadata) / 1000);
+                } catch (Exception e) {
+                    textViewDuration.setVisibility(View.INVISIBLE);
+                }
+
+            }
+            if (duration != 0) {
                 int minutes = duration / 60;
                 int seconds = duration % 60;
                 textViewDuration.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
                 textViewDuration.setVisibility(View.VISIBLE);
-            } catch (Exception e) {
+            } else {
                 textViewDuration.setVisibility(View.INVISIBLE);
             }
         }
@@ -133,6 +142,13 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
         this.tracks.clear();
         this.tracks.addAll(tracks);
         notifyDataSetChanged();
+    }
+
+    public void updateItem(int currentPosition, int trackDuration) {
+        if (tracks.size()>currentPosition){
+            tracks.get(currentPosition).setDuration(trackDuration);
+            notifyItemChanged(currentPosition);
+        }
     }
 
     public void setClickListener(ItemClickListener clickListener) {

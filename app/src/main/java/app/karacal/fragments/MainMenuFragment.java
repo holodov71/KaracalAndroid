@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.login.LoginManager;
@@ -36,8 +37,11 @@ import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.viewmodels.MainActivityViewModel;
 
 public class MainMenuFragment extends Fragment {
+
+    private MainActivityViewModel viewModel;
 
     private GoogleSignInClient mGoogleApiClient;
 
@@ -56,6 +60,7 @@ public class MainMenuFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
+        viewModel = new ViewModelProvider(getActivity()).get(MainActivityViewModel.class);
         setupGoogleClient();
     }
 
@@ -63,8 +68,13 @@ public class MainMenuFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
+
+        viewModel.loadGuides();
+
         setupButtons(view);
         setupCategories(view);
+
+
         return view;
     }
 
@@ -89,8 +99,7 @@ public class MainMenuFragment extends Fragment {
         categoryRecommended.setVisibility(View.GONE);
 //        setupTourCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tourRepository.getRecommendedTours());
         View categoryRecommendedGuide = view.findViewById(R.id.categoryRecommendedGuides);
-//        setupGuideCategory(categoryRecommendedGuide, 1, getString(R.string.recommended_for_you));
-        categoryRecommendedGuide.setVisibility(View.GONE);
+        setupGuideCategory(categoryRecommendedGuide, 1, getString(R.string.recommended_for_you));
 
         View categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
         categoryDownloaded.setVisibility(View.GONE);
@@ -125,7 +134,11 @@ public class MainMenuFragment extends Fragment {
             ProfileActivity.Args args = new ProfileActivity.Args(guideId);
             NavigationHelper.startProfileActivity(getActivity(), args);
         });
-        adapter.setGuidesList(guideRepository.getGuides());
+        observeGuidesList(adapter);
+    }
+
+    private void observeGuidesList(GuideHorizontalListAdapter adapter){
+        viewModel.getGuides().observe(getViewLifecycleOwner(), adapter::setGuidesList);
     }
 
     private void showCategory(int categoryId, String categoryName) {

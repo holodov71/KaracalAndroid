@@ -1,5 +1,6 @@
 package app.karacal.data.repository;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.location.Location;
@@ -18,16 +19,25 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.data.dao.ToursDao;
 import app.karacal.data.entity.TourEntity;
+import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.PreferenceHelper;
+import app.karacal.models.Guide;
 import app.karacal.models.Tour;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 @Singleton
 public class TourRepository {
+
+    @Inject
+    ApiHelper apiHelper;
 
     private ToursDao toursDao;
     private Context context;
 
     private final ArrayList<Tour> tours = new ArrayList<>();
     private final MutableLiveData<ArrayList<Tour>> toursList = new MutableLiveData<>();
+    public MutableLiveData<List<Tour>> toursLiveData = new MutableLiveData<>();
     private final ArrayList<Tour> nearTours = new ArrayList<>();
 
     @Inject
@@ -35,51 +45,6 @@ public class TourRepository {
 
         this.toursDao = toursDao;
         this.context = context;
-
-//        tours.add(new Tour(1, R.mipmap.tour_image_example_06,
-//                "The little secrets of the grand palace",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 10, 14, 14, 48.863352, 2.346973));
-//
-//        tours.add(new Tour(2, R.mipmap.tour_image_example_02,
-//                "Graph techniques with steph",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 9, 14, 14, 48.852007, 2.356188));
-//
-//        tours.add(new Tour(3, R.mipmap.tour_image_example_03,
-//                "The little secrets of the grand palace",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 5, 14, 14, 48.846273, 2.333738));
-//
-//        tours.add(new Tour(4, R.mipmap.tour_image_example_02,
-//                "The little secrets of the grand palace",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 8, 14,  14, 48.842149, 2.281903));
-//
-//        tours.add(new Tour(5, R.mipmap.tour_image_example_05,
-//                "Graph techniques with steph",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 7, 14, 14, 48.870894, 2.418592));
-//
-//        tours.add(new Tour(6, R.mipmap.tour_image_example_06,
-//                "The little secrets of the grand palace",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 10, 14, 14, 48.832326, 2.369280));
-//
-//        tours.add(new Tour(7, R.mipmap.tour_image_example_03,
-//                "The little secrets of the grand palace",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 6, 14, 14, 48.854111, 2.365951));
-//
-//        tours.add(new Tour(8, R.mipmap.tour_image_example_05,
-//                "Graph techniques with steph",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 3, 14, 14, 48.867015, 2.317614));
-//
-//        tours.add(new Tour(9, R.mipmap.tour_image_example_06,
-//                "The little secrets of the grand palace",
-//                "Go on a date with the city of light and explore the shores of its main artery in the sunset.",
-//                null, 9, 14, 14, 48.832901, 2.388167));
 
         tours.add(new Tour(1, R.mipmap.tour_image_varda,
                 "La rue Daguerre sous l'oeil d'Agnès Varda",
@@ -347,5 +312,24 @@ public class TourRepository {
             }
         }
         return filteredTours;
+    }
+
+    @SuppressLint("CheckResult")
+    public void loadTours() {
+        apiHelper.loadTours(PreferenceHelper.loadToken(context))
+                .flatMapIterable(list -> list)
+                .map(tour -> new Tour(tour))
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(tours -> {
+                    Log.v("loadTours", "toursLiveData.setValue(tours) size = "+tours.size());
+                    toursLiveData.setValue(tours);
+                    // TODO: save to DB
+
+                }, throwable -> {
+                    Log.v("loadTours", "throwable "+throwable.getMessage());
+                    // TODO: load list from DB
+                });
     }
 }

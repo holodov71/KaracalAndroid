@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import app.karacal.R;
@@ -81,7 +82,7 @@ public class TourHorizontalListAdapter extends RecyclerView.Adapter<TourHorizont
         this.clickListener = clickListener;
     }
 
-    public void setTours(ArrayList<Tour> tours){
+    public void setTours(List<Tour> tours){
         this.tours.clear();
         this.tours.addAll(tours);
         notifyDataSetChanged();

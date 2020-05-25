@@ -1,6 +1,7 @@
 package app.karacal.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -34,6 +35,7 @@ import app.karacal.viewmodels.MainActivityViewModel;
 
 public class MainHomeFragment extends Fragment {
 
+    private View categoryRecommended;
     private View categoryNear;
 
     private MainActivityViewModel viewModel;
@@ -63,6 +65,9 @@ public class MainHomeFragment extends Fragment {
         setupSeeAroundMeButton(view);
         setupCategories(view);
 
+        viewModel.loadTours();
+
+        observeRecommendedTours();
         observeNearTours();
         observeLocation();
         return view;
@@ -95,6 +100,15 @@ public class MainHomeFragment extends Fragment {
         });
     }
 
+    private void observeRecommendedTours(){
+        viewModel.getTours().observe(getViewLifecycleOwner(), tours -> {
+            Log.v("getTours", "observeRecommendedTours");
+            if (!tours.isEmpty()) {
+                setupCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tours);
+            }
+        });
+    }
+
     private void observeLocation(){
         viewModel.subscribeLocationUpdates(this, location -> {
             if (location != null) {
@@ -104,14 +118,13 @@ public class MainHomeFragment extends Fragment {
     }
 
     private void setupCategories(View view) {
-        View categoryRecommended = view.findViewById(R.id.categoryRecommended);
-        setupCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tourRepository.getRecommendedTours());
+        categoryRecommended = view.findViewById(R.id.categoryRecommended);
         categoryNear = view.findViewById(R.id.categoryNear);
         View categoryOriginals = view.findViewById(R.id.categoryOriginals);
         setupCategory(categoryOriginals, 2, getString(R.string.originals), tourRepository.getOriginalTours());
     }
 
-    private void setupCategory(View categoryView, int id, String title, ArrayList<Tour> tours) {
+    private void setupCategory(View categoryView, int id, String title, List<Tour> tours) {
         categoryView.setVisibility(View.VISIBLE);
 
         TextView textViewTitle = categoryView.findViewById(R.id.textViewTitle);

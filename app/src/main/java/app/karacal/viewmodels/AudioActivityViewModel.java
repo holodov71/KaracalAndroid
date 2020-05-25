@@ -3,8 +3,11 @@ package app.karacal.viewmodels;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -73,9 +76,9 @@ public class AudioActivityViewModel extends ViewModel {
         return tour;
     }
 
-    public Album getAlbum() {
-        return album;
-    }
+//    public Album getAlbum() {
+//        return album;
+//    }
 
     public Player getPlayer() {
         return player;
@@ -87,5 +90,17 @@ public class AudioActivityViewModel extends ViewModel {
 
     public int getCountGuides(){
         return tourRepository.getToursByAuthor(author.getId()).size();
+    }
+
+    public void loadTracks() {
+        albumRepository.loadTracksByTour(String.valueOf(tour.getId()));
+    }
+
+    public LiveData<Album> getAlbum(){
+        return albumRepository.albumLiveData;
+    }
+
+    public String getTrackTitle(int position){
+        return albumRepository.getTrackTitle(position);
     }
 }

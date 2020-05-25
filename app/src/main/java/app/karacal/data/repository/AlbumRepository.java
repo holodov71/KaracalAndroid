@@ -1,19 +1,40 @@
 package app.karacal.data.repository;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.Log;
+
+import androidx.lifecycle.MutableLiveData;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import app.karacal.App;
 import app.karacal.R;
+import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.Album;
+import app.karacal.models.Guide;
 import app.karacal.models.Track;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 @Singleton
 public class AlbumRepository {
 
     @Inject
-    public AlbumRepository(){
+    ApiHelper apiHelper;
+
+    private Context context;
+
+    public MutableLiveData<Album> albumLiveData = new MutableLiveData<>();
+
+    @Inject
+    public AlbumRepository(App context){
+        this.context = context;
     }
 
     public Album getAlbumByTourId(int tourId){
@@ -127,6 +148,34 @@ public class AlbumRepository {
         tracks.add(new Track("Abientt", R.raw.track_abientt));
 
         return new Album("Title of the Audio Album", tracks);
+    }
+
+    public String getTrackTitle(int position){
+        if (albumLiveData.getValue() != null) {
+            return albumLiveData.getValue().getTracks().get(position).getTitle();
+        } else {
+            return "";
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    public void loadTracksByTour(String tourId) {
+        apiHelper.loadTracks(PreferenceHelper.loadToken(context), tourId)
+                .flatMapIterable(list -> list)
+                .map(Track::new)
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(tracks -> {
+                    tracks.add(0, new Track("Bienvenue", R.raw.track_bienvenue));
+                    tracks.add(new Track("Abientt", R.raw.track_abientt));
+                    albumLiveData.setValue(new Album("", tracks));
+                    // TODO: save to DB
+
+                }, throwable -> {
+                    Log.e("loadTracksByTour", "Error: " +throwable.getMessage());
+                    // TODO: load list from DB
+                });
     }
 
 

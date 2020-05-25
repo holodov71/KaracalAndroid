@@ -7,8 +7,6 @@ import java.util.Date;
 public class Profile {
 
     private int id;
-
-    @SerializedName("social_id")
     private String socialId;
     private String firstName;
     private String secondName;
