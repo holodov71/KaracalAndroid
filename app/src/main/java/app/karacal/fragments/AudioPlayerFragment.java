@@ -132,16 +132,10 @@ public class AudioPlayerFragment extends LogFragment {
                 Log.v(TAG, "getPlayerState() == Player.PlayerState.PLAY");
                 buttonPause.setImageResource(R.drawable.ic_pause);
                 playButton.setImageResource(R.drawable.ic_pause);
-//                viewModel.getPlayer().pause();
-//                buttonPause.setImageResource(R.drawable.ic_play);
-//                playButton.setImageResource(R.drawable.ic_play);
             }else {
                 Log.v(TAG, "getPlayerState() == Another");
                 buttonPause.setImageResource(R.drawable.ic_play);
                 playButton.setImageResource(R.drawable.ic_play);
-//                viewModel.getPlayer().playTrack();
-//                buttonPause.setImageResource(R.drawable.ic_pause);
-//                playButton.setImageResource(R.drawable.ic_pause);
             }
         });
         viewModel.getPlayer().getCurrentTrackLiveData().observe(getViewLifecycleOwner(), currentTrack -> {
@@ -159,11 +153,6 @@ public class AudioPlayerFragment extends LogFragment {
                 progressBar.setProgress(positionInfo.getCurrentPosition());
             } else {
                 progressBar.setVisibility(View.INVISIBLE);
-            }
-        });
-        viewModel.getPlayer().getCurrentTrackDurationLiveData().observe(getViewLifecycleOwner(), durationInfo -> {
-            if (durationInfo != null) {
-                adapter.updateItem(durationInfo.getCurrentPosition(), durationInfo.getTrackDuration());
             }
         });
     }

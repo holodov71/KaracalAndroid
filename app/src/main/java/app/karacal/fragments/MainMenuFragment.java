@@ -88,7 +88,7 @@ public class MainMenuFragment extends Fragment {
         LinearLayout buttonSettings = view.findViewById(R.id.buttonSettings);
         buttonSettings.setOnClickListener(v -> NavigationHelper.startSettingsActivity(getActivity()));
         LinearLayout buttonDashboard = view.findViewById(R.id.buttonDashboardGuide);
-        buttonDashboard.setVisibility(View.GONE);
+//        buttonDashboard.setVisibility(View.GONE);
         buttonDashboard.setOnClickListener(v -> NavigationHelper.startDashboardActivity(getActivity()));
         LinearLayout buttonLogout = view.findViewById(R.id.buttonLogout);
         buttonLogout.setOnClickListener(v -> logout());

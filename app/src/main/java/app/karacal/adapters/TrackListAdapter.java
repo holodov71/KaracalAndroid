@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import app.karacal.R;
+import app.karacal.helpers.FileHelper;
 import app.karacal.models.Player;
 import app.karacal.models.Track;
 
@@ -71,9 +72,10 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
             if (duration == 0) {
                 try {
                     Uri mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
-                    metaRetriever.setDataSource(context, mediaPath);
-                    String metadata = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                    duration = (int) (Long.parseLong(metadata) / 1000);
+//                    metaRetriever.setDataSource(context, mediaPath);
+//                    String metadata = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+//                    duration = (int) (Long.parseLong(metadata) / 1000);
+                    duration = FileHelper.getAudioDuration(context, mediaPath);
                 } catch (Exception e) {
                     textViewDuration.setVisibility(View.INVISIBLE);
                 }
@@ -164,8 +166,12 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
     }
 
     public synchronized void updateProgress(Integer currentPosition, Player.PositionInfo positionInfo) {
-        for (ViewHolder viewHolder : activeViewHolders) {
-            viewHolder.setPositionProgress((currentPosition != null && currentPosition == viewHolder.position) ? positionInfo : null);
+        try {
+            for (ViewHolder viewHolder : activeViewHolders) {
+                viewHolder.setPositionProgress((currentPosition != null && currentPosition == viewHolder.position) ? positionInfo : null);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 }

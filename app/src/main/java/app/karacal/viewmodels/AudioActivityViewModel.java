@@ -3,7 +3,10 @@ package app.karacal.viewmodels;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -53,7 +56,7 @@ public class AudioActivityViewModel extends ViewModel {
 
     private final Guide author;
 
-    private final Album album;
+    private final LiveData<Album> album;
 
     private final Player player;
 
@@ -62,7 +65,7 @@ public class AudioActivityViewModel extends ViewModel {
         App.getAppComponent().inject(this);
         tour = tourRepository.getTourById(tourId);
         author = guideRepository.getGuide(tour.getAuthorId());
-        album = albumRepository.getAlbumByTourId(tourId);
+        album = albumRepository.albumLiveData;
         player = new Player(album);
     }
 
@@ -97,10 +100,17 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public LiveData<Album> getAlbum(){
-        return albumRepository.albumLiveData;
+        return album;
     }
 
     public String getTrackTitle(int position){
-        return albumRepository.getTrackTitle(position);
+        Log.v("AudioActivityViewModel", "getTrackTitle position = "+position);
+        if (album.getValue() != null) {
+            Log.v("AudioActivityViewModel", "getTrackTitle album.getValue().getTracks() = "+album.getValue().getTracks());
+
+            return album.getValue().getTracks().get(position).getTitle();
+        } else {
+            return "";
+        }
     }
 }

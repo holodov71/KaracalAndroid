@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleEventObserver;
@@ -20,7 +21,7 @@ import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class Player {
+public class Player implements MediaPlayer.OnPreparedListener{
 
     private static final int POSITION_INFO_UPDATE_INTERVAL = 1;     //seconds
     private static final int SEEK_AMOUNT = 15_000;                  //milliseconds
@@ -68,20 +69,20 @@ public class Player {
     }
 
     private MediaPlayer mediaPlayer;
+    private int currentPosition;
     private Disposable positionUpdater;
-    private Album album;
+    private LiveData<Album> album;
 
     private MutableLiveData<PlayerState> playerStateMutableLiveData = new MutableLiveData<>(PlayerState.IDLE);
     private MutableLiveData<Integer> currentTrackMutableLiveData = new MutableLiveData<>(null);
-    private MutableLiveData<DurationInfo> currentTrackDurationLiveData = new MutableLiveData<>(null);
     private MutableLiveData<PositionInfo> positionInfoMutableLiveData = new MutableLiveData<>(null);
 
-    public Player(Album album) {
+    public Player(LiveData<Album> album) {
         this.album = album;
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(mp -> {
             Integer currentTrack = getCurrentTrack();
-            if (currentTrack != null && currentTrack < album.getTracks().size() - 1) {
+            if (currentTrack != null && currentTrack < album.getValue().getTracks().size() - 1) {
                 playTrack(currentTrack + 1);
             } else {
                 setPlayerState(PlayerState.IDLE);
@@ -102,32 +103,67 @@ public class Player {
         if (getPlayerState() == PlayerState.PAUSE) {
             mediaPlayer.start();
             playerStateMutableLiveData.postValue(PlayerState.PLAY);
-        } else if (getPlayerState() == PlayerState.IDLE && album.getTracks().size() > 0) {
+        } else if (getPlayerState() == PlayerState.IDLE && album.getValue() != null && album.getValue().getTracks().size() > 0) {
             playTrack(0);
         }
     }
 
     @SuppressLint("CheckResult")
     public void playTrack(int position) {
-        currentTrackMutableLiveData.postValue(position);
+        Log.v("Player", "Play position = "+position);
+        currentPosition = position;
+//        try{
+//
+//            mediaPlayer.reset();
+//            if (album.getValue() != null) {
+//                Track track = album.getValue().getTracks().get(position);
+//                Log.v("Player", "Play track = "+track.getTitle());
+//                Context context = App.getInstance();
+//                Uri mediaPath;
+//                if (track.getResId() == -1) { // audio from network
+//                    mediaPath = Uri.parse(track.getFilename());
+//                } else {
+//                    mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
+//                }
+//                mediaPlayer.setDataSource(context, mediaPath);
+//
+//                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                mediaPlayer.prepare();
+//                mediaPlayer.setOnPreparedListener(this);
+//            } else {
+//                throw new Exception("Tracks in album is not available");
+//            }
+//        }catch (Exception ex){
+//            Logger.log(Player.this, "Error playing track", ex);
+//            setPlayerState(PlayerState.IDLE);
+//        }
+//        currentTrackMutableLiveData.postValue(position);
         Completable.fromAction(() -> {
             mediaPlayer.reset();
-            Track track = album.getTracks().get(position);
-            Context context = App.getInstance();
-            Uri mediaPath;
-            if (track.getResId() == -1){ // audio from network
-                mediaPath = Uri.parse(track.getFilename());
-            } else {
-                mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
-            }
-            mediaPlayer.setDataSource(context, mediaPath);
+            if (album.getValue() != null) {
+                Track track = album.getValue().getTracks().get(position);
+                Log.v("Player", "Play track = "+track.getTitle());
+                Context context = App.getInstance();
+                Uri mediaPath;
+                if (track.getResId() == -1) { // audio from network
+                    mediaPath = Uri.parse(track.getFilename());
+                } else {
+                    mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
+                }
+                mediaPlayer.setDataSource(context, mediaPath);
 
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mediaPlayer.setOnPreparedListener(this);
+                if (track.getResId() == -1) {
+                    mediaPlayer.prepare();
+                } else {
+                    mediaPlayer.prepareAsync();
+                }
+            } else {
+                throw new Exception("Tracks in album is not available");
+            }
         }).subscribeOn(Schedulers.io()).subscribe(() -> {
-            currentTrackDurationLiveData.postValue(new DurationInfo(position, mediaPlayer.getDuration()));
-            setPlayerState(PlayerState.PLAY);
+            Logger.log(Player.this, "Play Track");
         }, (throwable -> {
             Logger.log(Player.this, "Error playing track", throwable);
             setPlayerState(PlayerState.IDLE);
@@ -143,8 +179,8 @@ public class Player {
 
     public void nextTrack() {
         Integer currentPosition = getCurrentTrack();
-        if (currentPosition != null) {
-            playTrack((currentPosition + 1) % album.getTracks().size());
+        if (currentPosition != null && album.getValue() != null) {
+            playTrack((currentPosition + 1) % album.getValue().getTracks().size());
         }
     }
 
@@ -166,6 +202,13 @@ public class Player {
         }
     }
 
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mediaPlayer.start();
+        setPlayerState(PlayerState.PLAY);
+        currentTrackMutableLiveData.postValue(currentPosition);
+    }
+
     public LiveData<PlayerState> getPlayerStateLiveData() {
         return playerStateMutableLiveData;
     }
@@ -176,10 +219,6 @@ public class Player {
 
     public LiveData<Integer> getCurrentTrackLiveData() {
         return currentTrackMutableLiveData;
-    }
-
-    public LiveData<DurationInfo> getCurrentTrackDurationLiveData() {
-        return currentTrackDurationLiveData;
     }
 
     public LiveData<PositionInfo> getPositionInfoLiveData() {

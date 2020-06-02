@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -24,11 +25,14 @@ import app.karacal.adapters.TrackEditListAdapter;
 import app.karacal.data.repository.AlbumRepository;
 import app.karacal.dialogs.AudioTitleDialog;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.FileHelper;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Track;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
 import app.karacal.popups.EditAudioPopup;
+import io.reactivex.disposables.Disposable;
 
 public class EditAudioActivity extends PermissionActivity {
 
@@ -52,7 +56,11 @@ public class EditAudioActivity extends PermissionActivity {
     AlbumRepository albumRepository;
 
     private ConstraintLayout layoutRoot;
+    private View progressLoading;
     private ArrayList<Track> tracks;
+    private TrackEditListAdapter adapter;
+
+    Disposable disposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +79,15 @@ public class EditAudioActivity extends PermissionActivity {
         setupSendButton();
         setupBottomButtons();
         setupRecyclerView();
+        setupProgressLoading();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (disposable != null){
+            disposable.dispose();
+        }
     }
 
     private void setupBackButton() {
@@ -80,12 +97,12 @@ public class EditAudioActivity extends PermissionActivity {
 
     private void setupSendButton() {
         ImageView button = findViewById(R.id.buttonSend);
-        button.setOnClickListener(v -> NavigationHelper.startCongratulationsActivity(this));
+        button.setOnClickListener(v -> uploadTracks());
     }
 
     private void setupRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        TrackEditListAdapter adapter = new TrackEditListAdapter(this);
+        adapter = new TrackEditListAdapter(this);
         adapter.setTracks(tracks);
         adapter.setClickListener(position -> {
             EditAudioPopup popup = new EditAudioPopup(layoutRoot, new EditAudioPopup.EditAudioPopupCallbacks() {
@@ -115,7 +132,6 @@ public class EditAudioActivity extends PermissionActivity {
                 public void onButtonDeleteClick(BasePopup popup) {
                     tracks.remove(position);
                     adapter.setTracks(tracks);
-                    adapter.notifyDataSetChanged();
                     popup.close();
                 }
             });
@@ -141,11 +157,15 @@ public class EditAudioActivity extends PermissionActivity {
                     Intent intent;
                     intent = new Intent();
                     intent.setAction(Intent.ACTION_GET_CONTENT);
-                    intent.setType("audio/mp3");
+                    intent.setType("audio/*");
                     startActivityForResult(Intent.createChooser(intent, getString(R.string.select_audio_file)), MP3_SELECT_REQUEST_CODE);
                 },
                 () -> Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show())
         );
+    }
+
+    private void setupProgressLoading(){
+        progressLoading = findViewById(R.id.progressLoading);
     }
 
     @Override
@@ -157,12 +177,44 @@ public class EditAudioActivity extends PermissionActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == MP3_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if ((data != null) && (data.getData() != null)) {
-                Uri audioFileUri = data.getData();
-                //
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            Uri audioFileUri = null;
+            if (requestCode == MP3_SELECT_REQUEST_CODE || requestCode == AudioRecorderActivity.REQUEST_CODE) {
+                if (data.getData() != null) {
+                    audioFileUri = data.getData();
+                    if (audioFileUri != null){
+                        Track newTrack = new Track(
+                                FileHelper.getRealFileName(this, audioFileUri),
+                                FileHelper.getRealAudioPathFromUri(this, audioFileUri),
+                                FileHelper.getAudioDuration(this, audioFileUri));
+                        tracks.add(newTrack);
+                        adapter.setTracks(tracks);
+                    }else {
+                        ToastHelper.showToast(this, "Can not access audio");
+                    }
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private void uploadTracks (){
+        progressLoading.setVisibility(View.VISIBLE);
+        if (disposable != null) {
+            disposable.dispose();
+        }
+
+        disposable = albumRepository.uploadAudioToServer("1", "1", tracks)
+                .subscribe(
+                        (n) -> {
+                            progressLoading.setVisibility(View.GONE);
+                            NavigationHelper.startCongratulationsActivity(EditAudioActivity.this);
+                        },
+                        (e) -> {
+                            progressLoading.setVisibility(View.GONE);
+                            Toast.makeText(EditAudioActivity.this, "Error uploading audio", Toast.LENGTH_SHORT).show();
+                        }
+                );
+    }
+
 }

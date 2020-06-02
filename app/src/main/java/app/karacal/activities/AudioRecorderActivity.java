@@ -1,5 +1,6 @@
 package app.karacal.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +19,9 @@ import app.karacal.viewmodels.AudioRecorderActivityViewModel;
 import apps.in.android_logger.LogActivity;
 
 public class AudioRecorderActivity extends LogActivity {
+
+    public static final int REQUEST_CODE = 500;
+    public static final String RESPONSE_CODE = "record_response_code";
 
     private AudioRecorderActivityViewModel viewModel;
 
@@ -42,6 +46,7 @@ public class AudioRecorderActivity extends LogActivity {
         setupRecorderView();
         updateDuration();
         viewModel.bindLifecycle(this);
+        observeRecordFile();
     }
 
     private void setupBackButton(){
@@ -81,7 +86,7 @@ public class AudioRecorderActivity extends LogActivity {
         recordView = findViewById(R.id.recordView);
         textViewDuration = findViewById(R.id.textViewDuration);
         viewModel.setAmplitudeListener(amplitude -> {
-            recordView.update(amplitude);
+            textViewDuration.post(() -> recordView.update(amplitude));
             textViewDuration.post(() -> updateDuration());
         });
     }
@@ -100,9 +105,17 @@ public class AudioRecorderActivity extends LogActivity {
     private void save(){
         AudioTitleDialog dialog = AudioTitleDialog.getInstance(null);
         dialog.setListener(title -> {
-            viewModel.save();
-            finish();
+            viewModel.save(title);
         });
         dialog.show(getSupportFragmentManager(), AudioTitleDialog.DIALOG_TAG);
+    }
+
+    private void observeRecordFile(){
+        viewModel.getSavedFileUri().observe(this, fileUri -> {
+            Intent intent = new Intent();
+            intent.setData(fileUri);
+            setResult(RESULT_OK, intent);
+            finish();
+        });
     }
 }

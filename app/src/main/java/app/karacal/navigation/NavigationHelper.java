@@ -124,7 +124,7 @@ public class NavigationHelper {
 
     public static void startAudioRecorderActivity(Activity context) {
         Intent intent = new Intent(context, AudioRecorderActivity.class);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, AudioRecorderActivity.REQUEST_CODE);
     }
 
     public static void startCongratulationsActivity(Activity context) {

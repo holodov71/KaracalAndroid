@@ -5,6 +5,7 @@ public class TrackResponse {
     private int guideId;
     private int tourId;
     private String filename;
+    private int duration;
     private String createdAt;
     private String updatedAt;
 
@@ -24,6 +25,10 @@ public class TrackResponse {
         return filename;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
     public String getCreatedAt() {
         return createdAt;
     }
@@ -33,6 +38,9 @@ public class TrackResponse {
     }
 
     public String getTitle(){
-        return "Fake title";
+//        http://karacal.store:8080/admin/uploads/mp3/LesarnesdeLutce-1590661203.mp3
+        int index = filename.lastIndexOf("/");
+        if (index == -1) return filename;
+        return filename.substring(index+1);
     }
 }

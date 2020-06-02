@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Locale;
 
 import app.karacal.R;
+import app.karacal.helpers.FileHelper;
 import app.karacal.models.Track;
 
 public class TrackEditListAdapter extends RecyclerView.Adapter<TrackEditListAdapter.ViewHolder> {
@@ -103,18 +104,25 @@ public class TrackEditListAdapter extends RecyclerView.Adapter<TrackEditListAdap
         }
 
         private void setDurationText(Track track) {
-            try {
-                Uri mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
-                metaRetriever.setDataSource(context, mediaPath);
-                String metadata = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                int duration = (int) (Long.parseLong(metadata) / 1000);
+            int duration = track.getDuration();
+            if (duration == 0) {
+                try {
+                    Uri mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
+                    duration = FileHelper.getAudioDuration(textViewDuration.getContext(), mediaPath);
+                } catch (Exception e) {
+                    textViewDuration.setVisibility(View.INVISIBLE);
+                }
+
+            }
+            if (duration != 0) {
                 int minutes = duration / 60;
                 int seconds = duration % 60;
                 textViewDuration.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
                 textViewDuration.setVisibility(View.VISIBLE);
-            } catch (Exception e) {
+            } else {
                 textViewDuration.setVisibility(View.INVISIBLE);
             }
+
         }
     }
 

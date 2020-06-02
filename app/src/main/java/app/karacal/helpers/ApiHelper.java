@@ -1,9 +1,13 @@
 package app.karacal.helpers;
 
+import android.net.Uri;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -23,12 +27,18 @@ import app.karacal.retrofit.models.RegisterRequest;
 import app.karacal.retrofit.models.SocialLoginRequest;
 import app.karacal.retrofit.models.TourResponse;
 import app.karacal.retrofit.models.TrackResponse;
+import app.karacal.retrofit.models.UploadTrackResponse;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 @Singleton
@@ -149,6 +159,18 @@ public class ApiHelper {
         return tracksService.getTracksList("Bearer " + token, tourId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<UploadTrackResponse> uploadAudioToServer(String token, String guideId, String tourId, String path){
+        Log.v("uploadAudio", "upload file " + path);
+        File file = new File(path);
+        Log.d("uploadAudio", "file size "+ file.length());
+        RequestBody fileBody = RequestBody.create(MediaType.parse("audio/*"), file);
+
+        return tracksService.uploadAudio("Bearer " + token, guideId, tourId, fileBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
     }
 
 }

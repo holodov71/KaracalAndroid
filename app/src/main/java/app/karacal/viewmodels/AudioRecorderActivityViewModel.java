@@ -2,6 +2,7 @@ package app.karacal.viewmodels;
 
 import android.app.Application;
 import android.media.AudioFormat;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -15,19 +16,24 @@ import com.github.squti.androidwaverecorder.AmplitudeListener;
 import com.github.squti.androidwaverecorder.WaveConfig;
 import com.github.squti.androidwaverecorder.WaveRecorder;
 
+import java.io.File;
+
 public class AudioRecorderActivityViewModel extends AndroidViewModel {
 
     private static final int SAMPLE_RATE = 44100;
 
     private MutableLiveData<Boolean> isRecording = new MutableLiveData<>(false);
     private MutableLiveData<Boolean> hasData = new MutableLiveData<>(false);
+    private MutableLiveData<Uri> savedFileUri = new MutableLiveData<>();
 
     private WaveRecorder waveRecorder;
     private String path;
+    private String directory;
 
     public AudioRecorderActivityViewModel(@NonNull Application application) {
         super(application);
-        path = application.getFilesDir().getPath() + "/temp.mp3";
+        directory = application.getFilesDir().getPath();
+        path = directory + "/temp.mp3";
         waveRecorder = new WaveRecorder(path);
         WaveConfig waveConfig = new WaveConfig(SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
         waveRecorder.setWaveConfig(waveConfig);
@@ -39,6 +45,10 @@ public class AudioRecorderActivityViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getHasData() {
         return hasData;
+    }
+
+    public LiveData<Uri> getSavedFileUri(){
+        return savedFileUri;
     }
 
     public void setAmplitudeListener(AmplitudeListener amplitudeListener) {
@@ -71,8 +81,15 @@ public class AudioRecorderActivityViewModel extends AndroidViewModel {
         waveRecorder.pauseRecording();
     }
 
-    public void save(){
+    public void save(String title){
         waveRecorder.stopRecording();
+
+        String fileName = title + ".mp3";
+
+        File from = new File(path);
+        File to = new File(directory , fileName);
+        from.renameTo(to);
+        savedFileUri.setValue(Uri.fromFile(to));
     }
 
     public void reset(){

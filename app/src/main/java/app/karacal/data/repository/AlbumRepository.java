@@ -19,6 +19,9 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.Album;
 import app.karacal.models.Guide;
 import app.karacal.models.Track;
+import app.karacal.retrofit.models.UploadTrackResponse;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -150,13 +153,13 @@ public class AlbumRepository {
         return new Album("Title of the Audio Album", tracks);
     }
 
-    public String getTrackTitle(int position){
-        if (albumLiveData.getValue() != null) {
-            return albumLiveData.getValue().getTracks().get(position).getTitle();
-        } else {
-            return "";
-        }
-    }
+//    public String getTrackTitle(int position){
+//        if (albumLiveData.getValue() != null) {
+//            return albumLiveData.getValue().getTracks().get(position).getTitle();
+//        } else {
+//            return "";
+//        }
+//    }
 
     @SuppressLint("CheckResult")
     public void loadTracksByTour(String tourId) {
@@ -177,6 +180,15 @@ public class AlbumRepository {
                     // TODO: load list from DB
                 });
     }
+
+    public Single<List<UploadTrackResponse>> uploadAudioToServer(String guideId, String tourId, List<Track> tracks){
+        return Observable.fromIterable(tracks)
+                .flatMap(track -> apiHelper.uploadAudioToServer(PreferenceHelper.loadToken(context), guideId, tourId, track.getFileUri()))
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
 
 
 }
