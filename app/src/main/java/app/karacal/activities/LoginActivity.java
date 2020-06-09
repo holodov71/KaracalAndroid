@@ -1,5 +1,6 @@
 package app.karacal.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -55,6 +56,7 @@ public class LoginActivity extends LogActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @SuppressLint("CheckResult")
     private void tryToAuthorize(){
         String token = PreferenceHelper.loadToken(this);
         Logger.log(this, "token = "+token);

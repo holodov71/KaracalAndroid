@@ -49,14 +49,6 @@ public class MainActivityViewModel extends BaseLocationViewModel {
         App.getAppComponent().inject(this);
     }
 
-    public LiveData<ArrayList<Tour>> getNearTours() {
-        return nearTours;
-    }
-
-    public void obtainNearTours(Location location){
-        nearTours.setValue(tourRepository.getNearTours(location));
-    }
-
     public void loadGuides() {
         guideRepository.loadGuides();
     }
@@ -70,7 +62,23 @@ public class MainActivityViewModel extends BaseLocationViewModel {
     }
 
     public LiveData<List<Tour>> getTours(){
-        return tourRepository.toursLiveData;
+        return tourRepository.recommendedToursLiveData;
+    }
+
+    public LiveData<List<Tour>> getNearTours() {
+        return tourRepository.nearToursLiveData;
+    }
+
+    public void loadNearTours(Location location){
+        tourRepository.loadNearTours(location.getLatitude(), location.getLongitude());
+    }
+
+    public LiveData<List<Tour>> getOriginalTours() {
+        return tourRepository.originalToursLiveData;
+    }
+
+    public void loadOriginalTours() {
+        tourRepository.loadContents();
     }
 
 

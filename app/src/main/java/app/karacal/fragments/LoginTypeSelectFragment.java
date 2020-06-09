@@ -30,7 +30,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -42,7 +41,7 @@ import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
-import app.karacal.retrofit.models.SocialLoginRequest;
+import app.karacal.retrofit.models.request.SocialLoginRequest;
 import apps.in.android_logger.LogFragment;
 import apps.in.android_logger.Logger;
 import io.reactivex.android.schedulers.AndroidSchedulers;

@@ -1,5 +1,8 @@
 package app.karacal.viewmodels;
 
+import android.annotation.SuppressLint;
+import android.location.Location;
+
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
@@ -7,9 +10,21 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
+import app.karacal.App;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.LocationHelper;
+import app.karacal.helpers.PreferenceHelper;
+import app.karacal.retrofit.models.request.SaveTourRequest;
+import app.karacal.retrofit.models.response.BaseResponse;
+import app.karacal.retrofit.models.response.SaveTourResponse;
+import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -53,11 +68,20 @@ public class EditGuideActivityViewModel extends ViewModel {
         locationUpdateHandler = new EditGuideActivityViewModel.LocationUpdateHandler(lifecycleOwner, listener);
     }
 
+    @Inject
+    TourRepository tourRepository;
+
+    private Location locationCoordinates;
+
     private String title;
     private String location;
     private String description;
 
     private HashSet<String> tags = new HashSet<>();
+
+    public EditGuideActivityViewModel() {
+        App.getAppComponent().inject(this);
+    }
 
     public String getTitle() {
         return title;
@@ -95,15 +119,15 @@ public class EditGuideActivityViewModel extends ViewModel {
         return tags.remove(tag);
     }
 
+    @SuppressLint("CheckResult")
     public void obtainLocation() {
         LocationHelper.getLastKnownLocation().timeout(GEO_CODING_TIMEOUT, TimeUnit.SECONDS)
-                .map(location -> String.format("%f, %f", location.getLatitude(), location.getLongitude()))
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> isGeoCodingInProgress.postValue(true))
-                .subscribe(locationText -> {
-                            location = locationText;
+                .subscribe(loc -> {
+                            locationCoordinates = loc;
                             isGeoCodingInProgress.postValue(false);
+                            location = String.format(Locale.ROOT, "%f, %f", loc.getLatitude(), loc.getLongitude());
                             if (locationUpdateHandler != null) {
                                 locationUpdateHandler.notifyLocationUpdate(location);
                             }
@@ -114,5 +138,19 @@ public class EditGuideActivityViewModel extends ViewModel {
                                 locationUpdateHandler.notifyLocationUpdate(null);
                             }
                         });
+    }
+
+    public Observable<SaveTourResponse> saveTour() {
+        SaveTourRequest request = new SaveTourRequest(
+                "",
+                "Paris",
+                locationCoordinates!= null ? String.valueOf(locationCoordinates.getLatitude()) : "",
+                locationCoordinates!= null ? String.valueOf(locationCoordinates.getLongitude()) : "",
+                title,
+                description,
+                "",
+                "0",
+                "1");
+        return tourRepository.saveTour(request);
     }
 }

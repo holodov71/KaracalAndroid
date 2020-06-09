@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import java.util.Locale;
 
 import app.karacal.R;
+import app.karacal.helpers.ImageHelper;
 import app.karacal.models.Tour;
 
 public class TourStackItemFragment extends Fragment {
@@ -48,7 +49,8 @@ public class TourStackItemFragment extends Fragment {
 
     private void setupImageTitle(View view) {
         ImageView imageView = view.findViewById(R.id.imageViewTitle);
-        Glide.with(imageView).load(tour.getImage()).fitCenter().into(imageView);
+//        Glide.with(imageView).load(tour.getImage()).fitCenter().into(imageView);
+        ImageHelper.setImage(imageView, tour.getImageUrl(), tour.getImage(), false);
     }
 
     private void setupPrice(View view){

@@ -78,7 +78,8 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <include layout="@layout/tour_horizontal_list"
-                android:id="@+id/categoryRecommended"/>
+                android:id="@+id/categoryRecommended"
+                android:visibility="gone"/>
 
             <include layout="@layout/tour_horizontal_list"
                 android:id="@+id/categoryNear"

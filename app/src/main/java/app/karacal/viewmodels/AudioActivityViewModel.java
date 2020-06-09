@@ -56,7 +56,7 @@ public class AudioActivityViewModel extends ViewModel {
 
     private final Guide author;
 
-    private final LiveData<Album> album;
+    private final MutableLiveData<Album> album;
 
     private final Player player;
 
@@ -65,7 +65,11 @@ public class AudioActivityViewModel extends ViewModel {
         App.getAppComponent().inject(this);
         tour = tourRepository.getTourById(tourId);
         author = guideRepository.getGuide(tour.getAuthorId());
-        album = albumRepository.albumLiveData;
+        if (tour.getAudio() != null){
+            album = new MutableLiveData<>();
+        } else {
+            album = albumRepository.albumLiveData;
+        }
         player = new Player(album);
     }
 
@@ -92,11 +96,19 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public int getCountGuides(){
-        return tourRepository.getToursByAuthor(author.getId()).size();
+        if (author != null) {
+            return tourRepository.getToursByAuthor(author.getId()).size();
+        } else {
+            return 5;
+        }
     }
 
     public void loadTracks() {
-        albumRepository.loadTracksByTour(String.valueOf(tour.getId()));
+        if (tour.getAudio() != null){
+            album.setValue(tour.getAlbum());
+        } else {
+            albumRepository.loadTracksByTour(String.valueOf(tour.getId()));
+        }
     }
 
     public LiveData<Album> getAlbum(){

@@ -37,6 +37,7 @@ public class MainHomeFragment extends Fragment {
 
     private View categoryRecommended;
     private View categoryNear;
+    private View categoryOriginal;
 
     private MainActivityViewModel viewModel;
 
@@ -66,9 +67,11 @@ public class MainHomeFragment extends Fragment {
         setupCategories(view);
 
         viewModel.loadTours();
+        viewModel.loadOriginalTours();
 
         observeRecommendedTours();
         observeNearTours();
+        observeOriginalTours();
         observeLocation();
         return view;
     }
@@ -100,6 +103,14 @@ public class MainHomeFragment extends Fragment {
         });
     }
 
+    private void observeOriginalTours(){
+        viewModel.getOriginalTours().observe(getViewLifecycleOwner(), tours -> {
+            if (!tours.isEmpty()) {
+                setupCategory(categoryOriginal, 2, getString(R.string.originals), tours);
+            }
+        });
+    }
+
     private void observeRecommendedTours(){
         viewModel.getTours().observe(getViewLifecycleOwner(), tours -> {
             Log.v("getTours", "observeRecommendedTours");
@@ -112,7 +123,7 @@ public class MainHomeFragment extends Fragment {
     private void observeLocation(){
         viewModel.subscribeLocationUpdates(this, location -> {
             if (location != null) {
-                viewModel.obtainNearTours(location);
+                viewModel.loadNearTours(location);
             }
         });
     }
@@ -120,8 +131,7 @@ public class MainHomeFragment extends Fragment {
     private void setupCategories(View view) {
         categoryRecommended = view.findViewById(R.id.categoryRecommended);
         categoryNear = view.findViewById(R.id.categoryNear);
-        View categoryOriginals = view.findViewById(R.id.categoryOriginals);
-        setupCategory(categoryOriginals, 2, getString(R.string.originals), tourRepository.getOriginalTours());
+        categoryOriginal = view.findViewById(R.id.categoryOriginals);
     }
 
     private void setupCategory(View categoryView, int id, String title, List<Tour> tours) {

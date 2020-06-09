@@ -1,9 +1,12 @@
 package app.karacal.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +32,14 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
+import app.karacal.adapters.DashboardTourListAdapter;
 import app.karacal.adapters.TourVerticalListAdapter;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.LocationHelper;
@@ -91,6 +96,7 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
         return view;
     }
 
+    @SuppressLint("CheckResult")
     private void setupSearchField(View view) {
         buttonSearch = view.findViewById(R.id.buttonSearch);
         layoutSearchField = view.findViewById(R.id.layoutSearchField);
@@ -119,9 +125,17 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     private void setupSearchResults(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
         adapter = new TourVerticalListAdapter(getContext());
-        adapter.setTours(tourRepository.getAllTours());
         adapter.setClickListener(this::showTour);
         recyclerView.setAdapter(adapter);
+        observeTours(adapter);
+    }
+
+    private void observeTours(TourVerticalListAdapter adapter){
+        tourRepository.originalToursLiveData.observe(getViewLifecycleOwner(), tours -> {
+            if (!tours.isEmpty()) {
+                adapter.setTours(tours);
+            }
+        });
     }
 
     private void setupMap() {
@@ -136,11 +150,19 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
         applyMapStyle();
         setupLocation();
         setupClusterManager();
-        setMarkers(tourRepository.getAllTours());
+        observeTours();
         map.moveCamera(CameraUpdateFactory.zoomTo(MAP_ZOOM_LEVEL));
     }
 
-    private void setMarkers(ArrayList<Tour> tours){
+    private void observeTours(){
+        tourRepository.originalToursLiveData.observe(getViewLifecycleOwner(), tours -> {
+            if (!tours.isEmpty()) {
+                setMarkers(tours);
+            }
+        });
+    }
+
+    private void setMarkers(List<Tour> tours){
         clusterManager.clearItems();
         for (Tour tour : tours){
             clusterManager.addItem(new TourMarker(tour));
@@ -155,6 +177,7 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
         clusterManager.setRenderer(new TourMarkerRender(getContext(), map, clusterManager));
     }
 
+    @SuppressLint("CheckResult")
     private void setupLocation() {
         permissionHelper.checkPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION,
                 () -> {
@@ -177,6 +200,8 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
                 () -> {
                     map.setMyLocationEnabled(false);
                     map.getUiSettings().setMyLocationButtonEnabled(false);
+                    LatLng parisLocation = new LatLng(48.864716, 2.349014);
+                    map.moveCamera(CameraUpdateFactory.newLatLng(parisLocation));
                 });
     }
 

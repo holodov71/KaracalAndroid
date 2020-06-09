@@ -37,10 +37,18 @@ public class CategoryListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_category_list, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         TourVerticalListAdapter adapter = new TourVerticalListAdapter(getContext());
-        adapter.setTours(viewModel.getTours());
         adapter.setClickListener(tourClickListener);
         recyclerView.setAdapter(adapter);
+        observeTours(adapter);
         return view;
+    }
+
+    private void observeTours(TourVerticalListAdapter adapter){
+        viewModel.getTours().observe(getViewLifecycleOwner(), tours -> {
+            if (!tours.isEmpty()) {
+                adapter.setTours(tours);
+            }
+        });
     }
 
     private void showTour(int tourId){

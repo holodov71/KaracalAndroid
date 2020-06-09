@@ -1,13 +1,10 @@
 package app.karacal.helpers;
 
-import android.net.Uri;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,14 +17,20 @@ import app.karacal.retrofit.GuideService;
 import app.karacal.retrofit.InitService;
 import app.karacal.retrofit.TourService;
 import app.karacal.retrofit.TracksService;
-import app.karacal.retrofit.models.GuideResponse;
-import app.karacal.retrofit.models.LoginRequest;
+import app.karacal.retrofit.models.request.NearToursRequest;
+import app.karacal.retrofit.models.request.ProfileRequest;
+import app.karacal.retrofit.models.request.SaveTourRequest;
+import app.karacal.retrofit.models.response.BaseResponse;
+import app.karacal.retrofit.models.response.ContentResponse;
+import app.karacal.retrofit.models.response.GuideResponse;
+import app.karacal.retrofit.models.request.LoginRequest;
 import app.karacal.retrofit.ProfileService;
-import app.karacal.retrofit.models.RegisterRequest;
-import app.karacal.retrofit.models.SocialLoginRequest;
-import app.karacal.retrofit.models.TourResponse;
-import app.karacal.retrofit.models.TrackResponse;
-import app.karacal.retrofit.models.UploadTrackResponse;
+import app.karacal.retrofit.models.request.RegisterRequest;
+import app.karacal.retrofit.models.request.SocialLoginRequest;
+import app.karacal.retrofit.models.response.SaveTourResponse;
+import app.karacal.retrofit.models.response.TourResponse;
+import app.karacal.retrofit.models.response.TrackResponse;
+import app.karacal.retrofit.models.response.UploadTrackResponse;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -37,8 +40,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 @Singleton
@@ -77,6 +78,18 @@ public class ApiHelper {
             }
             emitter.onError(new Exception(context.getString(R.string.connection_problem)));
         });
+    }
+
+    public Observable<Profile> loadProfile(String token){
+        return profileService.loadProfile("Bearer " + token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<BaseResponse> editProfile(String token, ProfileRequest request) {
+        return profileService.editProfile("Bearer " + token, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Single<String> login(LoginRequest model) {
@@ -155,6 +168,24 @@ public class ApiHelper {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<List<ContentResponse>> loadContents(String token) {
+        return tourService.getContentsList("Bearer " + token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<List<ContentResponse>> loadNearTours(String token, NearToursRequest request) {
+        return tourService.loadNearTours("Bearer " + token, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<SaveTourResponse> createTour(String token, SaveTourRequest request) {
+        return tourService.createTour("Bearer " + token, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<List<TrackResponse>> loadTracks(String token, String tourId) {
         return tracksService.getTracksList("Bearer " + token, tourId)
                 .subscribeOn(Schedulers.io())
@@ -166,8 +197,9 @@ public class ApiHelper {
         File file = new File(path);
         Log.d("uploadAudio", "file size "+ file.length());
         RequestBody fileBody = RequestBody.create(MediaType.parse("audio/*"), file);
+        MultipartBody.Part audio = MultipartBody.Part.createFormData("mp3", file.getName(), fileBody);
 
-        return tracksService.uploadAudio("Bearer " + token, guideId, tourId, fileBody)
+        return tracksService.uploadAudio("Bearer " + token, guideId, tourId, audio)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 

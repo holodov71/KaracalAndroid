@@ -40,7 +40,7 @@ public class RegistrationContactsFragment extends LogFragment {
     private RegistrationActivityViewModel viewModel;
 
     private TextInputLayout textInputLayoutEmail;
-    private TextInputLayout textInputLayoutLocation;
+//    private TextInputLayout textInputLayoutLocation;
     private TextInputLayout textInputLayoutReferralCode;
     private Button buttonContinue;
 
@@ -61,7 +61,6 @@ public class RegistrationContactsFragment extends LogFragment {
         viewModel.setActivityTitle(getString(R.string.registration));
         View view = inflater.inflate(R.layout.fragment_registration_contacts, container, false);
         setupEmailInput(view);
-        setupLocationInput(view);
         setupReferralCodeInput(view);
         setupContinueButton(view);
         validateInputs();
@@ -73,33 +72,6 @@ public class RegistrationContactsFragment extends LogFragment {
         textInputLayoutEmail.getEditText().setText(viewModel.getEmail() != null ? viewModel.getEmail() : "");
         TextInputHelper.editTextObservable(textInputLayoutEmail).subscribe((s) -> {
             viewModel.setEmail(TextUtils.isEmpty(s) ? null : s);
-            validateInputs();
-        });
-    }
-
-    private void setupLocationInput(View view) {
-        ProgressBar progressBar = view.findViewById(R.id.progressBarGeoCoding);
-        textInputLayoutLocation = view.findViewById(R.id.textInputLayoutLocation);
-        textInputLayoutLocation.getEditText().setText(viewModel.getLocation() != null ? viewModel.getLocation() : "");
-        TextInputHelper.editTextObservable(textInputLayoutLocation).subscribe((s) -> {
-            viewModel.setLocation(TextUtils.isEmpty(s) ? null : s);
-            validateInputs();
-        });
-        ImageView buttonLocation = view.findViewById(R.id.buttonLocation);
-        buttonLocation.setOnClickListener(v -> permissionHelper.checkPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION,
-                () -> viewModel.obtainLocation(),
-                () -> Toast.makeText(getContext(), R.string.permission_denied, Toast.LENGTH_LONG).show()));
-        viewModel.subscribeLocationUpdates(this, location -> {
-            if (location != null) {
-                textInputLayoutLocation.getEditText().setText(location);
-            } else {
-                Toast.makeText(getContext(), R.string.error_obtaining_location, Toast.LENGTH_LONG).show();
-            }
-        });
-        viewModel.getGeoCodingState().observe(this, isActive -> {
-            textInputLayoutLocation.setEnabled((!isActive));
-            buttonLocation.setEnabled((!isActive));
-            progressBar.setVisibility(isActive ? View.VISIBLE : View.INVISIBLE);
             validateInputs();
         });
     }
@@ -123,7 +95,7 @@ public class RegistrationContactsFragment extends LogFragment {
     }
 
     private void validateInputs() {
-        buttonContinue.setEnabled(viewModel.getEmail() != null && viewModel.getLocation() != null && !viewModel.isGeoCodingInProgress());
+        buttonContinue.setEnabled(viewModel.getEmail() != null);
     }
 
 }

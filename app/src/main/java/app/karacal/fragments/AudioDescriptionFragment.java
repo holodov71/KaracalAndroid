@@ -19,6 +19,7 @@ import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.ProfileActivity;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.ShareHelper;
 import app.karacal.models.Guide;
 import app.karacal.navigation.NavigationHelper;
@@ -68,7 +69,8 @@ public class AudioDescriptionFragment extends LogFragment {
 
     private void setupBackground(View view){
         ImageView imageView = view.findViewById(R.id.imageViewBackground);
-        imageView.setImageResource(viewModel.getTour().getImage());
+        ImageHelper.setImage(imageView, viewModel.getTour().getImageUrl(), viewModel.getTour().getImage(), false);
+//        imageView.setImageResource(viewModel.getTour().getImage());
     }
 
     private void setupButtons(View view){
@@ -145,21 +147,29 @@ public class AudioDescriptionFragment extends LogFragment {
         Guide author = viewModel.getAuthor();
         int count = viewModel.getCountGuides();
         ImageView imageView = view.findViewById(R.id.imageViewAuthor);
-        if (author.getAvatarId() == -1){
-            imageView.setImageResource(R.drawable.ic_person);
-        } else {
-            imageView.setImageResource(author.getAvatarId());
-        }
         TextView textViewAuthor = view.findViewById(R.id.textViewAuthor);
-        textViewAuthor.setText(author.getName());
+        if (author != null) {
+            if (author.getAvatarId() == -1) {
+                imageView.setImageResource(R.drawable.ic_person);
+            } else {
+                imageView.setImageResource(author.getAvatarId());
+            }
+
+            textViewAuthor.setText(author.getName());
+
+            ConstraintLayout buttonAuthor = view.findViewById(R.id.buttonAuthor);
+            buttonAuthor.setOnClickListener(v -> {
+                ProfileActivity.Args args = new ProfileActivity.Args(author.getId());
+                NavigationHelper.startProfileActivity(getActivity(), args);
+            });
+        } else {
+            imageView.setImageResource(R.drawable.ic_person);
+            textViewAuthor.setText(viewModel.getTour().getAuthor());
+        }
         TextView textViewGuidesCount = view.findViewById(R.id.textViewGuidesCount);
         textViewGuidesCount.setText(getContext().getString(R.string.guide_count_format, count, getContext().getString(count != 1 ? R.string.guides : R.string.guide)));
         ImageView imageViewAlert = view.findViewById(R.id.imageViewAuthorAlert);
 //        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
-        ConstraintLayout buttonAuthor = view.findViewById(R.id.buttonAuthor);
-        buttonAuthor.setOnClickListener(v -> {
-            ProfileActivity.Args args = new ProfileActivity.Args(author.getId());
-            NavigationHelper.startProfileActivity(getActivity(), args);
-        });
+
     }
 }

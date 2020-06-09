@@ -1,9 +1,7 @@
 package app.karacal.models;
 
-import java.io.Serializable;
-
 import app.karacal.R;
-import app.karacal.retrofit.models.GuideResponse;
+import app.karacal.retrofit.models.response.GuideResponse;
 
 public class Guide {
 

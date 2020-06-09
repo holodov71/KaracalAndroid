@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,12 +36,16 @@ import app.karacal.R;
 import app.karacal.adapters.HelpfulInformationPagerAdapter;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.TextInputHelper;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Tour;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.retrofit.models.request.SaveTourRequest;
 import app.karacal.viewmodels.EditGuideActivityViewModel;
 import apps.in.android_logger.Logger;
+import io.reactivex.disposables.Disposable;
 
 public class EditGuideActivity extends PermissionActivity {
 
@@ -61,6 +66,8 @@ public class EditGuideActivity extends PermissionActivity {
     @Inject
     TourRepository tourRepository;
 
+    private Disposable disposable;
+
     private Tour tour;
 
     private EditGuideActivityViewModel viewModel;
@@ -73,6 +80,7 @@ public class EditGuideActivity extends PermissionActivity {
     private TextInputLayout textInputLayoutTitle;
     private TextInputLayout textInputLayoutLocation;
     private TextInputLayout textInputLayoutDescription;
+    private View progressLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +99,15 @@ public class EditGuideActivity extends PermissionActivity {
         setupInputs();
         setupContinueButton();
         setupViewPager();
+        setupProgressLoading();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (disposable != null){
+            disposable.dispose();
+        }
     }
 
     private void setupBackButton() {
@@ -108,10 +125,12 @@ public class EditGuideActivity extends PermissionActivity {
         constraintLayoutImage = findViewById(R.id.constraintLayoutImage);
         imageViewTitle = findViewById(R.id.imageViewTitle);
         buttonDelete = findViewById(R.id.buttonDelete);
-        if (tour != null && tour.getImage() != 0) {
+        if (tour != null) {
+            ImageHelper.setImage(imageViewTitle, tour.getImageUrl(), tour.getImage(), false);
+
             constraintLayoutImage.setVisibility(View.VISIBLE);
             placeholder.setVisibility(View.GONE);
-            imageViewTitle.setImageResource(tour.getImage());
+//            imageViewTitle.setImageResource(tour.getImage());
         } else {
             constraintLayoutImage.setVisibility(View.GONE);
             placeholder.setVisibility(View.VISIBLE);
@@ -243,9 +262,32 @@ public class EditGuideActivity extends PermissionActivity {
         textView.setText(String.format(Locale.getDefault(), "%02d / %02d", position, count));
     }
 
+    private void setupProgressLoading(){
+        progressLoading = findViewById(R.id.progressLoading);
+    }
+
     private void proceed() {
-        EditAudioActivity.Args args = new EditAudioActivity.Args(tour != null ? tour.getId() : null);
-        NavigationHelper.startEditAudioActivity(this, args);
+        if (tour == null) { // temporary realization
+            if (disposable != null) {
+                disposable.dispose();
+            }
+
+            disposable = viewModel.saveTour()
+                    .subscribe(response -> {
+                        if (response.isSuccess()) {
+                            EditAudioActivity.Args args = new EditAudioActivity.Args(response.getId());
+                            NavigationHelper.startEditAudioActivity(this, args);
+                        } else {
+                            ToastHelper.showToast(this, "Can not save tour");
+                        }
+                    }, throwable -> {
+                        ToastHelper.showToast(this, "Can not save tour");
+                        Log.v("saveTour", "throwable " + throwable.getMessage());
+                    });
+        } else {
+            EditAudioActivity.Args args = new EditAudioActivity.Args(tour.getId());
+            NavigationHelper.startEditAudioActivity(this, args);
+        }
     }
 
     @Override

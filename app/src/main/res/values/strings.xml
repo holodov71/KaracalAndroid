@@ -19,11 +19,11 @@
     <string name="registration">Inscription</string>
     <string name="referral_code">Code de parrainage</string>
     <string name="interests">Les intérêts</string>
-    <string name="continue_text">Les intérêts</string>
+    <string name="continue_text">Сontinuer</string>
     <string name="first_name">Prénom</string>
     <string name="second_name">Nom</string>
     <string name="birth_date">Date de naissance</string>
-    <string name="my_name_is_karacal">Moi je m\'appelle Karacal et je suis né le 26 Février 2016 à Paris. Et toi ?</string>
+    <string name="my_name_is_karacal">Moi je m\'appelle Karacal et je suis né le 26 Février 2018 à Paris. Et toi ?</string>
     <string name="e_mail_address">Votre adresse email</string>
     <string name="location">Ville de résidence</string>
     <string name="say_more_about_you">Parlez un peu plus de vous !</string>
@@ -36,7 +36,7 @@
     <string name="your_interests">Tes intérêts</string>
     <string name="skip_this_step">Sauter cette étape</string>
     <string name="greetings">Bonjour, %s !</string>
-    <string name="what_we_do">Alors on fait quoi aujoud\'hui ?</string>
+    <string name="what_we_do">Alors on fait quoi aujourd\'hui ?</string>
     <string name="see_around_me">Voir autour de moi</string>
     <string name="view_all">Voir tout</string>
     <string name="recommended_for_you">Recommandé pour vous</string>
@@ -108,7 +108,7 @@
     <string name="per_month">\/mois</string>
     <string name="enter_message">Écrire un commentaire...</string>
     <string name="title_comments">Commentaires</string>
-    <string name="all_guides">Tous les guides</string>
+    <string name="all_guides">Tous les podcasts</string>
     <string name="refer_a_friend">Parrainer un ami</string>
     <string name="how_we_choose_our_guide">Comment nous choisissons nos guides ?</string>
     <string name="contact_karacal">Contacter Karacal</string>

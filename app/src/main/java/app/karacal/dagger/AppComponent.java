@@ -23,6 +23,7 @@ import app.karacal.fragments.RegistrationContactsFragment;
 import app.karacal.fragments.RegistrationInterestsFragment;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import app.karacal.viewmodels.CategoryActivityViewModel;
+import app.karacal.viewmodels.EditGuideActivityViewModel;
 import app.karacal.viewmodels.MainActivityViewModel;
 import dagger.BindsInstance;
 import dagger.Component;
@@ -72,6 +73,8 @@ public interface AppComponent {
     void inject(CategoryActivityViewModel viewModel);
 
     void inject (AudioActivityViewModel viewModel);
+
+    void inject (EditGuideActivityViewModel viewModel);
 
     @Component.Builder
     interface Builder {

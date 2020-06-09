@@ -2,9 +2,11 @@ package app.karacal.models;
 
 import android.util.Log;
 
-import app.karacal.retrofit.models.TrackResponse;
+import java.io.Serializable;
 
-public class Track {
+import app.karacal.retrofit.models.response.TrackResponse;
+
+public class Track implements Serializable {
     private int id;
     private int guideId;
     private int tourId;

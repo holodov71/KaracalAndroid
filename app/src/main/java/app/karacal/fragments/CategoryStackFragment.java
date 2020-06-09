@@ -11,8 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.viewpager.widget.ViewPager;
+
+import java.util.List;
 
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
@@ -48,13 +49,21 @@ public class CategoryStackFragment extends Fragment {
         setupDurationTextView(view);
         setupStarsView(view);
         setupDetailsButton(view);
-        setupViewPager(view);
+        observeTours(view);
         return view;
     }
 
-    private void setupViewPager(View view) {
+    private void observeTours(View view){
+        viewModel.getTours().observe(getViewLifecycleOwner(), tours -> {
+            if (!tours.isEmpty()) {
+                setupViewPager(view, tours);
+            }
+        });
+    }
+
+    private void setupViewPager(View view, List<Tour> tours) {
         ViewPager viewPager = view.findViewById(R.id.viewPager);
-        TourStackPagerAdapter adapter = new TourStackPagerAdapter(getFragmentManager(), viewModel.getTours());
+        TourStackPagerAdapter adapter = new TourStackPagerAdapter(getChildFragmentManager(), tours);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

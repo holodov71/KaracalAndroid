@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 import app.karacal.R;
+import app.karacal.helpers.ImageHelper;
 import app.karacal.models.Tour;
 
 public class TourHorizontalListAdapter extends RecyclerView.Adapter<TourHorizontalListAdapter.ViewHolder> {
@@ -45,7 +46,12 @@ public class TourHorizontalListAdapter extends RecyclerView.Adapter<TourHorizont
         }
 
         private void setupTitleImage(Tour tour){
-            Glide.with(imageViewTitle.getContext()).load(tour.getImage()).fitCenter().into(imageViewTitle);
+            ImageHelper.setImage(imageViewTitle, tour.getImageUrl(), tour.getImage(), false);
+//            if (tour.getImage() == -1) {
+//                Glide.with(imageViewTitle.getContext()).load(tour.getImageUrl()).fitCenter().into(imageViewTitle);
+//            } else {
+//                Glide.with(imageViewTitle.getContext()).load(tour.getImage()).fitCenter().into(imageViewTitle);
+//            }
             imageViewTitle.setOnClickListener(v -> {
                 if (clickListener != null){
                     clickListener.onTourClick(tour.getId());

@@ -1,7 +1,6 @@
 package app.karacal.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import app.karacal.R;
 import app.karacal.activities.EditGuideActivity;
-import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.ImageHelper;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
 
@@ -42,7 +42,7 @@ public class DashboardTourListAdapter extends RecyclerView.Adapter<DashboardTour
         }
 
         void bind(Tour tour){
-            imageViewTitle.setImageResource(tour.getImage());
+            ImageHelper.setImage(imageViewTitle, tour.getImageUrl(), tour.getImage(), false);
             textViewTitle.setText(tour.getTitle());
             Date date = new Date();
             textViewDate.setText(context.getString(R.string.dashboard_tour_created_format, dateFormat.format(date)));
@@ -53,14 +53,14 @@ public class DashboardTourListAdapter extends RecyclerView.Adapter<DashboardTour
     private final Activity context;
     private final LayoutInflater inflater;
 
-    private ArrayList<Tour> tours = new ArrayList<>();
+    private List<Tour> tours = new ArrayList<>();
 
     public DashboardTourListAdapter(Activity context) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
     }
 
-    public void setTours(ArrayList<Tour> tours){
+    public void setTours(List<Tour> tours){
         this.tours = tours;
         notifyDataSetChanged();
     }

@@ -23,15 +23,18 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.TrackEditListAdapter;
 import app.karacal.data.repository.AlbumRepository;
+import app.karacal.data.repository.TourRepository;
 import app.karacal.dialogs.AudioTitleDialog;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.FileHelper;
 import app.karacal.helpers.ToastHelper;
+import app.karacal.models.Tour;
 import app.karacal.models.Track;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
 import app.karacal.popups.EditAudioPopup;
+import app.karacal.retrofit.models.response.UploadTrackResponse;
 import io.reactivex.disposables.Disposable;
 
 public class EditAudioActivity extends PermissionActivity {
@@ -55,9 +58,14 @@ public class EditAudioActivity extends PermissionActivity {
     @Inject
     AlbumRepository albumRepository;
 
+    @Inject
+    TourRepository tourRepository;
+
+    Integer tourId;
+
     private ConstraintLayout layoutRoot;
     private View progressLoading;
-    private ArrayList<Track> tracks;
+    private ArrayList<Track> tracks = new ArrayList<>();
     private TrackEditListAdapter adapter;
 
     Disposable disposable;
@@ -67,12 +75,9 @@ public class EditAudioActivity extends PermissionActivity {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
         EditAudioActivity.Args args = EditAudioActivity.Args.fromBundle(EditAudioActivity.Args.class, getIntent().getExtras());
-        Integer tourId = args.getTourId();
-        if (tourId != null) {
-            tracks = albumRepository.getAlbumByTourId(tourId).getTracks();
-        } else {
-            tracks = new ArrayList<>();
-        }
+
+        tourId = args.getTourId();
+
         setContentView(R.layout.activity_edit_audio);
         layoutRoot = findViewById(R.id.layoutRoot);
         setupBackButton();
@@ -101,6 +106,13 @@ public class EditAudioActivity extends PermissionActivity {
     }
 
     private void setupRecyclerView() {
+        if (tourId != null) {
+            Tour tour = tourRepository.getTourById(tourId);
+            if (tour != null) {
+                tracks = albumRepository.getAlbumByTourId(tourId).getTracks();
+            }
+        }
+
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         adapter = new TrackEditListAdapter(this);
         adapter.setTracks(tracks);
@@ -199,22 +211,37 @@ public class EditAudioActivity extends PermissionActivity {
     }
 
     private void uploadTracks (){
-        progressLoading.setVisibility(View.VISIBLE);
-        if (disposable != null) {
-            disposable.dispose();
-        }
+        if (tourId != null) {
+            progressLoading.setVisibility(View.VISIBLE);
+            if (disposable != null) {
+                disposable.dispose();
+            }
 
-        disposable = albumRepository.uploadAudioToServer("1", "1", tracks)
-                .subscribe(
-                        (n) -> {
-                            progressLoading.setVisibility(View.GONE);
-                            NavigationHelper.startCongratulationsActivity(EditAudioActivity.this);
-                        },
-                        (e) -> {
-                            progressLoading.setVisibility(View.GONE);
-                            Toast.makeText(EditAudioActivity.this, "Error uploading audio", Toast.LENGTH_SHORT).show();
-                        }
-                );
+            disposable = albumRepository.uploadAudioToServer("1", tourId.toString(), tracks)
+                    .subscribe(
+                            (responseList) -> {
+                                boolean isSuccess = true;
+                                for (UploadTrackResponse response : responseList) {
+                                    if (!response.isSuccess()) {
+                                        isSuccess = false;
+                                        break;
+                                    }
+                                }
+                                if (isSuccess) {
+                                    progressLoading.setVisibility(View.GONE);
+                                    NavigationHelper.startCongratulationsActivity(EditAudioActivity.this);
+                                } else {
+                                    Toast.makeText(EditAudioActivity.this, "One ore more audio was not uploaded!", Toast.LENGTH_SHORT).show();
+                                }
+                            },
+                            (e) -> {
+                                progressLoading.setVisibility(View.GONE);
+                                Toast.makeText(EditAudioActivity.this, "Error uploading audio", Toast.LENGTH_SHORT).show();
+                            }
+                    );
+        } else {
+            ToastHelper.showToast(this, "Can not upload audio!");
+        }
     }
 
 }

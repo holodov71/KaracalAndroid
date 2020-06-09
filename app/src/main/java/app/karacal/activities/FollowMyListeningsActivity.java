@@ -49,8 +49,16 @@ public class FollowMyListeningsActivity extends LogActivity {
     private void setupRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         ListeningsListAdapter adapter = new ListeningsListAdapter(this);
-        adapter.setTours(tourRepository.getAllTours());
         recyclerView.setAdapter(adapter);
+        observeTours(adapter);
+    }
+
+    private void observeTours(ListeningsListAdapter adapter){
+        tourRepository.originalToursLiveData.observe(this, tours -> {
+            if (!tours.isEmpty()) {
+                adapter.setTours(tours);
+            }
+        });
     }
 
 

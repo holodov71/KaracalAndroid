@@ -1,13 +1,24 @@
 package app.karacal.retrofit;
 
 import app.karacal.models.Profile;
+import app.karacal.retrofit.models.request.ProfileRequest;
+import app.karacal.retrofit.models.response.BaseResponse;
+import io.reactivex.Observable;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PUT;
 
 public interface ProfileService {
 
     @GET("profile")
     Call<Profile> getProfile(@Header("Authorization") String token);
+
+    @GET("profile")
+    Observable<Profile> loadProfile(@Header("Authorization") String token);
+
+    @PUT("profile/edit")
+    Observable<BaseResponse> editProfile(@Header("Authorization") String token, @Body ProfileRequest request);
 
 }

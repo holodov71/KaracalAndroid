@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -42,16 +43,28 @@ public class CategoryActivityViewModel extends ViewModel {
     @Inject
     TourRepository tourRepository;
 
-    private final ArrayList<Tour> tours;
+    private LiveData<List<Tour>> tours;
 
     private final MutableLiveData<CategoryViewMode> viewModeMutableLiveData = new MutableLiveData<>(CategoryViewMode.LIST);
 
     public CategoryActivityViewModel(int categoryId) {
         App.getAppComponent().inject(this);
-        tours = tourRepository.getToursByCategoryId(categoryId);
+        switch (categoryId){
+            case 0:
+                tours = tourRepository.recommendedToursLiveData;
+                break;
+            case 1:
+                tours = tourRepository.nearToursLiveData;
+                break;
+            case 2:
+                tours = tourRepository.originalToursLiveData;
+                break;
+            default:
+                throw new RuntimeException("Unknown category");
+        }
     }
 
-    public ArrayList<Tour> getTours() {
+    public LiveData<List<Tour>> getTours() {
         return tours;
     }
 

@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import app.karacal.R;
 import app.karacal.helpers.DummyHelper;
@@ -55,7 +56,7 @@ public class ListeningsListAdapter extends RecyclerView.Adapter<ListeningsListAd
     private final LayoutInflater inflater;
     private final DecimalFormat decimalFormat;
 
-    private ArrayList<Tour> tours = new ArrayList<>();
+    private List<Tour> tours = new ArrayList<>();
 
     public ListeningsListAdapter(Context context) {
         this.context = context;
@@ -84,7 +85,7 @@ public class ListeningsListAdapter extends RecyclerView.Adapter<ListeningsListAd
         return tours.size();
     }
 
-    public void setTours(ArrayList<Tour> tours){
+    public void setTours(List<Tour> tours){
         this.tours = tours;
         notifyDataSetChanged();
     }

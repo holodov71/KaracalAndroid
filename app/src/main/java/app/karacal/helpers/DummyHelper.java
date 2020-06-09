@@ -6,6 +6,6 @@ import android.widget.Toast;
 public class DummyHelper {
 
     public static void dummyAction(Context context){
-        ToastHelper.showToast(context, "#");
+        ToastHelper.showToast(context, "Cette fonctionnalité est en cours de développement");
     }
 }

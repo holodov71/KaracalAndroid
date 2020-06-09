@@ -1,8 +1,8 @@
 package app.karacal.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -49,6 +50,8 @@ public class MainSearchFragment extends Fragment {
 
     private SearchFilter searchFilter = new SearchFilter();
 
+    private List<Tour> allTours = new ArrayList<>();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +79,7 @@ public class MainSearchFragment extends Fragment {
         });
     }
 
+    @SuppressLint("CheckResult")
     private void setupSearchField(View view){
         ConstraintLayout searchFieldLayout = view.findViewById(R.id.constraintLayout);
         buttonClear = view.findViewById(R.id.buttonClear);
@@ -102,18 +106,27 @@ public class MainSearchFragment extends Fragment {
         recyclerViewTags.setAdapter(adapterTags);
         recyclerViewTags.setVisibility(View.INVISIBLE);
         recyclerViewResults = view.findViewById(R.id.recyclerViewResults);
-        ArrayList<Tour> tours = tourRepository.getAllTours();
         adapterResults = new TourVerticalListAdapter(getContext());
-        adapterResults.setTours(tours);
         adapterResults.setClickListener(this::showTour);
         recyclerViewResults.setAdapter(adapterResults);
         recyclerViewResults.setVisibility(View.VISIBLE);
+        observeTours();
+    }
+
+    private void observeTours(){
+        tourRepository.originalToursLiveData.observe(getViewLifecycleOwner(), tours -> {
+            if (!tours.isEmpty()) {
+                adapterResults.setTours(tours);
+                allTours.clear();
+                allTours.addAll(tours);
+            }
+        });
     }
 
     private void searchByText(String query){
         ArrayList<Tour> tours = new ArrayList<>();
         if (query.isEmpty()){
-            tours.addAll(tourRepository.getAllTours());
+            tours.addAll(allTours);
         } else {
             tours.addAll(tourRepository.searchToursByText(query));
         }

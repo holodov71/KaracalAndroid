@@ -50,9 +50,16 @@ public class DashboardTourItemFragment extends LogFragment {
         View view = inflater.inflate(R.layout.fragment_dashboard_tour_item, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         DashboardTourListAdapter adapter = new DashboardTourListAdapter(getActivity());
-        ArrayList<Tour> allTours = tourRepository.getAllTours();
-        adapter.setTours(allTours);
         recyclerView.setAdapter(adapter);
+        observeTours(adapter);
         return view;
+    }
+
+    private void observeTours(DashboardTourListAdapter adapter){
+        tourRepository.originalToursLiveData.observe(getViewLifecycleOwner(), tours -> {
+            if (!tours.isEmpty()) {
+                adapter.setTours(tours);
+            }
+        });
     }
 }

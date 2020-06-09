@@ -6,9 +6,14 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import app.karacal.R;
 import app.karacal.data.entity.TourEntity;
-import app.karacal.retrofit.models.TourResponse;
+import app.karacal.retrofit.models.response.ContentResponse;
+import app.karacal.retrofit.models.response.TourResponse;
+import app.karacal.retrofit.models.response.TrackResponse;
 
 public class Tour implements Serializable {
 
@@ -21,8 +26,10 @@ public class Tour implements Serializable {
     private int rating;
     private int duration;
     private int authorId;
+    private String author;
     private double lat;
     private double lng;
+    private List<Track> audio;
 
     public Tour(int id, int image, String title, String description, Double price, int rating, int duration, int authorId, double lat, double lng) {
         this.id = id;
@@ -41,15 +48,38 @@ public class Tour implements Serializable {
         Log.v("TourResponse", "Tour(TourResponse tourResponse)");
         Log.v("TourResponse", "tourResponse = "+tourResponse);
         this.id = tourResponse.getId();
+        this.image = -1;
         this.imageUrl = tourResponse.getImage();
         this.title = tourResponse.getTitle();
         this.description = tourResponse.getDescription();
         this.price = null;
         this.rating = tourResponse.getStars();
-        this.duration = Integer.parseInt(tourResponse.getDuration());
+        this.duration = tourResponse.getDuration() != null ? Integer.parseInt(tourResponse.getDuration()) : 100;
         this.authorId = tourResponse.getGuideId();
         this.lat = tourResponse.getLatitude();
         this.lng = tourResponse.getLongitude();
+        Log.v("TourResponse", "Finish = "+this.toString());
+
+    }
+
+    public Tour(ContentResponse content) {
+        Log.v("ContentResponse", "Tour(ContentResponse content)");
+        Log.v("ContentResponse", "content = "+content);
+        this.id = content.getId();
+        this.imageUrl = content.getImg();
+        this.image = -1;
+        this.title = content.getTitle();
+        this.description = content.getDesc();
+        this.price = null;
+        this.rating = content.getRating();
+        this.duration = 100;
+        this.author = content.getAuthor();
+        this.lat = 48.858222;
+        this.lng = 2.2945;
+        audio = new ArrayList<>();
+        for (TrackResponse response: content.getAudio()){
+            audio.add(new Track(response));
+        }
     }
 
     public Tour(TourEntity entity) {
@@ -71,6 +101,10 @@ public class Tour implements Serializable {
 
     public int getImage() {
         return image;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public String getTitle() {
@@ -97,6 +131,10 @@ public class Tour implements Serializable {
         return authorId;
     }
 
+    public String getAuthor() {
+        return author;
+    }
+
     public LatLng getLocation() {
         return new LatLng(lat, lng);
     }
@@ -106,5 +144,37 @@ public class Tour implements Serializable {
         tourLocation.setLatitude(lat);
         tourLocation.setLongitude(lng);
         return tourLocation;
+    }
+
+    public List<Track> getAudio() {
+        return audio;
+    }
+
+    public Album getAlbum() {
+        List<Track> tracks = new ArrayList<>();
+        if (!audio.isEmpty()) {
+            tracks.add(new Track("Bienvenue", R.raw.track_bienvenue));
+            tracks.addAll(audio);
+            tracks.add(new Track("Abientt", R.raw.track_abientt));
+        }
+        return new Album(title, tracks);
+    }
+
+    @Override
+    public String toString() {
+        return "Tour{" +
+                "id=" + id +
+                ", image=" + image +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", rating=" + rating +
+                ", duration=" + duration +
+                ", authorId=" + authorId +
+                ", author=" + author +
+                ", lat=" + lat +
+                ", lng=" + lng +
+                '}';
     }
 }

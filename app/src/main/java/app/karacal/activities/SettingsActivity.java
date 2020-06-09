@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,14 +31,19 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.dialogs.DeleteAccountDialog;
+import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.PermissionHelper;
+import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Profile;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.retrofit.models.request.ProfileRequest;
 import app.karacal.viewmodels.SettingsActivityViewModel;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class SettingsActivity extends PermissionActivity implements DatePickerDialog.OnDateSetListener {
@@ -54,6 +60,8 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
     private TextInputLayout textInputLayoutEmail;
     private TextInputLayout textInputLayoutLocation;
 
+    private View progressLoading;
+
 
     private String firstName;
     private String secondName;
@@ -64,6 +72,11 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
     @Inject
     ProfileHolder profileHolder;
+
+    @Inject
+    ApiHelper apiHelper;
+
+    Disposable disposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +97,15 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         setupBirthDateInput();
         setupEmailInput();
         setupLocationInput();
+        setupProgressLoading();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(disposable != null){
+            disposable.dispose();
+        }
     }
 
     private void initProfile(){
@@ -102,7 +124,7 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
     private void setupApplyButton() {
         buttonApply = findViewById(R.id.buttonApply);
-        buttonApply.setOnClickListener(v -> onBackPressed());
+        buttonApply.setOnClickListener(v -> updateProfile());
     }
 
     private void setupChangePasswordButton() {
@@ -139,21 +161,25 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         });
     }
 
+    @SuppressLint("CheckResult")
     private void setupFirstNameInput() {
         textInputLayoutFirstName = findViewById(R.id.textInputLayoutFirstName);
         textInputLayoutFirstName.getEditText().setText(firstName);
         textInputObservable(textInputLayoutFirstName).subscribe((s) -> {
             textInputLayoutFirstName.setError(TextUtils.isEmpty(s) ? getString(R.string.enter_first_name) : null);
             validateInputs();
+            firstName = s;
         });
     }
 
+    @SuppressLint("CheckResult")
     private void setupSecondNameInput() {
         textInputLayoutSecondName = findViewById(R.id.textInputLayoutSecondName);
         textInputLayoutSecondName.getEditText().setText(secondName);
         textInputObservable(textInputLayoutSecondName).subscribe((s) -> {
             textInputLayoutSecondName.setError(TextUtils.isEmpty(s) ? getString(R.string.enter_second_name) : null);
             validateInputs();
+            secondName = s;
         });
     }
 
@@ -206,15 +232,18 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         validateInputs();
     }
 
+    @SuppressLint("CheckResult")
     private void setupEmailInput() {
         textInputLayoutEmail = findViewById(R.id.textInputLayoutEmail);
         textInputLayoutEmail.getEditText().setText(email);
         textInputObservable(textInputLayoutEmail).subscribe((s) -> {
             textInputLayoutEmail.setError(TextUtils.isEmpty(s) ? getString(R.string.enter_email) : null);
             validateInputs();
+            email = s;
         });
     }
 
+    @SuppressLint("CheckResult")
     private void setupLocationInput() {
         ProgressBar progressBar = findViewById(R.id.progressBarGeoCoding);
         textInputLayoutLocation = findViewById(R.id.textInputLayoutLocation);
@@ -222,6 +251,7 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         textInputObservable(textInputLayoutLocation).subscribe((s) -> {
             textInputLayoutLocation.setError(TextUtils.isEmpty(s) ? getString(R.string.enter_location) : null);
             validateInputs();
+            location = s;
         });
         ImageView buttonLocation = findViewById(R.id.buttonLocation);
         buttonLocation.setOnClickListener(v -> permissionHelper.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION,
@@ -231,6 +261,7 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
             if (location != null) {
                 String locationText = String.format(Locale.getDefault(), "%f, %f", location.getLatitude(), location.getLongitude());
                 textInputLayoutLocation.getEditText().setText(locationText);
+                SettingsActivity.this.location = locationText;
             } else {
                 Toast.makeText(this, R.string.error_obtaining_location, Toast.LENGTH_LONG).show();
             }
@@ -243,6 +274,11 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         });
     }
 
+    private void setupProgressLoading(){
+        progressLoading = findViewById(R.id.progressLoading);
+    }
+
+
     private boolean validateInputs(TextInputLayout... textInputLayouts) {
         for (TextInputLayout inputLayout : textInputLayouts) {
             if (TextUtils.isEmpty(inputLayout.getEditText().getText().toString())) {
@@ -253,7 +289,31 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
     }
 
     private void validateInputs() {
-        boolean isValid = validateInputs(textInputLayoutFirstName, textInputLayoutSecondName, textInputLayoutBirthDate, textInputLayoutEmail, textInputLayoutLocation);
+        boolean isValid = validateInputs(textInputLayoutFirstName, textInputLayoutSecondName, textInputLayoutEmail);
         buttonApply.setVisibility(isValid ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    private void updateProfile(){
+        hideKeyboardFrom(textInputLayoutBirthDate);
+        if(disposable != null){
+            disposable.dispose();
+        }
+
+        progressLoading.setVisibility(View.VISIBLE);
+
+        disposable = apiHelper.editProfile(
+                PreferenceHelper.loadToken(this),
+                new ProfileRequest(firstName, secondName, birthDate, email, location))
+                .map(baseResponse -> PreferenceHelper.loadToken(this))
+                .flatMap(apiHelper::loadProfile)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(profile -> {
+                    profileHolder.setProfile(profile);
+                    onBackPressed();
+                }, throwable -> {
+                    progressLoading.setVisibility(View.GONE);
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                });
     }
 }

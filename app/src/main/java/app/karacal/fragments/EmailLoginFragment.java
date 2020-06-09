@@ -25,7 +25,7 @@ import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
-import app.karacal.retrofit.models.LoginRequest;
+import app.karacal.retrofit.models.request.LoginRequest;
 import apps.in.android_logger.LogFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;

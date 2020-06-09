@@ -5,17 +5,16 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-
-import java.util.ArrayList;
+import java.util.List;
 
 import app.karacal.fragments.TourStackItemFragment;
 import app.karacal.models.Tour;
 
 public class TourStackPagerAdapter extends FragmentStatePagerAdapter {
 
-    private final ArrayList<Tour> tours;
+    private final List<Tour> tours;
 
-    public TourStackPagerAdapter(@NonNull FragmentManager fm, ArrayList<Tour> tours) {
+    public TourStackPagerAdapter(@NonNull FragmentManager fm, List<Tour> tours) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.tours = tours;
     }

@@ -21,6 +21,7 @@ import androidx.transition.TransitionManager;
 import app.karacal.R;
 import app.karacal.adapters.TrackListAdapter;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.ImageHelper;
 import app.karacal.models.Player;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.AudioActivityViewModel;
@@ -78,7 +79,9 @@ public class AudioPlayerFragment extends LogFragment {
 
     private void setupBackground(View view){
         ImageView imageView = view.findViewById(R.id.imageViewTitle);
-        imageView.setImageResource(viewModel.getTour().getImage());
+        ImageHelper.setImage(imageView, viewModel.getTour().getImageUrl(), viewModel.getTour().getImage(), false);
+
+//        imageView.setImageResource(viewModel.getTour().getImage());
     }
 
     private void setupAudioButtons(View view) {
@@ -115,7 +118,9 @@ public class AudioPlayerFragment extends LogFragment {
     private void setupPlayerControls(View view) {
         ConstraintLayout constraintLayoutPlayer = view.findViewById(R.id.constraintLayoutPlayer);
         ImageView imageView = view.findViewById(R.id.imageViewAlbumTitle);
-        imageView.setImageResource(viewModel.getTour().getImage());
+//        imageView.setImageResource(viewModel.getTour().getImage());
+        ImageHelper.setImage(imageView, viewModel.getTour().getImageUrl(), viewModel.getTour().getImage(), false);
+
         TextView textViewAlbumTitle = view.findViewById(R.id.textViewAlbumTitle);
         textViewAlbumTitle.setText(viewModel.getTour().getTitle());
 //        textViewAlbumTitle.setText(viewModel.getAlbum().getTitle());
