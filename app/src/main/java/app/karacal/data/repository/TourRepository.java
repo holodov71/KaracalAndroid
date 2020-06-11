@@ -362,6 +362,7 @@ public class TourRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tours -> {
                     Log.v("loadTours", "contentsLiveData.setValue(tours) size = "+tours.size());
+                    tours.get(tours.size() - 1).setPrice(350);
                     originalToursLiveData.setValue(tours);
                     // TODO: save to DB
 

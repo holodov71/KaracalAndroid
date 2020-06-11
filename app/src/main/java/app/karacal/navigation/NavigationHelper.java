@@ -17,12 +17,14 @@ import app.karacal.activities.FollowMyListeningsActivity;
 import app.karacal.activities.LoginActivity;
 import app.karacal.activities.MainActivity;
 import app.karacal.activities.PasswordHasBeenResetActivity;
+import app.karacal.activities.PaymentActivity;
 import app.karacal.activities.PrivacyPolicyActivity;
 import app.karacal.activities.ProfileActivity;
 import app.karacal.activities.ReferFriendActivity;
 import app.karacal.activities.RegistrationActivity;
 import app.karacal.activities.SearchFilterActivity;
 import app.karacal.activities.SettingsActivity;
+import app.karacal.service.PaymentsUpdateService;
 
 public class NavigationHelper {
 
@@ -45,6 +47,8 @@ public class NavigationHelper {
     public static void startMainActivity(Activity context) {
         Intent intent = new Intent(context, MainActivity.class);
         context.startActivity(intent);
+
+        PaymentsUpdateService.startTimer();
     }
 
     public static void startRegistrationActivity(Activity context) {
@@ -130,6 +134,12 @@ public class NavigationHelper {
     public static void startCongratulationsActivity(Activity context) {
         Intent intent = new Intent(context, CongratulationsActivity.class);
         context.startActivity(intent);
+    }
+
+    public static void startPaymentActivity(Activity context, PaymentActivity.Args args) {
+        Intent intent = new Intent(context, PaymentActivity.class);
+        intent.putExtras(args.toBundle());
+        context.startActivityForResult(intent, PaymentActivity.REQUEST_CODE);
     }
 
 }

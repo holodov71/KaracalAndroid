@@ -14,14 +14,21 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.stripe.android.CustomerSession;
+
+import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.helpers.ApiHelper;
 import app.karacal.viewmodels.MainActivityViewModel;
 
 public class MainActivity extends PermissionActivity {
 
     private MainActivityViewModel viewModel;
+
+    @Inject
+    ApiHelper apiHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,7 @@ public class MainActivity extends PermissionActivity {
         NavController navController = Navigation.findNavController(this, R.id.fragmentHostView);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         setupLocation();
+
     }
 
     @Override

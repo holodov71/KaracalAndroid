@@ -188,10 +188,11 @@
     <string name="google_sign_in_error">Erreur de connexion à Google</string>
     <string name="facebook_sign_in_error">Erreur de connexion à Facebook</string>
     <string name="logout">Déconnexion</string>
+    <string name="pay">Payer</string>
+    <string name="enter_card">Enter card</string>
 
 
-
-<!--    <string name="app_name">Karacal</string>-->
+    <!--    <string name="app_name">Karacal</string>-->
 <!--    <string name="hello">Hello!</string>-->
 <!--    <string name="we_are_happy">We are happy to see you!</string>-->
 <!--    <string name="connect_via_facebook">Connect via Facebook</string>-->

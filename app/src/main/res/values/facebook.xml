@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    <string name="facebook_app_id" translatable="false">1453909444788255</string>-->
-<!--    <string name="fb_login_protocol_scheme" translatable="false">fb1453909444788255</string>-->
     <string name="facebook_app_id" translatable="false">837946070046047</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb837946070046047</string>
 </resources>

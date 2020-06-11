@@ -22,7 +22,7 @@ public class Tour implements Serializable {
     private String imageUrl;
     private String title;
     private String description;
-    private Double price;
+    private long price;
     private int rating;
     private int duration;
     private int authorId;
@@ -31,7 +31,7 @@ public class Tour implements Serializable {
     private double lng;
     private List<Track> audio;
 
-    public Tour(int id, int image, String title, String description, Double price, int rating, int duration, int authorId, double lat, double lng) {
+    public Tour(int id, int image, String title, String description, long price, int rating, int duration, int authorId, double lat, double lng) {
         this.id = id;
         this.image = image;
         this.title = title;
@@ -52,7 +52,7 @@ public class Tour implements Serializable {
         this.imageUrl = tourResponse.getImage();
         this.title = tourResponse.getTitle();
         this.description = tourResponse.getDescription();
-        this.price = null;
+        this.price = 0;
         this.rating = tourResponse.getStars();
         this.duration = tourResponse.getDuration() != null ? Integer.parseInt(tourResponse.getDuration()) : 100;
         this.authorId = tourResponse.getGuideId();
@@ -70,7 +70,7 @@ public class Tour implements Serializable {
         this.image = -1;
         this.title = content.getTitle();
         this.description = content.getDesc();
-        this.price = null;
+        this.price = 0;
         this.rating = content.getRating();
         this.duration = 100;
         this.author = content.getAuthor();
@@ -87,7 +87,7 @@ public class Tour implements Serializable {
         this.image = entity.imageId;
         this.title = entity.title;
         this.description = entity.description;
-        this.price = (double) entity.priceInCents/100;
+        this.price = entity.priceInCents;
         this.rating = entity.rating;
         this.duration = entity.duration;
         this.authorId = 1;
@@ -115,8 +115,16 @@ public class Tour implements Serializable {
         return description;
     }
 
-    public Double getPrice() {
+    public long getPrice() {
         return price;
+    }
+
+    public double getDoublePrice() {
+        return ((double)price)/100;
+    }
+
+    public void setPrice(long price) {
+        this.price = price;
     }
 
     public int getRating() {

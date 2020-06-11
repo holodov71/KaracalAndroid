@@ -55,10 +55,9 @@ public class TourStackItemFragment extends Fragment {
 
     private void setupPrice(View view){
         TextView textView = view.findViewById(R.id.textViewPrice);
-        Double price = tour.getPrice();
-        if (price != null){
+        if (tour.getPrice() != 0){
             textView.setVisibility(View.VISIBLE);
-            textView.setText(getContext().getString(R.string.price_format, price, getContext().getString(R.string.euro)));
+            textView.setText(getContext().getString(R.string.price_format, tour.getDoublePrice(), getContext().getString(R.string.euro)));
         } else {
             textView.setVisibility(View.GONE);
         }

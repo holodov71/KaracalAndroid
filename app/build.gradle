@@ -84,16 +84,25 @@ dependencies {
     def room_version = "2.2.5"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
+
     //Logger
     implementation 'com.github.apps-in:logger:0.6.0'
+
     //Bubble Picker
     implementation 'com.github.apps-in:BubblePicker:1.0.1'
+
     //Image Cropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
     //WaveRecorder
     implementation 'com.github.apps-in:WaveRecorder:1.0.5'
+
     //RecorderView
     implementation 'com.github.apps-in:AudioRecorderView:1.0.9'
+
     //Facebook SDK
     implementation 'com.facebook.android:facebook-login:5.15.3'
+
+    // Stripe Android SDK
+    implementation 'com.stripe:stripe-android:14.5.0'
 }

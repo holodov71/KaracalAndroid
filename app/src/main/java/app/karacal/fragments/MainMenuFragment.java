@@ -37,6 +37,7 @@ import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.service.PaymentsUpdateService;
 import app.karacal.viewmodels.MainActivityViewModel;
 
 public class MainMenuFragment extends Fragment {
@@ -167,7 +168,7 @@ public class MainMenuFragment extends Fragment {
 
             if (getActivity() != null){
                 profileHolder.removeProfile(getActivity());
-
+                PaymentsUpdateService.stopTimer();
                 NavigationHelper.startLoginActivity(getActivity());
                 getActivity().finish();
             }

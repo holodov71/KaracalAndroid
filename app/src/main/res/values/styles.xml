@@ -343,4 +343,41 @@
         <item name="android:textColorPrimary">@color/colorTextOrange</item>
     </style>
 
+    <style name="StripeDefaultTheme" parent="StripeBaseTheme">
+        <!-- Applied to toolbar background -->
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+
+        <!-- Applied to status bar -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+
+        <!-- Applied to inactive Shipping Method name and amount -->
+        <item name="android:textColorPrimary">@color/colorTextWhite</item>
+
+        <!-- Applied to inactive Shipping Method description -->
+        <item name="android:textColorSecondary">@color/colorTextWhite</item>
+
+        <!--
+            Applied to Shipping Information drop-down items;
+            add Payment Method footer text color
+        -->
+        <item name="android:textColor">@color/colorTextWhite</item>
+
+        <!-- Applied to toolbar foreground/text -->
+        <item name="titleTextColor">@color/colorTextWhite</item>
+
+        <!--
+            Applied to selected Payment Method; active field; links;
+            add new Payment Method call-to-action
+        -->
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- Applied to: Payment Method icon; inactive form field highlight -->
+        <item name="colorControlNormal">@color/colorAccent</item>
+
+        <!-- Applied to form field text -->
+        <item name="android:editTextColor">@color/colorTextWhite</item>
+
+        <item name="editTextColor">@color/colorTextWhite</item>
+    </style>
+
 </resources>

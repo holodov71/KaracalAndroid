@@ -83,10 +83,9 @@ public class TourVerticalListAdapter extends RecyclerView.Adapter<TourVerticalLi
         }
 
         private void setupPrice(Tour tour) {
-            Double price = tour.getPrice();
-            if (price != null){
+            if (tour.getPrice() != 0){
                 textViewPrice.setVisibility(View.VISIBLE);
-                textViewPrice.setText(context.getString(R.string.price_format, price, context.getString(R.string.euro)));
+                textViewPrice.setText(context.getString(R.string.price_format, tour.getDoublePrice(), context.getString(R.string.euro)));
             } else {
                 textViewPrice.setVisibility(View.GONE);
             }

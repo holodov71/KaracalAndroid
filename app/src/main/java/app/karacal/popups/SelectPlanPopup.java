@@ -25,9 +25,12 @@ public class SelectPlanPopup extends BasePopup {
 
     private final View view;
 
-    public SelectPlanPopup(ViewGroup parent, SelectPlanPopup.SelectPlanPopupCallbacks callbacks) {
+    private final long price;
+
+    public SelectPlanPopup(ViewGroup parent, SelectPlanPopup.SelectPlanPopupCallbacks callbacks, long price) {
         super(parent);
         this.callbacks = callbacks;
+        this.price = price;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         view = inflater.inflate(R.layout.dialog_select_plan, parent, false);
         setup(view);
@@ -38,7 +41,8 @@ public class SelectPlanPopup extends BasePopup {
         TextView buttonCancel = view.findViewById(R.id.buttonCancel);
         buttonCancel.setOnClickListener(v -> callbacks.onButtonCancelClick(this));
         TextView textViewSinglePrice = view.findViewById(R.id.textViewSinglePrice);
-        textViewSinglePrice.setText(context.getString(R.string.price_format, SINGLE_PRICE, context.getString(R.string.euro)));
+        double doublePrice = ((double)price)/100;
+        textViewSinglePrice.setText(context.getString(R.string.price_format, doublePrice, context.getString(R.string.euro)));
         TextView textViewRegularPrice = view.findViewById(R.id.textViewRegularPrice);
         textViewRegularPrice.setText(context.getString(R.string.price_format, REGULAR_PRICE, context.getString(R.string.euro)));
         ConstraintLayout buttonSinglePrice = view.findViewById(R.id.buttonSinglePrice);

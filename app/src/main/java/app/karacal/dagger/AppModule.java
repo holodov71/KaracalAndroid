@@ -15,6 +15,7 @@ import app.karacal.retrofit.DateTypeAdapter;
 import app.karacal.retrofit.GuideService;
 import app.karacal.retrofit.InitService;
 import app.karacal.retrofit.ProfileService;
+import app.karacal.retrofit.StripeService;
 import app.karacal.retrofit.TourService;
 import app.karacal.retrofit.TracksService;
 import dagger.Module;
@@ -69,8 +70,13 @@ public class AppModule {
     }
 
     @Provides
-    public TracksService tracksService(Retrofit retrofit){
+    public TracksService stripeService(Retrofit retrofit){
         return retrofit.create(TracksService.class);
+    }
+
+    @Provides
+    public StripeService tracksService(Retrofit retrofit){
+        return retrofit.create(StripeService.class);
     }
 
 }

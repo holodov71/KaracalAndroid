@@ -2,10 +2,20 @@ package app.karacal.helpers;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Size;
+
 import com.google.gson.JsonObject;
+import com.stripe.android.EphemeralKeyProvider;
+import com.stripe.android.EphemeralKeyUpdateListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,9 +25,11 @@ import app.karacal.R;
 import app.karacal.models.Profile;
 import app.karacal.retrofit.GuideService;
 import app.karacal.retrofit.InitService;
+import app.karacal.retrofit.StripeService;
 import app.karacal.retrofit.TourService;
 import app.karacal.retrofit.TracksService;
 import app.karacal.retrofit.models.request.NearToursRequest;
+import app.karacal.retrofit.models.request.PaymentRequest;
 import app.karacal.retrofit.models.request.ProfileRequest;
 import app.karacal.retrofit.models.request.SaveTourRequest;
 import app.karacal.retrofit.models.response.BaseResponse;
@@ -27,6 +39,7 @@ import app.karacal.retrofit.models.request.LoginRequest;
 import app.karacal.retrofit.ProfileService;
 import app.karacal.retrofit.models.request.RegisterRequest;
 import app.karacal.retrofit.models.request.SocialLoginRequest;
+import app.karacal.retrofit.models.response.PaymentResponse;
 import app.karacal.retrofit.models.response.SaveTourResponse;
 import app.karacal.retrofit.models.response.TourResponse;
 import app.karacal.retrofit.models.response.TrackResponse;
@@ -35,6 +48,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -43,15 +57,18 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 @Singleton
-public class ApiHelper {
+public class ApiHelper implements EphemeralKeyProvider {
 
     private App context;
+
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private InitService initService;
     private ProfileService profileService;
     private GuideService guideService;
     private TourService tourService;
     private TracksService tracksService;
+    private StripeService stripeService;
 
     @Inject
     public ApiHelper(App context,
@@ -59,13 +76,34 @@ public class ApiHelper {
                      ProfileService profileService,
                      GuideService guideService,
                      TourService tourService,
-                     TracksService tracksService){
+                     TracksService tracksService,
+                     StripeService stripeService){
         this.context = context;
         this.initService = initService;
         this.profileService = profileService;
         this.guideService = guideService;
         this.tourService = tourService;
         this.tracksService = tracksService;
+        this.stripeService = stripeService;
+    }
+
+    @Override
+    public void createEphemeralKey(@NonNull @Size(min = 4) String apiVersion, @NotNull EphemeralKeyUpdateListener ephemeralKeyUpdateListener) {
+        final Map<String, String> apiParamMap = new HashMap<>();
+        apiParamMap.put("api_version", apiVersion);
+        ephemeralKeyUpdateListener.onKeyUpdate(App.getInstance().getString(R.string.stripe_publishable_api_key));
+
+//        compositeDisposable.add(stripeService.createEphemeralKey(apiParamMap)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(
+//                        response -> {
+//                            try {
+//                                final String rawKey = response.string();
+//                                ephemeralKeyUpdateListener.onKeyUpdate(rawKey);
+//                            } catch (IOException ignored) {
+//                            }
+//                        }));
     }
 
     public Single<Profile> getProfile(String token){
@@ -200,6 +238,14 @@ public class ApiHelper {
         MultipartBody.Part audio = MultipartBody.Part.createFormData("mp3", file.getName(), fileBody);
 
         return tracksService.uploadAudio("Bearer " + token, guideId, tourId, audio)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+    }
+
+//    Payment Region
+    public Observable<PaymentResponse> makePayment(String token, PaymentRequest request){
+        return stripeService.makePayment("Bearer " + token, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 

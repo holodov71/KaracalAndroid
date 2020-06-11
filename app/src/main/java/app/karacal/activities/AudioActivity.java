@@ -1,15 +1,36 @@
 package app.karacal.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.stripe.android.ApiResultCallback;
+import com.stripe.android.CustomerSession;
+import com.stripe.android.Stripe;
+import com.stripe.android.model.Card;
+import com.stripe.android.model.PaymentMethod;
+import com.stripe.android.model.Token;
+import com.stripe.android.view.AddPaymentMethodActivityStarter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
+
+import app.karacal.App;
 import app.karacal.R;
+import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.PreferenceHelper;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
@@ -17,8 +38,10 @@ import app.karacal.popups.ReportProblemPopup;
 import app.karacal.popups.SelectActionPopup;
 import app.karacal.popups.SelectPlanPopup;
 import app.karacal.popups.ShareImpressionPopup;
+import app.karacal.retrofit.models.request.PaymentRequest;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import apps.in.android_logger.LogActivity;
+import io.reactivex.disposables.Disposable;
 
 public class AudioActivity extends LogActivity {
 
@@ -36,9 +59,14 @@ public class AudioActivity extends LogActivity {
 
     }
 
+    private static final String HTTP = "http";
+    private static final String HTTP1 = "http://";
+
     private AudioActivityViewModel viewModel;
 
     private ConstraintLayout layoutRoot;
+
+    private Disposable disposable;
 
     private SelectActionPopup.SelectActionPopupCallbacks selectActionPopupCallbacks = new SelectActionPopup.SelectActionPopupCallbacks() {
         @Override
@@ -93,8 +121,10 @@ public class AudioActivity extends LogActivity {
 
         @Override
         public void onButtonSinglePriceClick(BasePopup popup) {
-            DummyHelper.dummyAction(AudioActivity.this);
             onBackPressed();
+            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice());
+            NavigationHelper.startPaymentActivity(AudioActivity.this, args);
+//            new AddPaymentMethodActivityStarter(AudioActivity.this).startForResult();
         }
 
         @Override
@@ -104,15 +134,23 @@ public class AudioActivity extends LogActivity {
         }
     };
 
+//    private Stripe stripe;
+//    private String paymentIntentClientSecret;
+
+    @Inject
+    ApiHelper apiHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.getAppComponent().inject(this);
         setContentView(R.layout.activity_audio);
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
         int tourId = args.getTourId();
         viewModel = new ViewModelProvider(this, new AudioActivityViewModel.AudioActivityViewModelFactory(tourId)).get(AudioActivityViewModel.class);
         layoutRoot = findViewById(R.id.layoutRoot);
+
+//        CustomerSession.initCustomerSession(this, apiHelper);
     }
 
 
@@ -132,8 +170,8 @@ public class AudioActivity extends LogActivity {
         popup.show();
     }
 
-    public void showSelectPlanDialog() {
-        SelectPlanPopup popup = new SelectPlanPopup(layoutRoot, selectPlanPopupCallbacks);
+    public void showSelectPlanDialog(long price) {
+        SelectPlanPopup popup = new SelectPlanPopup(layoutRoot, selectPlanPopupCallbacks, price);
         popup.show();
     }
 
@@ -143,5 +181,66 @@ public class AudioActivity extends LogActivity {
         if (!BasePopup.closeAllPopups(layoutRoot)) {
             super.onBackPressed();
         }
+    }
+
+    private void pay(String token){
+        if (disposable != null){
+            disposable.dispose();
+        }
+        PaymentRequest request = new PaymentRequest(3500, "eur", token, "Paris tour description");
+        disposable = apiHelper.makePayment(PreferenceHelper.loadToken(this), request)
+                .subscribe(response -> {
+                    Log.e("makePayment", "Success response = " + response);
+
+                }, throwable -> {
+                    Log.e("makePayment", "Error: " +throwable.getMessage());
+                    // TODO: load list from DB
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == AddPaymentMethodActivityStarter.REQUEST_CODE) {
+//
+//            final AddPaymentMethodActivityStarter.Result result = AddPaymentMethodActivityStarter.Result.fromIntent(data);
+//
+//            final PaymentMethod paymentMethod = result != null ? result.getPaymentMethod() : null;
+//
+//            Stripe stripe = new Stripe(getApplicationContext(), getString(R.string.stripe_publishable_api_key));
+//            Card card = Card.create("4242424242424242", paymentMethod.card.expiryMonth, paymentMethod.card.expiryYear, "111");
+//            stripe.createCardToken(card, new ApiResultCallback<Token>() {
+//                @Override
+//                public void onSuccess(Token token) {
+//                    pay(token.getId());
+//                }
+//
+//                @Override
+//                public void onError(@NotNull Exception e) {
+//
+//                }
+//            });
+
+            // use paymentMethod
+//        }
+        if(data != null && resultCode == RESULT_OK) {
+            if (requestCode == PaymentActivity.REQUEST_CODE) {
+                String url = data.getStringExtra(PaymentActivity.RESULT_URL);
+                if (url != null){
+                    openWebLink(url);
+                }
+                Log.v("onActivityResult", "Payment completed");
+            }
+        }
+    }
+
+    private void openWebLink(String link){
+        Uri uri = Uri.parse(link.contains(HTTP) ? link : HTTP1 + link);
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+                        .addDefaultShareMenuItem()
+                        .setShowTitle(true)
+                        .setInstantAppsEnabled(true)
+                        .build();
+        customTabsIntent.launchUrl(this, uri);
     }
 }

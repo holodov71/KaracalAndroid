@@ -4,10 +4,12 @@ import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.activities.ApplyPrivacyPolicyActivity;
+import app.karacal.activities.AudioActivity;
 import app.karacal.activities.EditAudioActivity;
 import app.karacal.activities.EditGuideActivity;
 import app.karacal.activities.FollowMyListeningsActivity;
 import app.karacal.activities.LoginActivity;
+import app.karacal.activities.PaymentActivity;
 import app.karacal.activities.PermissionActivity;
 import app.karacal.activities.ProfileActivity;
 import app.karacal.activities.ReferFriendActivity;
@@ -49,6 +51,10 @@ public interface AppComponent {
     void inject(EditGuideActivity activity);
 
     void inject(EditAudioActivity activity);
+
+    void inject(AudioActivity activity);
+
+    void inject(PaymentActivity activity);
 
     void inject(LoginTypeSelectFragment fragment);
 

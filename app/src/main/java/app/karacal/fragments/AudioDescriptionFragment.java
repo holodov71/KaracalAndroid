@@ -1,5 +1,6 @@
 package app.karacal.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,8 +79,12 @@ public class AudioDescriptionFragment extends LogFragment {
         buttonShare.setOnClickListener(v -> ShareHelper.share(getActivity(), "Share tour", viewModel.getTour().getTitle(), viewModel.getTour().getDescription()));
         ImageView buttonPlay = view.findViewById(R.id.buttonPlay);
         buttonPlay.setOnClickListener(v -> {
-            if (viewModel.getTour().getPrice() != null){
-                ((AudioActivity) getActivity()).showSelectPlanDialog();
+            long price = viewModel.getTour().getPrice();
+            if (price != 0){
+                Activity activity = getActivity();
+                if (activity != null) {
+                    ((AudioActivity) activity).showSelectPlanDialog(price);
+                }
             } else {
                 NavHostFragment.findNavController(this).navigate(R.id.audioPlayerFragment);
             }
@@ -91,9 +96,8 @@ public class AudioDescriptionFragment extends LogFragment {
     private void setupPrice(View view){
         TextView textView = view.findViewById(R.id.textViewPrice);
         ConstraintLayout constraintLayout = view.findViewById(R.id.layoutAlert);
-        Double price = viewModel.getTour().getPrice();
-        if (price != null){
-            textView.setText(getContext().getString(R.string.price_format, price, getContext().getString(R.string.euro)));
+        if (viewModel.getTour().getPrice() != 0){
+            textView.setText(getContext().getString(R.string.price_format, viewModel.getTour().getDoublePrice(), getContext().getString(R.string.euro)));
             textView.setVisibility(View.VISIBLE);
             constraintLayout.setVisibility(View.VISIBLE);
         } else {
