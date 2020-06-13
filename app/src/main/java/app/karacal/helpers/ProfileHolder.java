@@ -14,7 +14,7 @@ public class ProfileHolder {
 
     private Profile profile;
 
-    private boolean hasSubscription = false;
+    private String subscriptionId = null;
 
     @Inject
     public ProfileHolder(TokenHelper tokenHelper){
@@ -36,10 +36,14 @@ public class ProfileHolder {
     }
 
     public boolean isHasSubscription() {
-        return hasSubscription;
+        return subscriptionId != null;
     }
 
-    public void setHasSubscription(boolean hasSubscription) {
-        this.hasSubscription = hasSubscription;
+    public void setSubscription(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
+
+    public String getSubscriptionId() {
+        return subscriptionId;
     }
 }

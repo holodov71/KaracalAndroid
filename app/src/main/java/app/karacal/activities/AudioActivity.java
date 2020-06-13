@@ -4,22 +4,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.stripe.android.ApiResultCallback;
-import com.stripe.android.CustomerSession;
-import com.stripe.android.Stripe;
-import com.stripe.android.model.Card;
-import com.stripe.android.model.PaymentMethod;
-import com.stripe.android.model.Token;
-import com.stripe.android.view.AddPaymentMethodActivityStarter;
-
-import org.jetbrains.annotations.NotNull;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.Serializable;
 
@@ -29,8 +22,6 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
-import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
@@ -38,10 +29,8 @@ import app.karacal.popups.ReportProblemPopup;
 import app.karacal.popups.SelectActionPopup;
 import app.karacal.popups.SelectPlanPopup;
 import app.karacal.popups.ShareImpressionPopup;
-import app.karacal.retrofit.models.request.PaymentRequest;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import apps.in.android_logger.LogActivity;
-import io.reactivex.disposables.Disposable;
 
 public class AudioActivity extends LogActivity {
 
@@ -65,8 +54,6 @@ public class AudioActivity extends LogActivity {
     private AudioActivityViewModel viewModel;
 
     private ConstraintLayout layoutRoot;
-
-    private Disposable disposable;
 
     private SelectActionPopup.SelectActionPopupCallbacks selectActionPopupCallbacks = new SelectActionPopup.SelectActionPopupCallbacks() {
         @Override
@@ -122,20 +109,16 @@ public class AudioActivity extends LogActivity {
         @Override
         public void onButtonSinglePriceClick(BasePopup popup) {
             onBackPressed();
-            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice(), false);
+            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice(), null);
             NavigationHelper.startPaymentActivity(AudioActivity.this, args);
         }
 
         @Override
         public void onButtonRegularPriceClick(BasePopup popup) {
             onBackPressed();
-            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice(), true);
-            NavigationHelper.startPaymentActivity(AudioActivity.this, args);
+            showSubscriptionListDialog();
         }
     };
-
-//    private Stripe stripe;
-//    private String paymentIntentClientSecret;
 
     @Inject
     ApiHelper apiHelper;
@@ -149,8 +132,6 @@ public class AudioActivity extends LogActivity {
         int tourId = args.getTourId();
         viewModel = new ViewModelProvider(this, new AudioActivityViewModel.AudioActivityViewModelFactory(tourId)).get(AudioActivityViewModel.class);
         layoutRoot = findViewById(R.id.layoutRoot);
-
-//        CustomerSession.initCustomerSession(this, apiHelper);
     }
 
 
@@ -205,5 +186,40 @@ public class AudioActivity extends LogActivity {
                         .setInstantAppsEnabled(true)
                         .build();
         customTabsIntent.launchUrl(this, uri);
+    }
+
+    private void orderSubscription(String subscriptionId){
+        PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice(), subscriptionId);
+        NavigationHelper.startPaymentActivity(AudioActivity.this, args);
+    }
+
+    private void showSubscriptionListDialog() {
+        BottomSheetDialog dialog = new BottomSheetDialog(this);
+        View bottomSheet = getLayoutInflater().inflate(R.layout.layout_list_subscription, null);
+
+        Button buttonSubsMonthly = bottomSheet.findViewById(R.id.buttonSubsMonthly);
+        buttonSubsMonthly.setOnClickListener(v -> {
+            orderSubscription(getString(R.string.monthly_subscription));
+            dialog.dismiss();
+        });
+
+        Button buttonSubsSixMonth = bottomSheet.findViewById(R.id.buttonSubsSixMonth);
+        buttonSubsSixMonth.setOnClickListener(v -> {
+            orderSubscription(getString(R.string.six_monthly_subscription));
+            dialog.dismiss();
+        });
+
+        Button buttonSubsYearly = bottomSheet.findViewById(R.id.buttonSubsYearly);
+        buttonSubsYearly.setOnClickListener(v -> {
+            orderSubscription(getString(R.string.yearly_subscription));
+            dialog.dismiss();
+        });
+
+        Button buttonCancel = bottomSheet.findViewById(R.id.buttonCancel);
+        buttonCancel.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.setContentView(bottomSheet);
+        dialog.show();
+
     }
 }

@@ -1,45 +1,23 @@
 package app.karacal.activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.stripe.android.ApiResultCallback;
-import com.stripe.android.CustomerSession;
-import com.stripe.android.PaymentSessionConfig;
 import com.stripe.android.Stripe;
-import com.stripe.android.model.Address;
-import com.stripe.android.model.Card;
-import com.stripe.android.model.ConfirmPaymentIntentParams;
-import com.stripe.android.model.PaymentMethod;
-import com.stripe.android.model.PaymentMethodCreateParams;
-import com.stripe.android.model.ShippingInformation;
-import com.stripe.android.model.ShippingMethod;
 import com.stripe.android.model.Token;
-import com.stripe.android.view.CardInputWidget;
 import com.stripe.android.view.CardMultilineWidget;
-import com.stripe.android.view.ShippingInfoWidget;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -57,7 +35,6 @@ import app.karacal.retrofit.models.request.CreateSubscriptionRequest;
 import app.karacal.retrofit.models.request.PaymentRequest;
 import apps.in.android_logger.LogActivity;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 public class PaymentActivity extends LogActivity {
 
@@ -70,12 +47,12 @@ public class PaymentActivity extends LogActivity {
 
         private final Long amount;
 
-        private final Boolean isSubscription;
+        private final String subscriptionId;
 
-        public Args(Integer tourId, Long amount, Boolean isSubscription) {
+        public Args(Integer tourId, Long amount, String subscriptionId) {
             this.tourId = tourId;
             this.amount = amount;
-            this.isSubscription = isSubscription;
+            this.subscriptionId = subscriptionId;
         }
 
         public Integer getTourId() {
@@ -86,8 +63,8 @@ public class PaymentActivity extends LogActivity {
             return amount;
         }
 
-        public Boolean getSubscription() {
-            return isSubscription;
+        public String getSubscriptionId() {
+            return subscriptionId;
         }
     }
 
@@ -104,7 +81,7 @@ public class PaymentActivity extends LogActivity {
 
     private long amount;
     private int tourId;
-    private boolean isSubscription;
+    private String subscriptionId;
 
     private Button payButton;
     private ProgressBar progressLoading;
@@ -118,7 +95,7 @@ public class PaymentActivity extends LogActivity {
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
         tourId = args.getTourId();
         amount = args.getAmount();
-        isSubscription = args.getSubscription();
+        subscriptionId = args.getSubscriptionId();
 
         paymentIntentClientSecret = getString(R.string.stripe_secret_api_key);
         stripe = new Stripe(getApplicationContext(), getString(R.string.stripe_publishable_api_key));
@@ -191,7 +168,7 @@ public class PaymentActivity extends LogActivity {
     }
 
     private void makePayment(String cardToken){
-        if (isSubscription){
+        if (subscriptionId != null){
             createCustomer(cardToken);
         }else {
             payTour(cardToken);
@@ -260,12 +237,12 @@ public class PaymentActivity extends LogActivity {
 
     private void createSubscription(String customerId){
 
-        CreateSubscriptionRequest createSubscriptionRequest = new CreateSubscriptionRequest(customerId, getString(R.string.monthly_subscription));
+        CreateSubscriptionRequest createSubscriptionRequest = new CreateSubscriptionRequest(customerId, subscriptionId);
         disposable.add(apiHelper.createSubscription(PreferenceHelper.loadToken(this), createSubscriptionRequest)
                 .subscribe(response -> {
                     Log.v("createCustomer", "Success response = " + response);
                     if (response.isSuccess()) {
-                        profileHolder.setHasSubscription(true);
+                        profileHolder.setSubscription(response.getSubscriptionId());
                         ToastHelper.showToast(this, getString(R.string.payment_success));
                         Intent intent = new Intent();
                         intent.putExtra(RESULT_URL, response.getSubscription());

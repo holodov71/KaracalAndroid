@@ -110,7 +110,6 @@ public class MainActivityViewModel extends BaseLocationViewModel {
 
         String serverToken = PreferenceHelper.loadToken(App.getInstance());
 
-//        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest("test_fake_new_email@gmail.com");
         CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
         disposable = apiHelper.createCustomer(serverToken, createCustomerRequest)
                 .map(CreateCustomerResponse::getId)
@@ -121,7 +120,7 @@ public class MainActivityViewModel extends BaseLocationViewModel {
                         if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
                             for (SubscriptionsListResponse.Subscription subs: response.getSubscriptions()){
                                 if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
-                                    profileHolder.setHasSubscription(true);
+                                    profileHolder.setSubscription(subs.getId());
                                     break;
                                 }
                             }
@@ -130,23 +129,6 @@ public class MainActivityViewModel extends BaseLocationViewModel {
                 }, throwable -> {
                     Log.v("loadSubscriptions", "Error loading");
                 });
-
-//        disposable = apiHelper.loadSubscriptions(serverToken, "customerId")
-//                .subscribe(response -> {
-//                    Log.v("loadSubscriptions", "Success response = " + response);
-//                    if (response.isSuccess()) {
-//                        if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
-//                            for (SubscriptionsListResponse.Subscription subs: response.getSubscriptions()){
-//                                if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
-//                                    profileHolder.setHasSubscription(true);
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }, throwable -> {
-//                    Log.v("loadSubscriptions", "Error loading");
-//                });
 
     }
 

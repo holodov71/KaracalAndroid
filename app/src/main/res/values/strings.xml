@@ -192,6 +192,11 @@
     <string name="enter_card">Entrez la carte</string>
     <string name="common_error">Quelque chose n\'allait pas</string>
     <string name="payment_success">Succès de paiement</string>
+    <string name="cancel_subscription">Annuler l\'abonnement</string>
+    <string name="subscription_canceled">Abonnement annulé</string>
+    <string name="monthly_subscription_title">One month subscription €10.00</string>
+    <string name="six_month_subscription_title">Half year subscription €50.00</string>
+    <string name="yearly_subscription_title">One year subscription €100.00</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

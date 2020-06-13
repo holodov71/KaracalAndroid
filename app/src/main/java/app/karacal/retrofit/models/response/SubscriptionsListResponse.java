@@ -19,6 +19,10 @@ public class SubscriptionsListResponse extends BaseResponse{
         private String status;
         private Plan plan;
 
+        public String getId() {
+            return id;
+        }
+
         public String getStatus() {
             return status;
         }

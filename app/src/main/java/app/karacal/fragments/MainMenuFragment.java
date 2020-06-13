@@ -1,10 +1,13 @@
 package app.karacal.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,14 +34,20 @@ import app.karacal.adapters.GuideHorizontalListAdapter;
 import app.karacal.adapters.TourHorizontalListAdapter;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
+import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.EmailHelper;
+import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.service.PaymentsUpdateService;
 import app.karacal.viewmodels.MainActivityViewModel;
+import io.reactivex.disposables.Disposable;
+
+import static app.karacal.activities.PaymentActivity.RESULT_URL;
 
 public class MainMenuFragment extends Fragment {
 
@@ -54,6 +63,11 @@ public class MainMenuFragment extends Fragment {
 
     @Inject
     ProfileHolder profileHolder;
+
+    @Inject
+    ApiHelper apiHelper;
+
+    private Disposable disposable;
 
     private TourHorizontalListAdapter.TourClickListener tourClickListener = this::showTour;
 
@@ -79,6 +93,12 @@ public class MainMenuFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (disposable != null) disposable.dispose();
+    }
+
     private void setupButtons(View view) {
         LinearLayout buttonRefer = view.findViewById(R.id.buttonReferFriend);
         buttonRefer.setOnClickListener(v -> NavigationHelper.startReferFriendActivity(getActivity()));
@@ -91,8 +111,49 @@ public class MainMenuFragment extends Fragment {
         LinearLayout buttonDashboard = view.findViewById(R.id.buttonDashboardGuide);
 //        buttonDashboard.setVisibility(View.GONE);
         buttonDashboard.setOnClickListener(v -> NavigationHelper.startDashboardActivity(getActivity()));
+
+        setupCancelSubscription(view);
         LinearLayout buttonLogout = view.findViewById(R.id.buttonLogout);
         buttonLogout.setOnClickListener(v -> logout());
+    }
+
+    private void setupCancelSubscription(View view){
+
+        LinearLayout buttonLogout = view.findViewById(R.id.buttonCancelSubscription);
+        if (profileHolder.isHasSubscription()){
+            buttonLogout.setVisibility(View.VISIBLE);
+            ProgressBar progressBar = view.findViewById(R.id.progressLoading);
+            TextView tvCancelSubscription = view.findViewById(R.id.tvCancelSubscription);
+            buttonLogout.setOnClickListener(v -> {
+                if (disposable != null){
+                    disposable.dispose();
+                }
+
+                progressBar.setVisibility(View.VISIBLE);
+                tvCancelSubscription.setVisibility(View.GONE);
+
+                disposable = apiHelper.cancelSubscription(PreferenceHelper.loadToken(), profileHolder.getSubscriptionId())
+                        .subscribe(response -> {
+                        Log.v("cancelSubscription", "Success response = " + response);
+                        if (response.isSuccess()) {
+                            ToastHelper.showToast(getContext(), getString(R.string.subscription_canceled));
+                            buttonLogout.setVisibility(View.GONE);
+                            profileHolder.setSubscription(null);
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                            tvCancelSubscription.setVisibility(View.VISIBLE);
+                            ToastHelper.showToast(getContext(), response.getErrorMessage());
+                        }
+                    }, throwable -> {
+                        progressBar.setVisibility(View.GONE);
+                        tvCancelSubscription.setVisibility(View.VISIBLE);
+                        ToastHelper.showToast(getContext(), getString(R.string.connection_problem));
+                    });
+            });
+        } else {
+            buttonLogout.setVisibility(View.GONE);
+        }
+
     }
 
     private void setupCategories(View view) {

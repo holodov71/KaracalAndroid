@@ -290,4 +290,10 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<BaseResponse> cancelSubscription(String token, String subscriptionId){
+        return stripeService.cancelSubscription("Bearer " + token, subscriptionId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
 }
