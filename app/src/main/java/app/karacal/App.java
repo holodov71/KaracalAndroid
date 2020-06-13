@@ -47,6 +47,10 @@ public class App extends Application {
         return instance;
     }
 
+    public static String getResString(int resId) {
+        return instance.getResources().getString(resId);
+    }
+
     public static AppComponent getAppComponent() {
         return instance.appComponent;
     }

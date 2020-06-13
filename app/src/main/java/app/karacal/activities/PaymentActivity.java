@@ -265,6 +265,7 @@ public class PaymentActivity extends LogActivity {
                 .subscribe(response -> {
                     Log.v("createCustomer", "Success response = " + response);
                     if (response.isSuccess()) {
+                        profileHolder.setHasSubscription(true);
                         ToastHelper.showToast(this, getString(R.string.payment_success));
                         Intent intent = new Intent();
                         intent.putExtra(RESULT_URL, response.getSubscription());

@@ -57,6 +57,12 @@ public class AudioDescriptionFragment extends LogFragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        observeViewModel();
+    }
+
     private void setupBackButton(View view) {
         ImageView buttonBack = view.findViewById(R.id.buttonBack);
         buttonBack.setOnClickListener(v -> getActivity().onBackPressed());
@@ -71,7 +77,6 @@ public class AudioDescriptionFragment extends LogFragment {
     private void setupBackground(View view){
         ImageView imageView = view.findViewById(R.id.imageViewBackground);
         ImageHelper.setImage(imageView, viewModel.getTour().getImageUrl(), viewModel.getTour().getImage(), false);
-//        imageView.setImageResource(viewModel.getTour().getImage());
     }
 
     private void setupButtons(View view){
@@ -79,15 +84,16 @@ public class AudioDescriptionFragment extends LogFragment {
         buttonShare.setOnClickListener(v -> ShareHelper.share(getActivity(), "Share tour", viewModel.getTour().getTitle(), viewModel.getTour().getDescription()));
         ImageView buttonPlay = view.findViewById(R.id.buttonPlay);
         buttonPlay.setOnClickListener(v -> {
-            long price = viewModel.getTour().getPrice();
-            if (price != 0){
-                Activity activity = getActivity();
-                if (activity != null) {
-                    ((AudioActivity) activity).showSelectPlanDialog(price);
-                }
-            } else {
-                NavHostFragment.findNavController(this).navigate(R.id.audioPlayerFragment);
-            }
+            viewModel.onListenTourClicked();
+//            long price = viewModel.getTour().getPrice();
+//            if (price != 0){
+//                Activity activity = getActivity();
+//                if (activity != null) {
+//                    ((AudioActivity) activity).showSelectPlanDialog(price);
+//                }
+//            } else {
+//                NavHostFragment.findNavController(this).navigate(R.id.audioPlayerFragment);
+//            }
         });
         ImageView buttonLike = view.findViewById(R.id.buttonLike);
         buttonLike.setOnClickListener(v -> buttonLike.setSelected(!buttonLike.isSelected()));
@@ -175,5 +181,17 @@ public class AudioDescriptionFragment extends LogFragment {
         ImageView imageViewAlert = view.findViewById(R.id.imageViewAuthorAlert);
 //        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
 
+    }
+
+    private void observeViewModel() {
+        viewModel.getListenAction().observe(getViewLifecycleOwner(), action ->
+                NavHostFragment.findNavController(this).navigate(R.id.audioPlayerFragment));
+
+        viewModel.getPaymentAction().observe(getViewLifecycleOwner(), tourPrice -> {
+            Activity activity = getActivity();
+            if (activity != null) {
+                ((AudioActivity) activity).showSelectPlanDialog(tourPrice);
+            }
+        });
     }
 }

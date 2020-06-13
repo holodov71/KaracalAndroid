@@ -183,46 +183,9 @@ public class AudioActivity extends LogActivity {
         }
     }
 
-//    private void pay(String token){
-//        if (disposable != null){
-//            disposable.dispose();
-//        }
-//        PaymentRequest request = new PaymentRequest(3500, "eur", token, "Paris tour description");
-//        disposable = apiHelper.makePayment(PreferenceHelper.loadToken(this), request)
-//                .subscribe(response -> {
-//                    Log.e("makePayment", "Success response = " + response);
-//
-//                }, throwable -> {
-//                    Log.e("makePayment", "Error: " +throwable.getMessage());
-//                    // TODO: load list from DB
-//                });
-//    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == AddPaymentMethodActivityStarter.REQUEST_CODE) {
-//
-//            final AddPaymentMethodActivityStarter.Result result = AddPaymentMethodActivityStarter.Result.fromIntent(data);
-//
-//            final PaymentMethod paymentMethod = result != null ? result.getPaymentMethod() : null;
-//
-//            Stripe stripe = new Stripe(getApplicationContext(), getString(R.string.stripe_publishable_api_key));
-//            Card card = Card.create("4242424242424242", paymentMethod.card.expiryMonth, paymentMethod.card.expiryYear, "111");
-//            stripe.createCardToken(card, new ApiResultCallback<Token>() {
-//                @Override
-//                public void onSuccess(Token token) {
-//                    pay(token.getId());
-//                }
-//
-//                @Override
-//                public void onError(@NotNull Exception e) {
-//
-//                }
-//            });
-
-            // use paymentMethod
-//        }
         if(data != null && resultCode == RESULT_OK) {
             if (requestCode == PaymentActivity.REQUEST_CODE) {
                 String url = data.getStringExtra(PaymentActivity.RESULT_URL);

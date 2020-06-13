@@ -36,6 +36,9 @@ public class MainActivity extends PermissionActivity {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this, new MainActivityViewModel.MainActivityViewModelFactory()).get(MainActivityViewModel.class);
         setContentView(R.layout.activity_main);
+
+        viewModel.checkSubscriptions();
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
         NavController navController = Navigation.findNavController(this, R.id.fragmentHostView);

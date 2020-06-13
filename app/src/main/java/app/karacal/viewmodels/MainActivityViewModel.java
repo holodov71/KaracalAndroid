@@ -1,6 +1,8 @@
 package app.karacal.viewmodels;
 
+import android.content.Intent;
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -8,16 +10,28 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import app.karacal.App;
+import app.karacal.R;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
+import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.PreferenceHelper;
+import app.karacal.helpers.ProfileHolder;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Guide;
 import app.karacal.models.Tour;
+import app.karacal.retrofit.models.request.CreateCustomerRequest;
+import app.karacal.retrofit.models.response.CreateCustomerResponse;
+import app.karacal.retrofit.models.response.SubscriptionsListResponse;
+import io.reactivex.disposables.Disposable;
+
+import static app.karacal.retrofit.models.response.SubscriptionsListResponse.STATUS_SUBSCRIPTION_ACTIVE;
 
 public class MainActivityViewModel extends BaseLocationViewModel {
 
@@ -37,11 +51,19 @@ public class MainActivityViewModel extends BaseLocationViewModel {
         }
     }
 
+    private Disposable disposable;
+
     @Inject
     TourRepository tourRepository;
 
     @Inject
     GuideRepository guideRepository;
+
+    @Inject
+    ApiHelper apiHelper;
+
+    @Inject
+    ProfileHolder profileHolder;
 
     private MutableLiveData<ArrayList<Tour>> nearTours = new MutableLiveData<>();
 
@@ -81,5 +103,58 @@ public class MainActivityViewModel extends BaseLocationViewModel {
         tourRepository.loadContents();
     }
 
+    public void checkSubscriptions() {
+        if (disposable != null){
+            disposable.dispose();
+        }
 
+        String serverToken = PreferenceHelper.loadToken(App.getInstance());
+
+//        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest("test_fake_new_email@gmail.com");
+        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+        disposable = apiHelper.createCustomer(serverToken, createCustomerRequest)
+                .map(CreateCustomerResponse::getId)
+                .flatMap(customerId -> apiHelper.loadSubscriptions(serverToken, customerId))
+                .subscribe(response -> {
+                    Log.v("loadSubscriptions", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
+                            for (SubscriptionsListResponse.Subscription subs: response.getSubscriptions()){
+                                if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
+                                    profileHolder.setHasSubscription(true);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }, throwable -> {
+                    Log.v("loadSubscriptions", "Error loading");
+                });
+
+//        disposable = apiHelper.loadSubscriptions(serverToken, "customerId")
+//                .subscribe(response -> {
+//                    Log.v("loadSubscriptions", "Success response = " + response);
+//                    if (response.isSuccess()) {
+//                        if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
+//                            for (SubscriptionsListResponse.Subscription subs: response.getSubscriptions()){
+//                                if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
+//                                    profileHolder.setHasSubscription(true);
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }, throwable -> {
+//                    Log.v("loadSubscriptions", "Error loading");
+//                });
+
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (disposable != null){
+            disposable.dispose();
+        }
+    }
 }

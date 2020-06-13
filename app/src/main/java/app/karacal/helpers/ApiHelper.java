@@ -47,6 +47,8 @@ import app.karacal.retrofit.models.request.RegisterRequest;
 import app.karacal.retrofit.models.request.SocialLoginRequest;
 import app.karacal.retrofit.models.response.PaymentResponse;
 import app.karacal.retrofit.models.response.SaveTourResponse;
+import app.karacal.retrofit.models.response.SubscriptionsListResponse;
+import app.karacal.retrofit.models.response.TourDetailsResponse;
 import app.karacal.retrofit.models.response.TourResponse;
 import app.karacal.retrofit.models.response.TrackResponse;
 import app.karacal.retrofit.models.response.UploadTrackResponse;
@@ -230,6 +232,12 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<TourDetailsResponse> loadTourById(String token, int tourId) {
+        return tourService.getTourById("Bearer " + token, String.valueOf(tourId))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<List<TrackResponse>> loadTracks(String token, String tourId) {
         return tracksService.getTracksList("Bearer " + token, tourId)
                 .subscribeOn(Schedulers.io())
@@ -276,5 +284,10 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<SubscriptionsListResponse> loadSubscriptions(String token, String customerId){
+        return stripeService.getSubscriptions("Bearer " + token, customerId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 
 }

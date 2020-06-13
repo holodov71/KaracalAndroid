@@ -74,6 +74,7 @@ public class LoginActivity extends LogActivity {
                         tokenHelper.updateToken(null);
                         proceedToLogin();
                     });
+
         } else {
             proceedToLogin();
         }

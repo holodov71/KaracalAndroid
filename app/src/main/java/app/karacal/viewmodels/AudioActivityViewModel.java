@@ -15,13 +15,20 @@ import java.util.List;
 import javax.inject.Inject;
 
 import app.karacal.App;
+import app.karacal.R;
 import app.karacal.data.repository.AlbumRepository;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
+import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.PreferenceHelper;
+import app.karacal.helpers.ProfileHolder;
+import app.karacal.helpers.ToastHelper;
+import app.karacal.helpers.TokenHelper;
 import app.karacal.models.Album;
 import app.karacal.models.Guide;
 import app.karacal.models.Player;
 import app.karacal.models.Tour;
+import io.reactivex.disposables.Disposable;
 
 public class AudioActivityViewModel extends ViewModel {
 
@@ -44,6 +51,9 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     @Inject
+    ProfileHolder profileHolder;
+
+    @Inject
     TourRepository tourRepository;
 
     @Inject
@@ -51,6 +61,24 @@ public class AudioActivityViewModel extends ViewModel {
 
     @Inject
     AlbumRepository albumRepository;
+
+    @Inject
+    ApiHelper apiHelper;
+
+    private Disposable disposable;
+
+
+    private SingleLiveEvent<Void> listenAction = new SingleLiveEvent<>();
+    private SingleLiveEvent<Long> paymentAction = new SingleLiveEvent<>();
+    private SingleLiveEvent<String> errorAction = new SingleLiveEvent<>();
+
+    public SingleLiveEvent<Void> getListenAction() {
+        return listenAction;
+    }
+
+    public SingleLiveEvent<Long> getPaymentAction() {
+        return paymentAction;
+    }
 
     private final Tour tour;
 
@@ -73,19 +101,9 @@ public class AudioActivityViewModel extends ViewModel {
         player = new Player(album);
     }
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        player.dispose();
-    }
-
     public Tour getTour() {
         return tour;
     }
-
-//    public Album getAlbum() {
-//        return album;
-//    }
 
     public Player getPlayer() {
         return player;
@@ -125,4 +143,40 @@ public class AudioActivityViewModel extends ViewModel {
             return "";
         }
     }
+
+    public void onListenTourClicked(){
+        if (profileHolder.isHasSubscription()){
+            Log.v("onListenTourClicked", "has Subscription");
+            listenAction.call();
+        } else {
+            if(disposable != null){
+                disposable.dispose();
+            }
+            disposable = apiHelper.loadTourById(PreferenceHelper.loadToken(App.getInstance()), tour.getId())
+                    .subscribe(response -> {
+                        if (response.isSuccess()) {
+                            if (response.isPaid()){
+                                listenAction.call();
+                            } else {
+                                paymentAction.setValue(tour.getPrice());
+                            }
+                        } else {
+                            errorAction.setValue(response.getErrorMessage());
+                        }
+                    }, throwable -> {
+                        errorAction.setValue(App.getResString(R.string.connection_problem));
+                    });
+        }
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        player.dispose();
+        if (disposable != null){
+            disposable.dispose();
+        }
+    }
+
+
 }
