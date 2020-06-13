@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,7 @@ import com.stripe.android.view.ShippingInfoWidget;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,10 +48,15 @@ import app.karacal.R;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.KeyboardHelper;
 import app.karacal.helpers.PreferenceHelper;
+import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.ActivityArgs;
+import app.karacal.retrofit.models.request.CreateCardRequest;
+import app.karacal.retrofit.models.request.CreateCustomerRequest;
+import app.karacal.retrofit.models.request.CreateSubscriptionRequest;
 import app.karacal.retrofit.models.request.PaymentRequest;
 import apps.in.android_logger.LogActivity;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 public class PaymentActivity extends LogActivity {
@@ -63,9 +70,12 @@ public class PaymentActivity extends LogActivity {
 
         private final Long amount;
 
-        public Args(Integer tourId, Long amount) {
+        private final Boolean isSubscription;
+
+        public Args(Integer tourId, Long amount, Boolean isSubscription) {
             this.tourId = tourId;
             this.amount = amount;
+            this.isSubscription = isSubscription;
         }
 
         public Integer getTourId() {
@@ -75,15 +85,29 @@ public class PaymentActivity extends LogActivity {
         public Long getAmount() {
             return amount;
         }
+
+        public Boolean getSubscription() {
+            return isSubscription;
+        }
     }
 
     @Inject
     ApiHelper apiHelper;
 
-    private Disposable disposable;
+    @Inject
+    ProfileHolder profileHolder;
+
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     private Stripe stripe;
     private String paymentIntentClientSecret;
+
+    private long amount;
+    private int tourId;
+    private boolean isSubscription;
+
+    private Button payButton;
+    private ProgressBar progressLoading;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,16 +116,16 @@ public class PaymentActivity extends LogActivity {
         setContentView(R.layout.activity_payment);
 
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
-        int tourId = args.getTourId();
-        long amount = args.getAmount();
+        tourId = args.getTourId();
+        amount = args.getAmount();
+        isSubscription = args.getSubscription();
 
         paymentIntentClientSecret = getString(R.string.stripe_secret_api_key);
         stripe = new Stripe(getApplicationContext(), getString(R.string.stripe_publishable_api_key));
 
+        setupLoading();
         setupBackButton();
-        setupCardInput(amount);
-
-//        CustomerSession.initCustomerSession(this, apiHelper);
+        setupCardInput();
     }
 
     private void setupBackButton() {
@@ -109,20 +133,24 @@ public class PaymentActivity extends LogActivity {
         buttonBack.setOnClickListener(v -> onBackPressed());
     }
 
-    private void setupCardInput(long amount){
+    private void setupLoading() {
+        progressLoading = findViewById(R.id.progressLoading);
+    }
+
+    private void setupCardInput(){
         CardMultilineWidget cardInputWidget = findViewById(R.id.cardInputWidget);
         cardInputWidget.setShouldShowPostalCode(false);
 
-        Button payButton = findViewById(R.id.payButton);
+        payButton = findViewById(R.id.payButton);
         payButton.setOnClickListener(v -> {
             KeyboardHelper.hideKeyboard(PaymentActivity.this, v);
 
 //            PaymentMethodCreateParams params = cardInputWidget.getPaymentMethodCreateParams();
 //            if (params != null){
+//
 //                stripe.createPaymentMethod(params, new ApiResultCallback<PaymentMethod>() {
 //                    @Override
 //                    public void onSuccess(PaymentMethod paymentMethod) {
-//
 //                    }
 //
 //                    @Override
@@ -142,15 +170,17 @@ public class PaymentActivity extends LogActivity {
 
 //                Card card = Card.create("4242424242424242", params., paymentMethod.card.expiryYear, "111");
 //
+                showLoading();
                 stripe.createCardToken(cardInputWidget.getCard(), new ApiResultCallback<Token>() {
                     @Override
                     public void onSuccess(Token token) {
-                        pay(token.getId(), amount);
+                        makePayment(token.getId());
                     }
 
                     @Override
                     public void onError(@NotNull Exception e) {
-
+                        hideLoading();
+                        ToastHelper.showToast(PaymentActivity.this, getString(R.string.common_error));
                     }
                 });
 
@@ -160,82 +190,109 @@ public class PaymentActivity extends LogActivity {
         });
     }
 
-    private void pay(String token, long amount){
-        if (disposable != null){
-            disposable.dispose();
+    private void makePayment(String cardToken){
+        if (isSubscription){
+            createCustomer(cardToken);
+        }else {
+            payTour(cardToken);
         }
-        PaymentRequest request = new PaymentRequest(amount, "eur", token, "Paris tour description");
-        disposable = apiHelper.makePayment(PreferenceHelper.loadToken(this), request)
-                .subscribe(response -> {
-                    Log.e("makePayment", "Success response = " + response);
-                    ToastHelper.showToast(this, "Payment Success");
-                    Intent intent = new Intent();
-                    intent.putExtra(RESULT_URL, response.getReceiptUrl());
-                    setResult(RESULT_OK, intent);
-                    finish();
-
-                }, throwable -> {
-                    Log.e("makePayment", "Error: " +throwable.getMessage());
-                    // TODO: load list from DB
-                });
     }
 
-//    @NonNull
-//    private PaymentSessionConfig createPaymentSessionConfig() {
-//        return new PaymentSessionConfig.Builder()
-//
-//                // hide the phone field on the shipping information form
-//                .setHiddenShippingInfoFields(
-//                        ShippingInfoWidget.CustomizableShippingField.PHONE_FIELD
-//                )
-//
-//                // make the address line 2 field optional
-//                .setOptionalShippingInfoFields(
-//                        ShippingInfoWidget.CustomizableShippingField.ADDRESS_LINE_TWO_FIELD
-//                )
-//
-//                // specify an address to pre-populate the shipping information form
-//                .setPrepopulatedShippingInfo(new ShippingInformation(
-//                        new Address.Builder()
-//                                .setLine1("123 Market St")
-//                                .setCity("San Francisco")
-//                                .setState("CA")
-//                                .setPostalCode("94107")
-//                                .setCountry("US")
-//                                .build(),
-//                        "Jenny Rosen",
-//                        "4158675309"
-//                ))
-//
-//                // collect shipping information
-//                .setShippingInfoRequired(true)
-//
-//                // collect shipping method
-//                .setShippingMethodsRequired(true)
-//
-//                // specify the payment method types that the customer can use;
-//                // defaults to PaymentMethod.Type.Card
-//                .setPaymentMethodTypes(Arrays.asList(PaymentMethod.Type.Card))
-//
-//                // only allow US and Canada shipping addresses
-////                .setAllowedShippingCountryCodes(new HashSet<>(
-////                        Arrays.asList("US", "CA")
-////                ))
-//
-//                // specify a layout to display under the payment collection form
-////                .setAddPaymentMethodFooter(R.layout.add_payment_method_footer)
-//
-//                // specify the shipping information validation delegate
-////                .setShippingInformationValidator(new AppShippingInformationValidator())
-//
-////                // specify the shipping methods factory delegate
-////                .setShippingMethodsFactory(new AppShippingMethodsFactory())
-//
-//                // if `true`, will show "Google Pay" as an option on the
-//                // Payment Methods selection screen
-//                .setShouldShowGooglePay(true)
-//
-//                .build();
-//    }
+    private void payTour(String token){
+        PaymentRequest request = new PaymentRequest(amount, "eur", token, "Paris tour description", tourId);
+        disposable.add(apiHelper.makePayment(PreferenceHelper.loadToken(this), request)
+                .subscribe(response -> {
+                    Log.v("makePayment", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        ToastHelper.showToast(this, getString(R.string.payment_success));
+                        Intent intent = new Intent();
+                        intent.putExtra(RESULT_URL, response.getReceiptUrl());
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    } else {
+                        hideLoading();
+                        ToastHelper.showToast(this, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    hideLoading();
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                }));
+    }
 
+    private void createCustomer(String cardToken){
+
+        String serverToken = PreferenceHelper.loadToken(this);
+
+        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+        disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
+                .subscribe(response -> {
+                    Log.v("createCustomer", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        createCard(response.getId(), cardToken);
+                    } else {
+                        hideLoading();
+                        ToastHelper.showToast(this, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    hideLoading();
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                }));
+    }
+
+    private void createCard(String customerId, String cardToken){
+        String serverToken = PreferenceHelper.loadToken(this);
+
+        CreateCardRequest createCardRequest = new CreateCardRequest(customerId, cardToken);
+        disposable.add(apiHelper.createCard(serverToken, createCardRequest)
+                .subscribe(response -> {
+                    Log.v("createCard", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        createSubscription(customerId);
+                    } else {
+                        hideLoading();
+                        ToastHelper.showToast(this, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    hideLoading();
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                }));
+    }
+
+    private void createSubscription(String customerId){
+
+        CreateSubscriptionRequest createSubscriptionRequest = new CreateSubscriptionRequest(customerId, getString(R.string.monthly_subscription));
+        disposable.add(apiHelper.createSubscription(PreferenceHelper.loadToken(this), createSubscriptionRequest)
+                .subscribe(response -> {
+                    Log.v("createCustomer", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        ToastHelper.showToast(this, getString(R.string.payment_success));
+                        Intent intent = new Intent();
+                        intent.putExtra(RESULT_URL, response.getSubscription());
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    } else {
+                        hideLoading();
+                        ToastHelper.showToast(this, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    hideLoading();
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                }));
+    }
+
+    private void showLoading(){
+        payButton.setVisibility(View.GONE);
+        progressLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading(){
+        payButton.setVisibility(View.VISIBLE);
+        progressLoading.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (disposable != null) disposable.dispose();
+    }
 }

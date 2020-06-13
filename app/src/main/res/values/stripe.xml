@@ -3,4 +3,9 @@
     <string name="stripe_api_key" translatable="false">pk_test_uUIYpX9gob7isjYc2SKI68zY00jLoFVjJN</string>
     <string name="stripe_publishable_api_key" translatable="false">pk_test_51GsCWaG3u2PgYWyjQQ9fE1XuJnkMCb7kh51pct5yMsuBHabMBL30B7k4gb76F7m5togCyuM3Cdtk7SG8dAHa8emr0057q3BCxO</string>
     <string name="stripe_secret_api_key" translatable="false">sk_test_51GsCWaG3u2PgYWyj9PGfXM6sPkpxnvSXtRDDQal3B67NWeBPurXBxnYXjFvvAMPp2UyrrF74ZqWF9Ie9KVl3Uuvd00G9vn1DrV</string>
+
+<!--    Subscriptions -->
+    <string name="monthly_subscription" translatable="false">price_1GsrIEG3u2PgYWyj6gGNEBjS</string>
+    <string name="six_monthly_subscription" translatable="false">price_1GsrIEG3u2PgYWyjfzR6uVBR</string>
+    <string name="yearly_subscription" translatable="false">price_1GsrIEG3u2PgYWyjfJ0iIgci</string>
 </resources>

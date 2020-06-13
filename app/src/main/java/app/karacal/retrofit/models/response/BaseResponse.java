@@ -1,10 +1,10 @@
 package app.karacal.retrofit.models.response;
 
 public class BaseResponse {
-    private Object errorMessage;
+    private String errorMessage;
     private boolean isSuccess;
 
-    public Object getErrorMessage() {
+    public String getErrorMessage() {
         return errorMessage;
     }
 

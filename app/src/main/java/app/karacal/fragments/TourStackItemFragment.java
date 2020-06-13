@@ -49,7 +49,6 @@ public class TourStackItemFragment extends Fragment {
 
     private void setupImageTitle(View view) {
         ImageView imageView = view.findViewById(R.id.imageViewTitle);
-//        Glide.with(imageView).load(tour.getImage()).fitCenter().into(imageView);
         ImageHelper.setImage(imageView, tour.getImageUrl(), tour.getImage(), false);
     }
 

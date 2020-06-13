@@ -122,15 +122,15 @@ public class AudioActivity extends LogActivity {
         @Override
         public void onButtonSinglePriceClick(BasePopup popup) {
             onBackPressed();
-            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice());
+            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice(), false);
             NavigationHelper.startPaymentActivity(AudioActivity.this, args);
-//            new AddPaymentMethodActivityStarter(AudioActivity.this).startForResult();
         }
 
         @Override
         public void onButtonRegularPriceClick(BasePopup popup) {
-            DummyHelper.dummyAction(AudioActivity.this);
             onBackPressed();
+            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice(), true);
+            NavigationHelper.startPaymentActivity(AudioActivity.this, args);
         }
     };
 
@@ -183,20 +183,20 @@ public class AudioActivity extends LogActivity {
         }
     }
 
-    private void pay(String token){
-        if (disposable != null){
-            disposable.dispose();
-        }
-        PaymentRequest request = new PaymentRequest(3500, "eur", token, "Paris tour description");
-        disposable = apiHelper.makePayment(PreferenceHelper.loadToken(this), request)
-                .subscribe(response -> {
-                    Log.e("makePayment", "Success response = " + response);
-
-                }, throwable -> {
-                    Log.e("makePayment", "Error: " +throwable.getMessage());
-                    // TODO: load list from DB
-                });
-    }
+//    private void pay(String token){
+//        if (disposable != null){
+//            disposable.dispose();
+//        }
+//        PaymentRequest request = new PaymentRequest(3500, "eur", token, "Paris tour description");
+//        disposable = apiHelper.makePayment(PreferenceHelper.loadToken(this), request)
+//                .subscribe(response -> {
+//                    Log.e("makePayment", "Success response = " + response);
+//
+//                }, throwable -> {
+//                    Log.e("makePayment", "Error: " +throwable.getMessage());
+//                    // TODO: load list from DB
+//                });
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

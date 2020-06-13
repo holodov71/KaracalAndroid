@@ -189,7 +189,9 @@
     <string name="facebook_sign_in_error">Erreur de connexion à Facebook</string>
     <string name="logout">Déconnexion</string>
     <string name="pay">Payer</string>
-    <string name="enter_card">Enter card</string>
+    <string name="enter_card">Entrez la carte</string>
+    <string name="common_error">Quelque chose n\'allait pas</string>
+    <string name="payment_success">Succès de paiement</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

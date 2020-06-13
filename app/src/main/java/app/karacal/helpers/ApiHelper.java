@@ -28,12 +28,18 @@ import app.karacal.retrofit.InitService;
 import app.karacal.retrofit.StripeService;
 import app.karacal.retrofit.TourService;
 import app.karacal.retrofit.TracksService;
+import app.karacal.retrofit.models.request.CreateCardRequest;
+import app.karacal.retrofit.models.request.CreateCustomerRequest;
+import app.karacal.retrofit.models.request.CreateSubscriptionRequest;
 import app.karacal.retrofit.models.request.NearToursRequest;
 import app.karacal.retrofit.models.request.PaymentRequest;
 import app.karacal.retrofit.models.request.ProfileRequest;
 import app.karacal.retrofit.models.request.SaveTourRequest;
 import app.karacal.retrofit.models.response.BaseResponse;
 import app.karacal.retrofit.models.response.ContentResponse;
+import app.karacal.retrofit.models.response.CreateCardResponse;
+import app.karacal.retrofit.models.response.CreateCustomerResponse;
+import app.karacal.retrofit.models.response.CreateSubscriptionResponse;
 import app.karacal.retrofit.models.response.GuideResponse;
 import app.karacal.retrofit.models.request.LoginRequest;
 import app.karacal.retrofit.ProfileService;
@@ -250,5 +256,25 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
 
     }
+
+    public Observable<CreateCustomerResponse> createCustomer(String token, CreateCustomerRequest request){
+        return stripeService.createCustomer("Bearer " + token, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+    }
+
+    public Observable<CreateCardResponse> createCard(String token, CreateCardRequest request){
+        return stripeService.createCard("Bearer " + token, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<CreateSubscriptionResponse> createSubscription(String token, CreateSubscriptionRequest request){
+        return stripeService.createSubscription("Bearer " + token, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
 
 }
