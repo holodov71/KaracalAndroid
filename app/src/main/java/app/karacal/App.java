@@ -5,6 +5,8 @@ import android.app.Application;
 import app.karacal.dagger.AppComponent;
 import app.karacal.dagger.DaggerAppComponent;
 import apps.in.android_logger.Logger;
+
+import com.onesignal.OneSignal;
 import com.stripe.android.PaymentConfiguration;
 
 public class App extends Application {
@@ -28,10 +30,17 @@ public class App extends Application {
         Logger.log(String.format("App: %s", BuildConfig.APPLICATION_ID));
         Logger.log(String.format("Version: %s", BuildConfig.VERSION_NAME));
 
+        // Payment Initialization
         PaymentConfiguration.init(
                 getApplicationContext(),
                 getString(R.string.stripe_api_key)
         );
+
+        // OneSignal Initialization
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
     }
 
     public static App getInstance() {

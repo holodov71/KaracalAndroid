@@ -1,3 +1,17 @@
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/'}
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.6, 0.99.99]'
+    }
+}
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+
+repositories {
+    maven { url 'https://maven.google.com' }
+}
+
 apply plugin: 'com.android.application'
 
 android {
@@ -27,6 +41,12 @@ android {
         versionCode code
         versionName "V ${versionMajor}.${versionMinor}.${versionPatch}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                onesignal_app_id: '10bca9e1-e857-4b84-872d-c44c5eb0b431',
+                // Project number pulled from dashboard, local value is ignored.
+                onesignal_google_project_number: 'REMOTE'
+        ]
     }
     buildTypes {
         release {
@@ -105,4 +125,7 @@ dependencies {
 
     // Stripe Android SDK
     implementation 'com.stripe:stripe-android:14.5.0'
+
+    // OneSignal
+    implementation 'com.onesignal:OneSignal:[3.13.0, 3.99.99]'
 }
