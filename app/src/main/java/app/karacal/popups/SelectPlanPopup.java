@@ -43,8 +43,9 @@ public class SelectPlanPopup extends BasePopup {
         TextView textViewSinglePrice = view.findViewById(R.id.textViewSinglePrice);
         double doublePrice = ((double)price)/100;
         textViewSinglePrice.setText(context.getString(R.string.price_format, doublePrice, context.getString(R.string.euro)));
-        TextView textViewRegularPrice = view.findViewById(R.id.textViewRegularPrice);
-        textViewRegularPrice.setText(context.getString(R.string.price_format, REGULAR_PRICE, context.getString(R.string.euro)));
+//        TextView textViewRegularPrice = view.findViewById(R.id.textViewRegularPrice);
+//        textViewRegularPrice.setText(context.getString(R.string.price_format, REGULAR_PRICE, context.getString(R.string.euro)));
+//        textViewRegularPrice.setText(context.getString(R.string.choose_plan));
         ConstraintLayout buttonSinglePrice = view.findViewById(R.id.buttonSinglePrice);
         buttonSinglePrice.setOnClickListener(v -> callbacks.onButtonSinglePriceClick(this));
         ConstraintLayout buttonRegularPrice = view.findViewById(R.id.buttonRegularPrice);

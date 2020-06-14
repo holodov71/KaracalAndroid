@@ -197,6 +197,7 @@
     <string name="monthly_subscription_title">One month subscription €10.00</string>
     <string name="six_month_subscription_title">Half year subscription €50.00</string>
     <string name="yearly_subscription_title">One year subscription €100.00</string>
+    <string name="choose_plan">Choisissez le plan</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->
