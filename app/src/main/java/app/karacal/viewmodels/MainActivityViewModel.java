@@ -17,13 +17,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import app.karacal.App;
-import app.karacal.R;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
-import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Guide;
 import app.karacal.models.Tour;
 import app.karacal.retrofit.models.request.CreateCustomerRequest;

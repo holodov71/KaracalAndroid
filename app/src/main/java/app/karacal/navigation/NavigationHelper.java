@@ -33,8 +33,9 @@ public class NavigationHelper {
         context.startActivity(intent);
     }
 
-    public static void startCommentsActivity(Activity context) {
+    public static void startCommentsActivity(Activity context, CommentsActivity.Args args) {
         Intent intent = new Intent(context, CommentsActivity.class);
+        intent.putExtras(args.toBundle());
         context.startActivity(intent);
     }
 

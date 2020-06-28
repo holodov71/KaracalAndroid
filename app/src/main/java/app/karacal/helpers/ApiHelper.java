@@ -23,12 +23,14 @@ import javax.inject.Singleton;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.models.Profile;
+import app.karacal.retrofit.CommentsService;
 import app.karacal.retrofit.GuideService;
 import app.karacal.retrofit.InitService;
 import app.karacal.retrofit.StripeService;
 import app.karacal.retrofit.TourService;
 import app.karacal.retrofit.TracksService;
 import app.karacal.retrofit.models.request.CreateCardRequest;
+import app.karacal.retrofit.models.request.CreateCommentRequest;
 import app.karacal.retrofit.models.request.CreateCustomerRequest;
 import app.karacal.retrofit.models.request.CreateSubscriptionRequest;
 import app.karacal.retrofit.models.request.NearToursRequest;
@@ -36,6 +38,7 @@ import app.karacal.retrofit.models.request.PaymentRequest;
 import app.karacal.retrofit.models.request.ProfileRequest;
 import app.karacal.retrofit.models.request.SaveTourRequest;
 import app.karacal.retrofit.models.response.BaseResponse;
+import app.karacal.retrofit.models.response.CommentsResponse;
 import app.karacal.retrofit.models.response.ContentResponse;
 import app.karacal.retrofit.models.response.CreateCardResponse;
 import app.karacal.retrofit.models.response.CreateCustomerResponse;
@@ -75,6 +78,7 @@ public class ApiHelper implements EphemeralKeyProvider {
     private ProfileService profileService;
     private GuideService guideService;
     private TourService tourService;
+    private CommentsService commentsService;
     private TracksService tracksService;
     private StripeService stripeService;
 
@@ -84,6 +88,7 @@ public class ApiHelper implements EphemeralKeyProvider {
                      ProfileService profileService,
                      GuideService guideService,
                      TourService tourService,
+                     CommentsService commentsService,
                      TracksService tracksService,
                      StripeService stripeService){
         this.context = context;
@@ -91,6 +96,7 @@ public class ApiHelper implements EphemeralKeyProvider {
         this.profileService = profileService;
         this.guideService = guideService;
         this.tourService = tourService;
+        this.commentsService = commentsService;
         this.tracksService = tracksService;
         this.stripeService = stripeService;
     }
@@ -257,7 +263,21 @@ public class ApiHelper implements EphemeralKeyProvider {
 
     }
 
-//    Payment Region
+    //Comments Region
+    public Observable<CommentsResponse> loadComments(String token, int tourId) {
+        return commentsService.getCommentsByTour("Bearer " + token, tourId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<BaseResponse> createNewComment(String token, CreateCommentRequest request){
+        return commentsService.createNewComment("Bearer " + token, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+    //    Payment Region
     public Observable<PaymentResponse> makePayment(String token, PaymentRequest request){
         return stripeService.makePayment("Bearer " + token, request)
                 .subscribeOn(Schedulers.io())

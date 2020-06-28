@@ -2,6 +2,8 @@ package app.karacal.models;
 
 import java.util.Date;
 
+import app.karacal.retrofit.models.response.CommentsResponse;
+
 public class Comment {
 
     private String author;
@@ -12,6 +14,12 @@ public class Comment {
         this.author = author;
         this.date = date;
         this.comment = comment;
+    }
+
+    public Comment(CommentsResponse.CommentResponse commentResponse) {
+        this.author = commentResponse.getClientName() + commentResponse.getClientSecondName();
+        this.date = new Date();
+        this.comment = commentResponse.getText();
     }
 
     public String getAuthor() {

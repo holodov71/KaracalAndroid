@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.models.Track;
+import app.karacal.retrofit.CommentsService;
 import app.karacal.retrofit.DateTypeAdapter;
 import app.karacal.retrofit.GuideService;
 import app.karacal.retrofit.InitService;
@@ -77,6 +78,11 @@ public class AppModule {
     @Provides
     public StripeService tracksService(Retrofit retrofit){
         return retrofit.create(StripeService.class);
+    }
+
+    @Provides
+    public CommentsService commentsService(Retrofit retrofit){
+        return retrofit.create(CommentsService.class);
     }
 
 }

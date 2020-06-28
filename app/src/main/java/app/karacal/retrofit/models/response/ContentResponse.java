@@ -12,6 +12,8 @@ public class ContentResponse {
     private String city;
     private String desc;
     private String img;
+    private String latitude;
+    private String longitude;
     private List<TrackResponse> audio;
     private int rating;
     private String type;
@@ -77,6 +79,34 @@ public class ContentResponse {
 
     public String getUpdatedAt() {
         return updatedAt;
+    }
+
+    public double parseLatitude(){
+        return parseCoordinate(latitude);
+    }
+
+    public double parseLongitude(){
+        return parseCoordinate(longitude);
+    }
+
+    private double parseCoordinate(String coordinate){
+        double result = 0.0;
+        try{
+            result = Double.parseDouble(coordinate);
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
+    public int parseDuration(){
+        int result = 0;
+        if (audio != null && !audio.isEmpty()){
+            for(TrackResponse trackResponse: audio){
+                result += trackResponse.getDuration();
+            }
+        }
+        return result;
     }
 
     @Override

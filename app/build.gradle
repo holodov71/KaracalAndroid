@@ -18,7 +18,7 @@ android {
 
     def versionMajor = 1
     def versionMinor = 0
-    def versionPatch = 1
+    def versionPatch = 2
 
     def code = versionMajor * 100 + versionMinor
 
@@ -82,8 +82,8 @@ dependencies {
     //Map utils
     implementation 'com.google.maps.android:android-maps-utils:0.5'
     //Navigation
-    implementation "androidx.navigation:navigation-fragment:2.2.2"
-    implementation "androidx.navigation:navigation-ui:2.2.2"
+    implementation "androidx.navigation:navigation-fragment:2.3.0"
+    implementation "androidx.navigation:navigation-ui:2.3.0"
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
@@ -128,4 +128,13 @@ dependencies {
 
     // OneSignal
     implementation 'com.onesignal:OneSignal:[3.13.0, 3.99.99]'
+
+    // Paging library
+    def paging_version = "3.0.0-alpha02"
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-rxjava2:$paging_version"
+//    def paging_version = "2.1.2"
+//    implementation "androidx.paging:paging-runtime:$paging_version"
+//    implementation "androidx.paging:paging-rxjava2:$paging_version"
+
 }

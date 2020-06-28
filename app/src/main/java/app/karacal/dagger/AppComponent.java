@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import app.karacal.App;
 import app.karacal.activities.ApplyPrivacyPolicyActivity;
 import app.karacal.activities.AudioActivity;
+import app.karacal.activities.CommentsActivity;
 import app.karacal.activities.EditAudioActivity;
 import app.karacal.activities.EditGuideActivity;
 import app.karacal.activities.FollowMyListeningsActivity;
@@ -25,6 +26,7 @@ import app.karacal.fragments.RegistrationContactsFragment;
 import app.karacal.fragments.RegistrationInterestsFragment;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import app.karacal.viewmodels.CategoryActivityViewModel;
+import app.karacal.viewmodels.CommentsActivityViewModel;
 import app.karacal.viewmodels.EditGuideActivityViewModel;
 import app.karacal.viewmodels.MainActivityViewModel;
 import dagger.BindsInstance;
@@ -54,6 +56,8 @@ public interface AppComponent {
 
     void inject(AudioActivity activity);
 
+    void inject(CommentsActivity activity);
+
     void inject(PaymentActivity activity);
 
     void inject(LoginTypeSelectFragment fragment);
@@ -81,6 +85,8 @@ public interface AppComponent {
     void inject (AudioActivityViewModel viewModel);
 
     void inject (EditGuideActivityViewModel viewModel);
+
+    void inject (CommentsActivityViewModel viewModel);
 
     @Component.Builder
     interface Builder {

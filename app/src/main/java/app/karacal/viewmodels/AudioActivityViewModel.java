@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -25,9 +26,12 @@ import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.TokenHelper;
 import app.karacal.models.Album;
+import app.karacal.models.Comment;
 import app.karacal.models.Guide;
 import app.karacal.models.Player;
 import app.karacal.models.Tour;
+import app.karacal.retrofit.models.response.CommentsResponse;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 public class AudioActivityViewModel extends ViewModel {
@@ -65,12 +69,13 @@ public class AudioActivityViewModel extends ViewModel {
     @Inject
     ApiHelper apiHelper;
 
-    private Disposable disposable;
+    private CompositeDisposable disposable = new CompositeDisposable();
 
 
     private SingleLiveEvent<Void> listenAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Long> paymentAction = new SingleLiveEvent<>();
     private SingleLiveEvent<String> errorAction = new SingleLiveEvent<>();
+    private MutableLiveData<List<Comment>> commentsLiveData = new MutableLiveData<>();
 
     public SingleLiveEvent<Void> getListenAction() {
         return listenAction;
@@ -78,6 +83,10 @@ public class AudioActivityViewModel extends ViewModel {
 
     public SingleLiveEvent<Long> getPaymentAction() {
         return paymentAction;
+    }
+
+    public LiveData<List<Comment>> getComments(){
+        return commentsLiveData;
     }
 
     private final Tour tour;
@@ -145,28 +154,44 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public void onListenTourClicked(){
-        if (profileHolder.isHasSubscription()){
-            Log.v("onListenTourClicked", "has Subscription");
+        if(tour.getPrice() == 0){
             listenAction.call();
         } else {
-            if(disposable != null){
-                disposable.dispose();
-            }
-            disposable = apiHelper.loadTourById(PreferenceHelper.loadToken(App.getInstance()), tour.getId())
-                    .subscribe(response -> {
-                        if (response.isSuccess()) {
-                            if (response.isPaid()){
-                                listenAction.call();
+            if (profileHolder.isHasSubscription()) {
+                Log.v("onListenTourClicked", "has Subscription");
+                listenAction.call();
+            } else {
+                disposable.add(apiHelper.loadTourById(PreferenceHelper.loadToken(App.getInstance()), tour.getId())
+                        .subscribe(response -> {
+                            if (response.isSuccess()) {
+                                if (response.isPaid()) {
+                                    listenAction.call();
+                                } else {
+                                    paymentAction.setValue(tour.getPrice());
+                                }
                             } else {
-                                paymentAction.setValue(tour.getPrice());
+                                errorAction.setValue(response.getErrorMessage());
                             }
-                        } else {
-                            errorAction.setValue(response.getErrorMessage());
-                        }
-                    }, throwable -> {
-                        errorAction.setValue(App.getResString(R.string.connection_problem));
-                    });
+                        }, throwable -> {
+                            errorAction.setValue(App.getResString(R.string.connection_problem));
+                        }));
+            }
         }
+    }
+
+    public void loadComments(){
+        disposable.add(apiHelper.loadComments(PreferenceHelper.loadToken(App.getInstance()), tour.getId())
+                .subscribe(response -> {
+                    List<Comment> comments = new ArrayList<>();
+                    if (response.isSuccess()) {
+                        for (CommentsResponse.CommentResponse comment: response.getComments()){
+                            comments.add(new Comment(comment));
+                        }
+                    }
+                    commentsLiveData.setValue(comments);
+                }, throwable -> {
+                    commentsLiveData.setValue(new ArrayList<>());
+                }));
     }
 
     @Override

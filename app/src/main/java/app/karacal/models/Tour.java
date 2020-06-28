@@ -27,11 +27,12 @@ public class Tour implements Serializable {
     private int duration;
     private int authorId;
     private String author;
+    private String address;
     private double lat;
     private double lng;
     private List<Track> audio;
 
-    public Tour(int id, int image, String title, String description, long price, int rating, int duration, int authorId, double lat, double lng) {
+    public Tour(int id, int image, String title, String description, long price, int rating, int duration, int authorId, double lat, double lng, String address) {
         this.id = id;
         this.image = image;
         this.title = title;
@@ -42,6 +43,7 @@ public class Tour implements Serializable {
         this.authorId = authorId;
         this.lat = lat;
         this.lng = lng;
+        this.address = address;
     }
 
     public Tour(TourResponse tourResponse) {
@@ -58,6 +60,7 @@ public class Tour implements Serializable {
         this.authorId = tourResponse.getGuideId();
         this.lat = tourResponse.getLatitude();
         this.lng = tourResponse.getLongitude();
+        this.address = tourResponse.getAddress();
         Log.v("TourResponse", "Finish = "+this.toString());
 
     }
@@ -72,10 +75,11 @@ public class Tour implements Serializable {
         this.description = content.getDesc();
         this.price = 0;
         this.rating = content.getRating();
-        this.duration = 100;
+        this.duration = content.parseDuration();
         this.author = content.getAuthor();
-        this.lat = 48.858222;
-        this.lng = 2.2945;
+        this.lat = content.parseLatitude();
+        this.lng = content.parseLongitude();
+        this.address = content.getAddress();
         audio = new ArrayList<>();
         for (TrackResponse response: content.getAudio()){
             audio.add(new Track(response));
@@ -91,6 +95,7 @@ public class Tour implements Serializable {
         this.rating = entity.rating;
         this.duration = entity.duration;
         this.authorId = 1;
+        this.address = "";
         this.lat = entity.lat;
         this.lng = entity.lng;
     }
@@ -168,6 +173,10 @@ public class Tour implements Serializable {
         return new Album(title, tracks);
     }
 
+    public String getAddress() {
+        return address;
+    }
+
     @Override
     public String toString() {
         return "Tour{" +
@@ -183,6 +192,7 @@ public class Tour implements Serializable {
                 ", author=" + author +
                 ", lat=" + lat +
                 ", lng=" + lng +
+                ", address=" + address +
                 '}';
     }
 }

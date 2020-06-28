@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
+import app.karacal.activities.CommentsActivity;
 import app.karacal.activities.ProfileActivity;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ImageHelper;
@@ -35,6 +36,7 @@ import apps.in.android_logger.LogFragment;
 public class AudioDescriptionFragment extends LogFragment {
 
     private AudioActivityViewModel viewModel;
+    TextView textViewComments;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,15 +91,6 @@ public class AudioDescriptionFragment extends LogFragment {
         ImageView buttonPlay = view.findViewById(R.id.buttonPlay);
         buttonPlay.setOnClickListener(v -> {
             viewModel.onListenTourClicked();
-//            long price = viewModel.getTour().getPrice();
-//            if (price != 0){
-//                Activity activity = getActivity();
-//                if (activity != null) {
-//                    ((AudioActivity) activity).showSelectPlanDialog(price);
-//                }
-//            } else {
-//                NavHostFragment.findNavController(this).navigate(R.id.audioPlayerFragment);
-//            }
         });
         ImageView buttonLike = view.findViewById(R.id.buttonLike);
         buttonLike.setOnClickListener(v -> buttonLike.setSelected(!buttonLike.isSelected()));
@@ -136,24 +129,28 @@ public class AudioDescriptionFragment extends LogFragment {
 
     private void setupAddress(View view){
         TextView textView = view.findViewById(R.id.textViewAddress);
-        textView.setText("1,rue Beyouroux, 79008, Paris");
+        textView.setText(viewModel.getTour().getAddress());
     }
 
     private void setupDuration(View view){
         TextView textView = view.findViewById(R.id.textViewDuration);
         int duration = viewModel.getTour().getDuration();
-        int hours = duration / 60;
+        int durationInMinutes = duration / 60;
+        int hours = durationInMinutes / 60;
         String hoursText = hours > 0 ? String.format(Locale.getDefault(), "%d %s", hours, getContext().getString(hours > 1 ? R.string.hours : R.string.hour)) : "";
-        int minutes = duration % 60;
+        int minutes = durationInMinutes % 60;
         String minutesText = String.format(Locale.getDefault(), "%d %s", minutes, getContext().getString(minutes != 1 ? R.string.minutes : R.string.minute));
         textView.setText(String.format("%s %s", hoursText, minutesText));
     }
 
     private void setupReviews(View view){
-        int count = 3;
-        TextView textView = view.findViewById(R.id.textViewReviews);
-        textView.setText(getContext().getString(R.string.comments_count_format, count, getContext().getString(count != 1 ? R.string.comments : R.string.comment)));
-//        textView.setOnClickListener(v -> NavigationHelper.startCommentsActivity(getActivity()));
+        textViewComments = view.findViewById(R.id.textViewReviews);
+        setCommentsCount(0);
+        textViewComments.setOnClickListener(v -> {
+            CommentsActivity.Args args = new CommentsActivity.Args(viewModel.getTour().getId());
+            NavigationHelper.startCommentsActivity(getActivity(), args);
+        });
+        viewModel.loadComments();
     }
 
     private void setupAuthor(View view){
@@ -197,6 +194,16 @@ public class AudioDescriptionFragment extends LogFragment {
                 ((AudioActivity) activity).showSelectPlanDialog(tourPrice);
             }
         });
+
+        viewModel.getComments().observe(getViewLifecycleOwner(), comments -> {
+            if (comments != null){
+                setCommentsCount(comments.size());
+            }
+        });
+    }
+
+    private void setCommentsCount(int count){
+        textViewComments.setText(getString(R.string.comments_count_format, count, getString(count != 1 ? R.string.comments : R.string.comment)));
     }
 
 
