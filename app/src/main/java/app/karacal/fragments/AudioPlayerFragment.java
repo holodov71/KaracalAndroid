@@ -19,9 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
 
 import app.karacal.R;
+import app.karacal.activities.CommentsActivity;
 import app.karacal.adapters.TrackListAdapter;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ImageHelper;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Player;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.AudioActivityViewModel;
@@ -35,9 +37,12 @@ public class AudioPlayerFragment extends LogFragment {
 
     private TrackListAdapter adapter;
 
+    private ProgressBar progressDownloading;
+    private ImageView buttonDownload;
     private ImageView playButton;
     private ImageView buttonPause;
     private TextView tracksTextView;
+    private TextView commentsTextView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +66,8 @@ public class AudioPlayerFragment extends LogFragment {
         setupPlayerControls(view);
         viewModel.loadTracks();
         observeTracks();
+        observeDownloading();
+        observeComments();
 
         return view;
     }
@@ -71,9 +78,12 @@ public class AudioPlayerFragment extends LogFragment {
     }
 
     private void setupDownloadButton(View view) {
-        ImageView buttonDownload = view.findViewById(R.id.buttonDownload);
-        buttonDownload.setVisibility(View.GONE);
-        buttonDownload.setOnClickListener(v -> DummyHelper.dummyAction(getContext()));
+        buttonDownload = view.findViewById(R.id.buttonDownload);
+        progressDownloading = view.findViewById(R.id.progressDownloading);
+        buttonDownload.setOnClickListener(v -> {
+            onDownloadingStarted();
+            viewModel.downloadTour(requireContext());
+        });
     }
 
 
@@ -98,13 +108,13 @@ public class AudioPlayerFragment extends LogFragment {
     }
 
     private void setupCommentsTextView(View view) {
-        TextView commentsTextView = view.findViewById(R.id.textViewComments);
-        commentsTextView.setVisibility(View.GONE);
-        int count = 3;
-        commentsTextView.setText(getString(R.string.comments_count_format, count, getString(count != 1 ? R.string.comments : R.string.comment)));
+        commentsTextView = view.findViewById(R.id.textViewComments);
+        setCommentsCount(0);
         commentsTextView.setOnClickListener(v -> {
-//            NavigationHelper.startCommentsActivity(getActivity());
+            CommentsActivity.Args args = new CommentsActivity.Args(viewModel.getTour().getId());
+            NavigationHelper.startCommentsActivity(getActivity(), args);
         });
+        viewModel.loadComments();
     }
 
     private void setupTracksList(View view) {
@@ -179,6 +189,45 @@ public class AudioPlayerFragment extends LogFragment {
             int count = album.getTracks().size();
             tracksTextView.setText(getString(R.string.tracks_count_format, count, getString(count != 1 ? R.string.tracks : R.string.track)));
         });
+    }
+
+    private void observeComments(){
+        viewModel.getComments().observe(getViewLifecycleOwner(), comments -> {
+            if (comments != null){
+                setCommentsCount(comments.size());
+            }
+        });
+    }
+
+    private void setCommentsCount(int count){
+        commentsTextView.setText(getString(R.string.comments_count_format, count, getString(count != 1 ? R.string.comments : R.string.comment)));
+    }
+
+    private void observeDownloading(){
+        viewModel.getTourDownloadedAction().observe(getViewLifecycleOwner(), action -> {
+            onDownloadingFinished();
+            ToastHelper.showToast(requireContext(), getString(R.string.tour_downloaded));
+        });
+
+        viewModel.getTourAlreadyDownloadedAction().observe(getViewLifecycleOwner(), action -> {
+            onDownloadingFinished();
+            ToastHelper.showToast(requireContext(), getString(R.string.tour_already_downloaded));
+        });
+
+        viewModel.getDownloadingErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
+            onDownloadingFinished();
+            ToastHelper.showToast(requireContext(), errorMsg);
+        });
+    }
+
+    private void onDownloadingStarted(){
+        progressDownloading.setVisibility(View.VISIBLE);
+        buttonDownload.setImageDrawable(null);
+    }
+
+    private void onDownloadingFinished(){
+        progressDownloading.setVisibility(View.GONE);
+        buttonDownload.setImageResource(R.drawable.ic_download);
     }
 
 }

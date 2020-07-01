@@ -10,7 +10,9 @@ public class Guide {
     private String secondName;
     private String localization;
     private String description;
+    private int countGuides;
     private int avatarId;
+    private String avatarUrl;
 
     public Guide(int id, String firstName, String secondName, String localization, String  description, int avatarId) {
         this.id = id;
@@ -27,7 +29,9 @@ public class Guide {
         this.secondName = guideResponse.getClient().getSecondName();
         this.localization = guideResponse.getClient().getLocation();
         this.description = guideResponse.getDescription();
+        this.countGuides = guideResponse.getTourIndexesCount();
         this.avatarId = R.mipmap.avatar_example;
+        this.avatarUrl = guideResponse.getClient().getAvatar();
     }
 
     public int getId() {
@@ -56,5 +60,13 @@ public class Guide {
 
     public int getAvatarId() {
         return avatarId;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public int getCountGuides() {
+        return countGuides;
     }
 }

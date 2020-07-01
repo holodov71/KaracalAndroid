@@ -15,6 +15,7 @@ public class Profile {
     private String location;
     private String referralCode;
     private String authKey;
+    private String avatar;
 
     public int getId() {
         return id;
@@ -82,5 +83,9 @@ public class Profile {
 
     public void setAuthKey(String authKey) {
         this.authKey = authKey;
+    }
+
+    public String getAvatar() {
+        return avatar;
     }
 }

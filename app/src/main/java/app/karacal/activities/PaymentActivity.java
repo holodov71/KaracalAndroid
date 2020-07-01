@@ -77,7 +77,6 @@ public class PaymentActivity extends LogActivity {
     private CompositeDisposable disposable = new CompositeDisposable();
 
     private Stripe stripe;
-    private String paymentIntentClientSecret;
 
     private long amount;
     private int tourId;
@@ -97,7 +96,6 @@ public class PaymentActivity extends LogActivity {
         amount = args.getAmount();
         subscriptionId = args.getSubscriptionId();
 
-        paymentIntentClientSecret = getString(R.string.stripe_secret_api_key);
         stripe = new Stripe(getApplicationContext(), getString(R.string.stripe_publishable_api_key));
 
         setupLoading();
@@ -122,31 +120,9 @@ public class PaymentActivity extends LogActivity {
         payButton.setOnClickListener(v -> {
             KeyboardHelper.hideKeyboard(PaymentActivity.this, v);
 
-//            PaymentMethodCreateParams params = cardInputWidget.getPaymentMethodCreateParams();
-//            if (params != null){
-//
-//                stripe.createPaymentMethod(params, new ApiResultCallback<PaymentMethod>() {
-//                    @Override
-//                    public void onSuccess(PaymentMethod paymentMethod) {
-//                    }
-//
-//                    @Override
-//                    public void onError(@NotNull Exception e) {
-//
-//                    }
-//                });
-//
-//            }
-
             if (cardInputWidget.getCard() != null) {
                 Log.v("PaymentMethodCreate", "cardInputWidget.getCard() = "+cardInputWidget.getCard());
 
-//                ConfirmPaymentIntentParams confirmParams = ConfirmPaymentIntentParams
-//                        .createWithPaymentMethodCreateParams(params, paymentIntentClientSecret);
-//                stripe.confirmPayment(this, confirmParams);
-
-//                Card card = Card.create("4242424242424242", params., paymentMethod.card.expiryYear, "111");
-//
                 showLoading();
                 stripe.createCardToken(cardInputWidget.getCard(), new ApiResultCallback<Token>() {
                     @Override
@@ -160,8 +136,6 @@ public class PaymentActivity extends LogActivity {
                         ToastHelper.showToast(PaymentActivity.this, getString(R.string.common_error));
                     }
                 });
-
-
 
             }
         });
@@ -181,6 +155,7 @@ public class PaymentActivity extends LogActivity {
                 .subscribe(response -> {
                     Log.v("makePayment", "Success response = " + response);
                     if (response.isSuccess()) {
+                        profileHolder.addTourPurchase(tourId);
                         ToastHelper.showToast(this, getString(R.string.payment_success));
                         Intent intent = new Intent();
                         intent.putExtra(RESULT_URL, response.getReceiptUrl());

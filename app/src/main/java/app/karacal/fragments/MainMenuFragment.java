@@ -32,6 +32,7 @@ import app.karacal.activities.CategoryActivity;
 import app.karacal.activities.ProfileActivity;
 import app.karacal.adapters.GuideHorizontalListAdapter;
 import app.karacal.adapters.TourHorizontalListAdapter;
+import app.karacal.data.DownloadedToursCache;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
@@ -164,8 +165,9 @@ public class MainMenuFragment extends Fragment {
         setupGuideCategory(categoryRecommendedGuide, 1, getString(R.string.recommended_for_you));
 
         View categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
-        categoryDownloaded.setVisibility(View.GONE);
-//        setupTourCategory(categoryDownloaded, 2, getString(R.string.already_downloaded), tourRepository.getOriginalTours());
+        if (getContext() != null) {
+            setupTourCategory(categoryDownloaded, 2, getString(R.string.already_downloaded), DownloadedToursCache.getInstance(getContext()).getToursList());
+        }
     }
 
     private void setupTourCategory(View categoryView, int id, String title, ArrayList<Tour> tours) {

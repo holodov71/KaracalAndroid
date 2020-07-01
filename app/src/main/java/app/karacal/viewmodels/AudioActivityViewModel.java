@@ -1,15 +1,22 @@
 package app.karacal.viewmodels;
 
+import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,22 +24,28 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.DownloadedToursCache;
 import app.karacal.data.repository.AlbumRepository;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
-import app.karacal.helpers.ToastHelper;
-import app.karacal.helpers.TokenHelper;
+import app.karacal.interfaces.ActionCallback;
+import app.karacal.interfaces.ErrorCallback;
 import app.karacal.models.Album;
 import app.karacal.models.Comment;
 import app.karacal.models.Guide;
 import app.karacal.models.Player;
 import app.karacal.models.Tour;
+import app.karacal.models.Track;
 import app.karacal.retrofit.models.response.CommentsResponse;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 public class AudioActivityViewModel extends ViewModel {
 
@@ -74,8 +87,12 @@ public class AudioActivityViewModel extends ViewModel {
 
     private SingleLiveEvent<Void> listenAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Long> paymentAction = new SingleLiveEvent<>();
+    private SingleLiveEvent<Void> tourDownloadedAction = new SingleLiveEvent<>();
+    private SingleLiveEvent<Void> tourAlreadyDownloadedAction = new SingleLiveEvent<>();
+    private SingleLiveEvent<String> downloadingErrorAction = new SingleLiveEvent<>();
     private SingleLiveEvent<String> errorAction = new SingleLiveEvent<>();
     private MutableLiveData<List<Comment>> commentsLiveData = new MutableLiveData<>();
+    private MutableLiveData<Guide> guideLiveData = new MutableLiveData<>();
 
     public SingleLiveEvent<Void> getListenAction() {
         return listenAction;
@@ -85,8 +102,28 @@ public class AudioActivityViewModel extends ViewModel {
         return paymentAction;
     }
 
+    public SingleLiveEvent<Void> getTourDownloadedAction() {
+        return tourDownloadedAction;
+    }
+
+    public SingleLiveEvent<Void> getTourAlreadyDownloadedAction() {
+        return tourAlreadyDownloadedAction;
+    }
+
+    public SingleLiveEvent<String> getErrorAction() {
+        return errorAction;
+    }
+
+    public SingleLiveEvent<String> getDownloadingErrorAction() {
+        return downloadingErrorAction;
+    }
+
     public LiveData<List<Comment>> getComments(){
         return commentsLiveData;
+    }
+
+    public LiveData<Guide> getGuide(){
+        return guideLiveData;
     }
 
     private final Tour tour;
@@ -118,8 +155,8 @@ public class AudioActivityViewModel extends ViewModel {
         return player;
     }
 
-    public Guide getAuthor(){
-        return author;
+    public int getGuideId(){
+        return tour.getAuthorId();
     }
 
     public int getCountGuides(){
@@ -154,53 +191,126 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public void onListenTourClicked(){
+        checkAccess(() -> listenAction.call());
+    }
+
+    private void checkAccess(ActionCallback successCallback){
         if(tour.getPrice() == 0){
-            listenAction.call();
+            successCallback.invoke();
         } else {
-            if (profileHolder.isHasSubscription()) {
-                Log.v("onListenTourClicked", "has Subscription");
-                listenAction.call();
+            if (profileHolder.isHasSubscription() || profileHolder.isPurchasesContainsTour(tour.getId())) {
+                Log.v("checkAccess", "has Subscription");
+                successCallback.invoke();
             } else {
-                disposable.add(apiHelper.loadTourById(PreferenceHelper.loadToken(App.getInstance()), tour.getId())
-                        .subscribe(response -> {
-                            if (response.isSuccess()) {
-                                if (response.isPaid()) {
-                                    listenAction.call();
-                                } else {
-                                    paymentAction.setValue(tour.getPrice());
-                                }
-                            } else {
-                                errorAction.setValue(response.getErrorMessage());
-                            }
-                        }, throwable -> {
-                            errorAction.setValue(App.getResString(R.string.connection_problem));
-                        }));
+                paymentAction.setValue(tour.getPrice());
             }
         }
     }
 
     public void loadComments(){
-        disposable.add(apiHelper.loadComments(PreferenceHelper.loadToken(App.getInstance()), tour.getId())
-                .subscribe(response -> {
-                    List<Comment> comments = new ArrayList<>();
-                    if (response.isSuccess()) {
-                        for (CommentsResponse.CommentResponse comment: response.getComments()){
-                            comments.add(new Comment(comment));
+        List<Comment> list = commentsLiveData.getValue();
+        if (list == null || list.isEmpty()) {
+            disposable.add(apiHelper.loadComments(PreferenceHelper.loadToken(App.getInstance()), tour.getId())
+                    .subscribe(response -> {
+                        List<Comment> comments = new ArrayList<>();
+                        if (response.isSuccess()) {
+                            for (CommentsResponse.CommentResponse comment : response.getComments()) {
+                                comments.add(new Comment(comment));
+                            }
                         }
-                    }
-                    commentsLiveData.setValue(comments);
-                }, throwable -> {
-                    commentsLiveData.setValue(new ArrayList<>());
-                }));
+                        commentsLiveData.setValue(comments);
+                    }, throwable -> {
+                        commentsLiveData.setValue(new ArrayList<>());
+                    }));
+        }
+    }
+
+    public void downloadTour(Context context) {
+        if(DownloadedToursCache.getInstance(context).containsTour(tour.getId())){
+            tourAlreadyDownloadedAction.call();
+        } else {
+            checkAccess(() -> disposable.add(Single.just(tour.getAudio())
+                    .flattenAsObservable(items -> items)
+                    .flatMap(this::downloadTrack)
+                    .toList()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(tracks -> {
+                        boolean allTracksDownloaded = true;
+                        for (Track track : tracks) {
+                            if (track.getFileUri() == null) {
+                                allTracksDownloaded = false;
+                                break;
+                            } else {
+                                Log.v("Tracks downloaded", track.getFileUri());
+                            }
+                        }
+                        if (allTracksDownloaded) {
+                            tour.setAudio(tracks);
+                            DownloadedToursCache.getInstance(context).addDownloadedTour(context, tour);
+                            tourDownloadedAction.call();
+                        } else {
+                            downloadingErrorAction.setValue(App.getResString(R.string.error_download_tour));
+                        }
+                    }, throwable -> {
+                        downloadingErrorAction.setValue(App.getResString(R.string.connection_problem));
+                    })));
+        }
+    }
+
+    private Observable<Track> downloadTrack(Track track){
+        Log.v("downloadTrack", track.getFilename());
+
+        try {
+            URL u = new URL(track.getFilename());
+            InputStream is = u.openStream();
+
+            DataInputStream dis = new DataInputStream(is);
+
+            byte[] buffer = new byte[1024];
+            int length;
+
+            File imageDir = new File(App.getInstance().getExternalFilesDir(null), "audio");
+            if (!imageDir.exists()) {
+                imageDir.mkdirs();
+            }
+            File newFile = new File(imageDir, track.getTitle());
+
+
+            Log.v("downloadTrack", "Path file = "+newFile.getPath());
+
+
+            FileOutputStream fos = new FileOutputStream(newFile);
+            while ((length = dis.read(buffer))>0) {
+                fos.write(buffer, 0, length);
+            }
+            track.setFileUri(newFile.getPath());
+
+        } catch (MalformedURLException mue) {
+            Log.e("downloadTrack", "malformed url error", mue);
+        } catch (IOException ioe) {
+            Log.e("downloadTrack", "io error", ioe);
+        } catch (SecurityException se) {
+            Log.e("downloadTrack", "security error", se);
+        }
+
+        return Observable.just(track);
+    }
+
+    public void loadAuthor(){
+        disposable.add(apiHelper.loadGuide(PreferenceHelper.loadToken(App.getInstance()), String.valueOf(tour.getAuthorId()))
+                .subscribe(response ->
+                    guideLiveData.setValue(new Guide(response))
+                , throwable ->
+                    guideLiveData.setValue(null)
+                ));
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
         player.dispose();
-        if (disposable != null){
-            disposable.dispose();
-        }
+        disposable.dispose();
     }
 
 

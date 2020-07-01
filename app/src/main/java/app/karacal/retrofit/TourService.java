@@ -10,6 +10,7 @@ import app.karacal.retrofit.models.response.SaveTourResponse;
 import app.karacal.retrofit.models.response.TourDetailsResponse;
 import app.karacal.retrofit.models.response.TourResponse;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -26,6 +27,9 @@ public interface TourService {
 
     @GET("contents")
     Observable<List<ContentResponse>> getContentsList(@Header("Authorization") String token);
+
+    @GET("contents")
+    Observable<List<ContentResponse>> getContentsPage(@Header("Authorization") String token);
 
     @POST("contents/by-location")
     Observable<List<ContentResponse>> loadNearTours(@Header("Authorization") String token, @Body NearToursRequest request);

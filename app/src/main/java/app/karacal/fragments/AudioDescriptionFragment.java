@@ -2,11 +2,12 @@ package app.karacal.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,9 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.Locale;
 
@@ -24,9 +22,9 @@ import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CommentsActivity;
 import app.karacal.activities.ProfileActivity;
-import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.ShareHelper;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Guide;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.AudioActivityViewModel;
@@ -36,7 +34,14 @@ import apps.in.android_logger.LogFragment;
 public class AudioDescriptionFragment extends LogFragment {
 
     private AudioActivityViewModel viewModel;
-    TextView textViewComments;
+    private TextView textViewComments;
+    private View progressLoading;
+    private ProgressBar progressDownloading;
+    private ImageView buttonDownload;
+    private ImageView imageViewAuthor;
+    private TextView textViewAuthor;
+    private TextView textViewGuidesCount;
+    private View buttonAuthor;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +65,7 @@ public class AudioDescriptionFragment extends LogFragment {
         setupDuration(view);
         setupReviews(view);
         setupAuthor(view);
+        setupProgressLoading(view);
         return view;
     }
 
@@ -75,9 +81,12 @@ public class AudioDescriptionFragment extends LogFragment {
     }
 
     private void setupDownloadButton(View view) {
-        ImageView buttonDownload = view.findViewById(R.id.buttonDownload);
-        buttonDownload.setVisibility(View.GONE);
-        buttonDownload.setOnClickListener(v -> DummyHelper.dummyAction(getContext()));
+        buttonDownload = view.findViewById(R.id.buttonDownload);
+        progressDownloading = view.findViewById(R.id.progressDownloading);
+        buttonDownload.setOnClickListener(v -> {
+            onDownloadingStarted();
+            viewModel.downloadTour(requireContext());
+        });
     }
 
     private void setupBackground(View view){
@@ -90,6 +99,7 @@ public class AudioDescriptionFragment extends LogFragment {
         buttonShare.setOnClickListener(v -> ShareHelper.share(getActivity(), "Share tour", viewModel.getTour().getTitle(), viewModel.getTour().getDescription()));
         ImageView buttonPlay = view.findViewById(R.id.buttonPlay);
         buttonPlay.setOnClickListener(v -> {
+            showLoading();
             viewModel.onListenTourClicked();
         });
         ImageView buttonLike = view.findViewById(R.id.buttonLike);
@@ -154,41 +164,66 @@ public class AudioDescriptionFragment extends LogFragment {
     }
 
     private void setupAuthor(View view){
-//        String author = "Alexander McQueen";
-        Guide author = viewModel.getAuthor();
-        int count = viewModel.getCountGuides();
-        ImageView imageView = view.findViewById(R.id.imageViewAuthor);
-        TextView textViewAuthor = view.findViewById(R.id.textViewAuthor);
-        if (author != null) {
-            if (author.getAvatarId() == -1) {
-                imageView.setImageResource(R.drawable.ic_person);
-            } else {
-                imageView.setImageResource(author.getAvatarId());
-            }
-
-            textViewAuthor.setText(author.getName());
-
-            ConstraintLayout buttonAuthor = view.findViewById(R.id.buttonAuthor);
-            buttonAuthor.setOnClickListener(v -> {
-                ProfileActivity.Args args = new ProfileActivity.Args(author.getId());
-                NavigationHelper.startProfileActivity(getActivity(), args);
-            });
-        } else {
-            imageView.setImageResource(R.drawable.ic_person);
-            textViewAuthor.setText(viewModel.getTour().getAuthor());
-        }
-        TextView textViewGuidesCount = view.findViewById(R.id.textViewGuidesCount);
-        textViewGuidesCount.setText(getContext().getString(R.string.guide_count_format, count, getContext().getString(count != 1 ? R.string.guides : R.string.guide)));
+        imageViewAuthor = view.findViewById(R.id.imageViewAuthor);
+        textViewAuthor = view.findViewById(R.id.textViewAuthor);
+        buttonAuthor = view.findViewById(R.id.buttonAuthor);
+        buttonAuthor.setOnClickListener(v -> {
+            ProfileActivity.Args args = new ProfileActivity.Args(viewModel.getGuideId());
+            NavigationHelper.startProfileActivity(getActivity(), args);
+        });
+        textViewGuidesCount = view.findViewById(R.id.textViewGuidesCount);
         ImageView imageViewAlert = view.findViewById(R.id.imageViewAuthorAlert);
 //        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
 
+        viewModel.loadAuthor();
+    }
+
+    private void setAuthorData(Guide guide){
+        if (guide != null) {
+            textViewAuthor.setText(guide.getName());
+            ImageHelper.setImage(imageViewAuthor, guide.getAvatarUrl(), R.drawable.ic_person, false);
+            textViewGuidesCount.setText(getString(R.string.guide_count_format, guide.getCountGuides(), getString(guide.getCountGuides() != 1 ? R.string.guides : R.string.guide)));
+        } else {
+            buttonAuthor.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupProgressLoading(View view){
+        progressLoading = view.findViewById(R.id.progressLoading);
+    }
+
+    private void showLoading(){
+        progressLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading(){
+        Log.v("hideLoading", "hideLoading");
+        progressLoading.setVisibility(View.GONE);
     }
 
     private void observeViewModel() {
-        viewModel.getListenAction().observe(getViewLifecycleOwner(), action ->
-                NavHostFragment.findNavController(this).navigate(R.id.audioPlayerFragment));
+        viewModel.getTourDownloadedAction().observe(getViewLifecycleOwner(), action -> {
+            onDownloadingFinished();
+            ToastHelper.showToast(requireContext(), getString(R.string.tour_downloaded));
+        });
+
+        viewModel.getTourAlreadyDownloadedAction().observe(getViewLifecycleOwner(), action -> {
+            onDownloadingFinished();
+            ToastHelper.showToast(requireContext(), getString(R.string.tour_already_downloaded));
+        });
+
+        viewModel.getDownloadingErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
+            onDownloadingFinished();
+            ToastHelper.showToast(requireContext(), errorMsg);
+        });
+
+        viewModel.getListenAction().observe(getViewLifecycleOwner(), action ->{
+                hideLoading();
+                NavHostFragment.findNavController(this).navigate(R.id.audioPlayerFragment);
+        });
 
         viewModel.getPaymentAction().observe(getViewLifecycleOwner(), tourPrice -> {
+            hideLoading();
             Activity activity = getActivity();
             if (activity != null) {
                 ((AudioActivity) activity).showSelectPlanDialog(tourPrice);
@@ -200,11 +235,27 @@ public class AudioDescriptionFragment extends LogFragment {
                 setCommentsCount(comments.size());
             }
         });
+
+        viewModel.getErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
+            hideLoading();
+            ToastHelper.showToast(requireContext(), errorMsg);
+        });
+
+        viewModel.getGuide().observe(getViewLifecycleOwner(), this::setAuthorData);
     }
 
     private void setCommentsCount(int count){
         textViewComments.setText(getString(R.string.comments_count_format, count, getString(count != 1 ? R.string.comments : R.string.comment)));
     }
 
+    private void onDownloadingStarted(){
+        progressDownloading.setVisibility(View.VISIBLE);
+        buttonDownload.setImageDrawable(null);
+    }
+
+    private void onDownloadingFinished(){
+        progressDownloading.setVisibility(View.GONE);
+        buttonDownload.setImageResource(R.drawable.ic_download);
+    }
 
 }

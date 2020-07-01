@@ -77,6 +77,7 @@ public class Tour implements Serializable {
         this.rating = content.getRating();
         this.duration = content.parseDuration();
         this.author = content.getAuthor();
+        this.authorId = content.getGuideId();
         this.lat = content.parseLatitude();
         this.lng = content.parseLongitude();
         this.address = content.getAddress();
@@ -163,6 +164,10 @@ public class Tour implements Serializable {
         return audio;
     }
 
+    public void setAudio(List<Track> audio) {
+        this.audio = audio;
+    }
+
     public Album getAlbum() {
         List<Track> tracks = new ArrayList<>();
         if (!audio.isEmpty()) {
@@ -189,10 +194,22 @@ public class Tour implements Serializable {
                 ", rating=" + rating +
                 ", duration=" + duration +
                 ", authorId=" + authorId +
-                ", author=" + author +
+                ", author='" + author + '\'' +
+                ", address='" + address + '\'' +
                 ", lat=" + lat +
                 ", lng=" + lng +
-                ", address=" + address +
+                ", audio=" + audio +
                 '}';
+    }
+
+    public void addAudioFiles(Tour downloadedTour) {
+        for (Track track: audio){
+            for (Track downloadedTrack: downloadedTour.audio){
+                if (track.getTitle().equals(downloadedTrack.getTitle())){
+                    track.setFileUri(downloadedTrack.getFileUri());
+                    break;
+                }
+            }
+        }
     }
 }

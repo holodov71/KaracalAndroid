@@ -6,6 +6,7 @@ public class ContentResponse {
     private int id;
     private String title;
     private String author;
+    private int guideId;
     private String date;
     private String tags;
     private String address;
@@ -31,6 +32,10 @@ public class ContentResponse {
 
     public String getAuthor() {
         return author;
+    }
+
+    public int getGuideId() {
+        return guideId;
     }
 
     public String getDate() {
@@ -115,6 +120,7 @@ public class ContentResponse {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", author='" + author + '\'' +
+                ", guideId='" + guideId + '\'' +
                 ", date='" + date + '\'' +
                 ", tags='" + tags + '\'' +
                 ", address='" + address + '\'' +

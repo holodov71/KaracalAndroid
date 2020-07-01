@@ -10,13 +10,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import app.karacal.App;
+import app.karacal.data.datasource.ToursPagingSource;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
@@ -26,7 +26,9 @@ import app.karacal.models.Guide;
 import app.karacal.models.Tour;
 import app.karacal.retrofit.models.request.CreateCustomerRequest;
 import app.karacal.retrofit.models.response.CreateCustomerResponse;
+import app.karacal.retrofit.models.response.SubscriptionWrapper;
 import app.karacal.retrofit.models.response.SubscriptionsListResponse;
+import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
 
 import static app.karacal.retrofit.models.response.SubscriptionsListResponse.STATUS_SUBSCRIPTION_ACTIVE;
@@ -108,25 +110,43 @@ public class MainActivityViewModel extends BaseLocationViewModel {
 
         String serverToken = PreferenceHelper.loadToken(App.getInstance());
 
-        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
-        disposable = apiHelper.createCustomer(serverToken, createCustomerRequest)
-                .map(CreateCustomerResponse::getId)
-                .flatMap(customerId -> apiHelper.loadSubscriptions(serverToken, customerId))
+        disposable = apiHelper.getPurchases(serverToken)
                 .subscribe(response -> {
                     Log.v("loadSubscriptions", "Success response = " + response);
-                    if (response.isSuccess()) {
-                        if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
-                            for (SubscriptionsListResponse.Subscription subs: response.getSubscriptions()){
-                                if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
-                                    profileHolder.setSubscription(subs.getId());
-                                    break;
-                                }
+                    if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
+                        for (SubscriptionWrapper subs: response.getSubscriptions()){
+                            if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
+                                profileHolder.setSubscription(subs.getId());
+                                break;
                             }
                         }
+                    }
+                    if (response.getIdTours() != null && !response.getIdTours().isEmpty()){
+                        profileHolder.setTourPurchases(response.getIdTours());
                     }
                 }, throwable -> {
                     Log.v("loadSubscriptions", "Error loading");
                 });
+
+//        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+//        disposable = apiHelper.createCustomer(serverToken, createCustomerRequest)
+//                .map(CreateCustomerResponse::getId)
+//                .flatMap(customerId -> apiHelper.loadSubscriptions(serverToken, customerId))
+//                .subscribe(response -> {
+//                    Log.v("loadSubscriptions", "Success response = " + response);
+//                    if (response.isSuccess()) {
+//                        if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
+//                            for (SubscriptionsListResponse.Subscription subs: response.getSubscriptions()){
+//                                if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
+//                                    profileHolder.setSubscription(subs.getId());
+//                                    break;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }, throwable -> {
+//                    Log.v("loadSubscriptions", "Error loading");
+//                });
 
     }
 

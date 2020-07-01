@@ -2,6 +2,9 @@ package app.karacal.helpers;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -15,6 +18,7 @@ public class ProfileHolder {
     private Profile profile;
 
     private String subscriptionId = null;
+    private List<Integer> tourPurchases = new ArrayList<>();
 
     @Inject
     public ProfileHolder(TokenHelper tokenHelper){
@@ -45,5 +49,22 @@ public class ProfileHolder {
 
     public String getSubscriptionId() {
         return subscriptionId;
+    }
+
+    public List<Integer> getTourPurchases() {
+        return tourPurchases;
+    }
+
+    public void setTourPurchases(List<Integer> tourPurchases) {
+        this.tourPurchases.clear();
+        this.tourPurchases.addAll(tourPurchases);
+    }
+
+    public boolean isPurchasesContainsTour(int tourId){
+        return tourPurchases.contains(tourId);
+    }
+
+    public void addTourPurchase(int tourId){
+        tourPurchases.add(tourId);
     }
 }

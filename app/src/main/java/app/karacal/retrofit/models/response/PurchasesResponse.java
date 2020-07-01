@@ -2,10 +2,13 @@ package app.karacal.retrofit.models.response;
 
 import java.util.List;
 
-public class SubscriptionsListResponse extends BaseResponse{
-    public static final String STATUS_SUBSCRIPTION_ACTIVE = "active";
-
+public class PurchasesResponse extends BaseResponse {
+    private List<Integer> idTours;
     private List<SubscriptionWrapper> subscriptions;
+
+    public List<Integer> getIdTours() {
+        return idTours;
+    }
 
     public List<SubscriptionWrapper> getSubscriptions() {
         return subscriptions;
@@ -13,8 +16,9 @@ public class SubscriptionsListResponse extends BaseResponse{
 
     @Override
     public String toString() {
-        return "SubscriptionsListResponse{" +
-                "subscriptions=" + subscriptions +
+        return "PurchasesResponse{" +
+                "idTours=" + idTours +
+                ", subscriptions=" + subscriptions +
                 '}';
     }
 }

@@ -15,4 +15,6 @@
     <color name="colorDisabled">#555461</color>
     <color name="colorControlActivated">#EF4516</color>
     <color name="colorControlNormal">#BDBDBD</color>
+    <color name="colorDarkBackground">#CC0C0B1D</color>
+
 </resources>

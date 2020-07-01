@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import app.karacal.App;
@@ -145,10 +146,20 @@ public class Player implements MediaPlayer.OnPreparedListener{
                 Log.v("Player", "Play track = "+track.getTitle());
                 Context context = App.getInstance();
                 Uri mediaPath;
-                if (track.getResId() == -1) { // audio from network
-                    mediaPath = Uri.parse(track.getFilename());
-                } else {
+                if (track.getResId() != -1) { // audio from network
                     mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
+                } else {
+                    File file = null;
+                    if (track.getFileUri() != null){
+                        file = new File(track.getFileUri());
+                    }
+                    if (file != null && file.exists()){
+                        Log.v("Player", "Play track from file");
+                        Log.v("Player", "path = "+ file.getPath());
+                        mediaPath = Uri.fromFile(file);
+                    } else {
+                        mediaPath = Uri.parse(track.getFilename());
+                    }
                 }
                 mediaPlayer.setDataSource(context, mediaPath);
 

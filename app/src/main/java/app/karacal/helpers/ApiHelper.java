@@ -49,6 +49,7 @@ import app.karacal.retrofit.ProfileService;
 import app.karacal.retrofit.models.request.RegisterRequest;
 import app.karacal.retrofit.models.request.SocialLoginRequest;
 import app.karacal.retrofit.models.response.PaymentResponse;
+import app.karacal.retrofit.models.response.PurchasesResponse;
 import app.karacal.retrofit.models.response.SaveTourResponse;
 import app.karacal.retrofit.models.response.SubscriptionsListResponse;
 import app.karacal.retrofit.models.response.TourDetailsResponse;
@@ -144,6 +145,12 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<PurchasesResponse> getPurchases(String token) {
+        return profileService.loadPurchases(token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Single<String> login(LoginRequest model) {
         return Single.create(emitter -> {
             Response<ResponseBody> response = initService.login(model).execute();
@@ -214,6 +221,12 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<GuideResponse> loadGuide(String token, String guideId) {
+        return guideService.getGuideById("Bearer " + token, guideId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<List<TourResponse>> loadTours(String token) {
         return tourService.getToursList("Bearer " + token)
                 .subscribeOn(Schedulers.io())
@@ -221,6 +234,12 @@ public class ApiHelper implements EphemeralKeyProvider {
     }
 
     public Observable<List<ContentResponse>> loadContents(String token) {
+        return tourService.getContentsList("Bearer " + token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<List<ContentResponse>> loadPagedContents(String token) {
         return tourService.getContentsList("Bearer " + token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

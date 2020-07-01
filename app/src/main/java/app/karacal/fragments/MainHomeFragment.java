@@ -109,7 +109,17 @@ public class MainHomeFragment extends Fragment {
                 setupCategory(categoryOriginal, 2, getString(R.string.originals), tours);
             }
         });
+
+//        TourHorizontalListPagerAdapter pagingAdapter = new TourHorizontalListPagerAdapter(new TourComparator());
+//        RecyclerView recyclerView = categoryOriginal.findViewById(R.id.recyclerView);
+//        recyclerView.setAdapter(pagingAdapter);
+//
+//        viewModel.flowable
+//                .autoDispose(this) // Using AutoDispose to handle subscription lifecycle.
+//                .subscribe(pagingData -> pagingAdapter.submitData(getLifecycle(), pagingData));
     }
+
+
 
     private void observeRecommendedTours(){
         viewModel.getTours().observe(getViewLifecycleOwner(), tours -> {

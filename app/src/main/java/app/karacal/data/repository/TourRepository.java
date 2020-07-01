@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.DownloadedToursCache;
 import app.karacal.data.dao.ToursDao;
 import app.karacal.data.entity.TourEntity;
 import app.karacal.helpers.ApiHelper;
@@ -297,14 +298,20 @@ public class TourRepository {
 //    }
 
     public Tour getTourById(int tourId) {
+        Tour downloadedTour = DownloadedToursCache.getInstance(App.getInstance()).getDownloadedTour(tourId);
+
         if (originalToursLiveData.getValue() != null){
             for (Tour tour : originalToursLiveData.getValue()) {
                 if (tour.getId() == tourId) {
+                    if (downloadedTour != null){
+                        tour.addAudioFiles(downloadedTour);
+                    }
                     return tour;
                 }
             }
         }
-        return null;
+
+        return downloadedTour;
     }
 
     public ArrayList<Tour> searchToursByText(String query) {
@@ -362,7 +369,11 @@ public class TourRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tours -> {
                     Log.v("loadTours", "contentsLiveData.setValue(tours) size = "+tours.size());
-                    tours.get(tours.size() - 1).setPrice(999);
+                    for (Tour tour: tours){
+                        if (tour.getId() == 1 || tour.getId() == 2 || tour.getId() == 7 || tour.getId() == 8){
+                            tour.setPrice(999);
+                        }
+                    }
                     originalToursLiveData.setValue(tours);
                     // TODO: save to DB
 

@@ -198,6 +198,9 @@
     <string name="six_month_subscription_title">Half year subscription €50.00</string>
     <string name="yearly_subscription_title">One year subscription €100.00</string>
     <string name="choose_plan">Choisissez le plan</string>
+    <string name="error_download_tour">Erreur lors du téléchargement!</string>
+    <string name="tour_downloaded">Visite téléchargée avec succès</string>
+    <string name="tour_already_downloaded">La visite est déjà téléchargée</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

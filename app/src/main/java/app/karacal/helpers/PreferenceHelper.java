@@ -6,16 +6,21 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import app.karacal.App;
+import app.karacal.data.DownloadedToursCache;
+import app.karacal.models.Tour;
 
 public class PreferenceHelper {
 
     private static final String PREFERENCES_FILE_NAME = "karacal.pref";
     private static final String PRIVACY_POLICY_APPLIED_KEY = "PRIVACY_POLICY_APPLIED";
     private static final String AUTH_TOKEN_KEY = "AUTH_TOKEN";
+    private static final String DOWNLOADED_TOURS_KEY = "DOWNLOADED_TOURS";
 
     private static SharedPreferences getSharedPreferences() {
         return getSharedPreferences(App.getInstance());
@@ -47,5 +52,14 @@ public class PreferenceHelper {
 
     public static void deleteToken(Context context){
         getSharedPreferences(context).edit().remove(AUTH_TOKEN_KEY).apply();
+    }
+
+    public static String getDownloadedToursCache(Context context) {
+        String defValue = DownloadedToursCache.getEmptyInstance().retrieveStringFormat();
+        return getSharedPreferences(context).getString(DOWNLOADED_TOURS_KEY, defValue);
+    }
+
+    public static void setDownloadedToursCache(Context context, String downloadedToursCache) {
+        getSharedPreferences(context).edit().putString(DOWNLOADED_TOURS_KEY, downloadedToursCache).apply();
     }
 }
