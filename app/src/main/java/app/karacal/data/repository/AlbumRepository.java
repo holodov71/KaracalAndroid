@@ -19,7 +19,7 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.Album;
 import app.karacal.models.Tour;
 import app.karacal.models.Track;
-import app.karacal.retrofit.models.response.UploadTrackResponse;
+import app.karacal.network.models.response.UploadTrackResponse;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;

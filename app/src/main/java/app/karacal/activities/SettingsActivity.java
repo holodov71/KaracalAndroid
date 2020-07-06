@@ -1,6 +1,5 @@
 package app.karacal.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
@@ -16,8 +15,13 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.DateFormat;
@@ -32,18 +36,18 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.dialogs.DeleteAccountDialog;
 import app.karacal.helpers.ApiHelper;
-import app.karacal.helpers.DummyHelper;
-import app.karacal.helpers.PermissionHelper;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
+import app.karacal.helpers.RestartAppHelper;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Profile;
-import app.karacal.navigation.NavigationHelper;
-import app.karacal.retrofit.models.request.ProfileRequest;
+import app.karacal.network.models.request.ProfileRequest;
+import app.karacal.network.models.request.ResetPasswordRequest;
+import app.karacal.service.PaymentsUpdateService;
 import app.karacal.viewmodels.SettingsActivityViewModel;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class SettingsActivity extends PermissionActivity implements DatePickerDialog.OnDateSetListener {
@@ -76,7 +80,9 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
     @Inject
     ApiHelper apiHelper;
 
-    Disposable disposable;
+    private GoogleSignInClient mGoogleApiClient;
+
+    CompositeDisposable disposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +91,9 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         initProfile();
         viewModel = new ViewModelProvider(this).get(SettingsActivityViewModel.class);
         setContentView(R.layout.activity_settings);
+        setupGoogleClient();
 
+        setupContentContainer();
         setupBackButton();
         setupApplyButton();
         setupChangePasswordButton();
@@ -98,14 +106,13 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         setupEmailInput();
         setupLocationInput();
         setupProgressLoading();
+        setupSwitchSettings();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(disposable != null){
-            disposable.dispose();
-        }
+        disposable.dispose();
     }
 
     private void initProfile(){
@@ -115,6 +122,11 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         birthDate = profile.getBirthDate();
         email = profile.getEmail();
         location = profile.getLocation();
+    }
+
+    private void setupContentContainer() {
+        View contentContainer = findViewById(R.id.contentContainer);
+        contentContainer.requestFocus();
     }
 
     private void setupBackButton() {
@@ -132,7 +144,8 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         if(profileHolder.getProfile().getSocialId() != null){
             buttonChangePassword.setVisibility(View.GONE);
         }else {
-            buttonChangePassword.setOnClickListener(v -> NavigationHelper.startChangePasswordActivity(this));
+//            buttonChangePassword.setOnClickListener(v -> NavigationHelper.startChangePasswordActivity(this));
+            buttonChangePassword.setOnClickListener(v -> resetPassword());
         }
     }
 
@@ -156,7 +169,7 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         LinearLayout buttonDeleteAccount = findViewById(R.id.buttonDeleteMyAccount);
         buttonDeleteAccount.setOnClickListener(v -> {
             DeleteAccountDialog dialog = new DeleteAccountDialog();
-            dialog.setListener(() -> DummyHelper.dummyAction(this));
+            dialog.setListener(this::deleteAccount);
             dialog.show(getSupportFragmentManager(), DeleteAccountDialog.DIALOG_TAG);
         });
     }
@@ -193,7 +206,8 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
     }
 
     private Observable<String> textInputObservable(TextInputLayout textInputLayout) {
-        Observable<String> observable = Observable.create(emitter -> textInputLayout.getEditText().addTextChangedListener(new TextWatcher() {
+        Observable<String> observable = Observable.create(emitter -> textInputLayout.getEditText()
+                .addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 //do nothing
@@ -206,8 +220,7 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String s = editable.toString();
-                emitter.onNext(s != null ? s : "");
+                emitter.onNext(editable != null ? editable.toString() : "");
             }
         }));
         return observable.debounce(300, TimeUnit.MILLISECONDS)
@@ -278,6 +291,31 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         progressLoading = findViewById(R.id.progressLoading);
     }
 
+    private void setupSwitchSettings(){
+        Switch switchDownloadOnlyViaWifi = findViewById(R.id.switchDownloadOnlyViaWifi);
+        switchDownloadOnlyViaWifi.setChecked(PreferenceHelper.isDownloadOnlyViaWifi(this));
+        switchDownloadOnlyViaWifi.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()){
+                PreferenceHelper.setDownloadOnlyViaWifi(this, isChecked);
+            }
+        });
+
+        Switch switchPauseAudio = findViewById(R.id.switchPauseAudio);
+        switchPauseAudio.setChecked(PreferenceHelper.isPauseAudioAfterEachSegment(this));
+        switchPauseAudio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()){
+                PreferenceHelper.setPauseAudioAfterEachSegment(this, isChecked);
+            }
+        });
+
+        Switch switchAllowNotification = findViewById(R.id.switchAllowNotification);
+        switchAllowNotification.setChecked(PreferenceHelper.isNotificationsAllowed(this));
+        switchAllowNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (buttonView.isPressed()){
+                PreferenceHelper.setNotificationsAllowed(this, isChecked);
+            }
+        });
+    }
 
     private boolean validateInputs(TextInputLayout... textInputLayouts) {
         for (TextInputLayout inputLayout : textInputLayouts) {
@@ -295,13 +333,10 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
     private void updateProfile(){
         hideKeyboardFrom(textInputLayoutBirthDate);
-        if(disposable != null){
-            disposable.dispose();
-        }
 
         progressLoading.setVisibility(View.VISIBLE);
 
-        disposable = apiHelper.editProfile(
+        disposable.add(apiHelper.editProfile(
                 PreferenceHelper.loadToken(this),
                 new ProfileRequest(firstName, secondName, birthDate, email, location))
                 .map(baseResponse -> PreferenceHelper.loadToken(this))
@@ -314,6 +349,68 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
                 }, throwable -> {
                     progressLoading.setVisibility(View.GONE);
                     ToastHelper.showToast(this, getString(R.string.connection_problem));
-                });
+                }));
     }
+
+    private void resetPassword(){
+        hideKeyboardFrom(textInputLayoutBirthDate);
+
+        progressLoading.setVisibility(View.VISIBLE);
+
+        disposable.add(apiHelper.resetPassword(new ResetPasswordRequest(profileHolder.getProfile().getEmail()))
+                .subscribe(response -> {
+                    progressLoading.setVisibility(View.GONE);
+                    if (response.isSuccess()){
+                        ToastHelper.showToast(this, response.getMsg());
+                    } else {
+                        ToastHelper.showToast(this, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    progressLoading.setVisibility(View.GONE);
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                }));
+    }
+
+    private void deleteAccount(){
+        hideKeyboardFrom(textInputLayoutBirthDate);
+
+        progressLoading.setVisibility(View.VISIBLE);
+
+        disposable.add(apiHelper.deleteProfile(PreferenceHelper.loadToken(this))
+                .subscribe(response -> {
+                    if (response.isSuccess()){
+                        logout();
+                        RestartAppHelper.restartApp(this);
+                    } else {
+                        progressLoading.setVisibility(View.GONE);
+                        ToastHelper.showToast(this, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    progressLoading.setVisibility(View.GONE);
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                }));
+    }
+
+    private void setupGoogleClient() {
+        String serverClientId = getString(R.string.server_client_id);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestServerAuthCode(serverClientId)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = GoogleSignIn.getClient(this, gso);
+    }
+
+    private void logout(){
+        try {
+            LoginManager.getInstance().logOut();
+            mGoogleApiClient.signOut();
+
+            profileHolder.removeProfile(this);
+            PaymentsUpdateService.stopTimer();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+
 }

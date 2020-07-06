@@ -12,7 +12,6 @@ import com.stripe.android.EphemeralKeyUpdateListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,44 +22,44 @@ import javax.inject.Singleton;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.models.Profile;
-import app.karacal.retrofit.CommentsService;
-import app.karacal.retrofit.GuideService;
-import app.karacal.retrofit.InitService;
-import app.karacal.retrofit.StripeService;
-import app.karacal.retrofit.TourService;
-import app.karacal.retrofit.TracksService;
-import app.karacal.retrofit.models.request.CreateCardRequest;
-import app.karacal.retrofit.models.request.CreateCommentRequest;
-import app.karacal.retrofit.models.request.CreateCustomerRequest;
-import app.karacal.retrofit.models.request.CreateSubscriptionRequest;
-import app.karacal.retrofit.models.request.NearToursRequest;
-import app.karacal.retrofit.models.request.PaymentRequest;
-import app.karacal.retrofit.models.request.ProfileRequest;
-import app.karacal.retrofit.models.request.SaveTourRequest;
-import app.karacal.retrofit.models.response.BaseResponse;
-import app.karacal.retrofit.models.response.CommentsResponse;
-import app.karacal.retrofit.models.response.ContentResponse;
-import app.karacal.retrofit.models.response.CreateCardResponse;
-import app.karacal.retrofit.models.response.CreateCustomerResponse;
-import app.karacal.retrofit.models.response.CreateSubscriptionResponse;
-import app.karacal.retrofit.models.response.GuideResponse;
-import app.karacal.retrofit.models.request.LoginRequest;
-import app.karacal.retrofit.ProfileService;
-import app.karacal.retrofit.models.request.RegisterRequest;
-import app.karacal.retrofit.models.request.SocialLoginRequest;
-import app.karacal.retrofit.models.response.PaymentResponse;
-import app.karacal.retrofit.models.response.PurchasesResponse;
-import app.karacal.retrofit.models.response.SaveTourResponse;
-import app.karacal.retrofit.models.response.SubscriptionsListResponse;
-import app.karacal.retrofit.models.response.TourDetailsResponse;
-import app.karacal.retrofit.models.response.TourResponse;
-import app.karacal.retrofit.models.response.TrackResponse;
-import app.karacal.retrofit.models.response.UploadTrackResponse;
-import io.reactivex.Completable;
+import app.karacal.network.CommentsService;
+import app.karacal.network.GuideService;
+import app.karacal.network.InitService;
+import app.karacal.network.StripeService;
+import app.karacal.network.TourService;
+import app.karacal.network.TracksService;
+import app.karacal.network.models.request.CreateCardRequest;
+import app.karacal.network.models.request.CreateCommentRequest;
+import app.karacal.network.models.request.CreateCustomerRequest;
+import app.karacal.network.models.request.CreateSubscriptionRequest;
+import app.karacal.network.models.request.NearToursRequest;
+import app.karacal.network.models.request.PaymentRequest;
+import app.karacal.network.models.request.ProfileRequest;
+import app.karacal.network.models.request.ResetPasswordRequest;
+import app.karacal.network.models.request.SaveTourRequest;
+import app.karacal.network.models.response.BaseResponse;
+import app.karacal.network.models.response.CommentsResponse;
+import app.karacal.network.models.response.ContentResponse;
+import app.karacal.network.models.response.CreateCardResponse;
+import app.karacal.network.models.response.CreateCustomerResponse;
+import app.karacal.network.models.response.CreateSubscriptionResponse;
+import app.karacal.network.models.response.GuideResponse;
+import app.karacal.network.models.request.LoginRequest;
+import app.karacal.network.ProfileService;
+import app.karacal.network.models.request.RegisterRequest;
+import app.karacal.network.models.request.SocialLoginRequest;
+import app.karacal.network.models.response.PaymentResponse;
+import app.karacal.network.models.response.PurchasesResponse;
+import app.karacal.network.models.response.ResetPasswordResponse;
+import app.karacal.network.models.response.SaveTourResponse;
+import app.karacal.network.models.response.SubscriptionsListResponse;
+import app.karacal.network.models.response.TourDetailsResponse;
+import app.karacal.network.models.response.TourResponse;
+import app.karacal.network.models.response.TrackResponse;
+import app.karacal.network.models.response.UploadTrackResponse;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -72,8 +71,6 @@ import retrofit2.Response;
 public class ApiHelper implements EphemeralKeyProvider {
 
     private App context;
-
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private InitService initService;
     private ProfileService profileService;
@@ -104,9 +101,10 @@ public class ApiHelper implements EphemeralKeyProvider {
 
     @Override
     public void createEphemeralKey(@NonNull @Size(min = 4) String apiVersion, @NotNull EphemeralKeyUpdateListener ephemeralKeyUpdateListener) {
-        final Map<String, String> apiParamMap = new HashMap<>();
-        apiParamMap.put("api_version", apiVersion);
         ephemeralKeyUpdateListener.onKeyUpdate(App.getInstance().getString(R.string.stripe_publishable_api_key));
+
+//        final Map<String, String> apiParamMap = new HashMap<>();
+//        apiParamMap.put("api_version", apiVersion);
 
 //        compositeDisposable.add(stripeService.createEphemeralKey(apiParamMap)
 //                .subscribeOn(Schedulers.io())
@@ -120,6 +118,8 @@ public class ApiHelper implements EphemeralKeyProvider {
 //                            }
 //                        }));
     }
+
+    // Profile region
 
     public Single<Profile> getProfile(String token){
         return Single.create(emitter -> {
@@ -145,13 +145,22 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<PurchasesResponse> getPurchases(String token) {
-        return profileService.loadPurchases(token)
+    public Observable<BaseResponse> deleteProfile(String token) {
+        return profileService.deleteProfile("Bearer " + token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<PurchasesResponse> getPurchases(String token) {
+        return profileService.loadPurchases("Bearer " + token, token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    // Auth region
+
     public Single<String> login(LoginRequest model) {
+        Log.v(App.TAG, "login");
         return Single.create(emitter -> {
             Response<ResponseBody> response = initService.login(model).execute();
             if (response.isSuccessful()) {
@@ -195,25 +204,19 @@ public class ApiHelper implements EphemeralKeyProvider {
         });
     }
 
-    public Completable register(RegisterRequest model) {
-        return Completable.create(emitter -> {
-            Response<ResponseBody> response = initService.register(model).execute();
-            if (response.isSuccessful()) {
-                String responseString = response.body().string();
-                if (responseString.equals("true")){
-                    emitter.onComplete();
-                    return;
-                } else {
-                    String errors = JsonHelper.extractStrings(responseString);
-                    if (errors != null){
-                        emitter.onError(new Exception(errors));
-                        return;
-                    }
-                }
-            }
-            emitter.onError(new Exception(context.getString(R.string.connection_problem)));
-        });
+    public Observable<BaseResponse> register(RegisterRequest request) {
+        return initService.register(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
+
+    public Observable<ResetPasswordResponse> resetPassword(ResetPasswordRequest request) {
+        return initService.resetPassword(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    // Guide region
 
     public Observable<List<GuideResponse>> loadGuides(String token) {
         return guideService.getGuidesList("Bearer " + token)
@@ -227,6 +230,8 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    // Tours region
+
     public Observable<List<TourResponse>> loadTours(String token) {
         return tourService.getToursList("Bearer " + token)
                 .subscribeOn(Schedulers.io())
@@ -235,6 +240,12 @@ public class ApiHelper implements EphemeralKeyProvider {
 
     public Observable<List<ContentResponse>> loadContents(String token) {
         return tourService.getContentsList("Bearer " + token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<List<ContentResponse>> loadToursByAuthor(String token, int authorId) {
+        return tourService.getToursByAuthor("Bearer " + token, authorId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -296,7 +307,7 @@ public class ApiHelper implements EphemeralKeyProvider {
     }
 
 
-    //    Payment Region
+    // Payment Region
     public Observable<PaymentResponse> makePayment(String token, PaymentRequest request){
         return stripeService.makePayment("Bearer " + token, request)
                 .subscribeOn(Schedulers.io())

@@ -76,10 +76,10 @@ public class TourVerticalListAdapter extends RecyclerView.Adapter<TourVerticalLi
         }
 
         private void setupDurationText(Tour tour){
-            int hours = tour.getDuration() / 60;
-            int minutes = tour.getDuration() % 60;
-            String duration = textViewDuration.getContext().getString(R.string.duration_format, hours, minutes);
-            textViewDuration.setText(duration);
+//            int hours = tour.getDuration() / 60;
+//            int minutes = tour.getDuration() % 60;
+//            String duration = textViewDuration.getContext().getString(R.string.duration_format, hours, minutes);
+            textViewDuration.setText(tour.getShortFormattedTourDuration(textViewDuration.getContext()));
         }
 
         private void setupPrice(Tour tour) {

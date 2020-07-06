@@ -42,7 +42,6 @@ import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Tour;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
-import app.karacal.retrofit.models.request.SaveTourRequest;
 import app.karacal.viewmodels.EditGuideActivityViewModel;
 import apps.in.android_logger.Logger;
 import io.reactivex.disposables.Disposable;

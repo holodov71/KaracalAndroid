@@ -29,10 +29,10 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.ActivityArgs;
-import app.karacal.retrofit.models.request.CreateCardRequest;
-import app.karacal.retrofit.models.request.CreateCustomerRequest;
-import app.karacal.retrofit.models.request.CreateSubscriptionRequest;
-import app.karacal.retrofit.models.request.PaymentRequest;
+import app.karacal.network.models.request.CreateCardRequest;
+import app.karacal.network.models.request.CreateCustomerRequest;
+import app.karacal.network.models.request.CreateSubscriptionRequest;
+import app.karacal.network.models.request.PaymentRequest;
 import apps.in.android_logger.LogActivity;
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -40,6 +40,7 @@ public class PaymentActivity extends LogActivity {
 
     public static final int REQUEST_CODE = 501;
     public static final String RESULT_URL = "result_url";
+    public static final String ARG_CUSTOMER_ID_STATE = "customer_id";
 
     public static class Args extends ActivityArgs implements Serializable {
 
@@ -81,6 +82,7 @@ public class PaymentActivity extends LogActivity {
     private long amount;
     private int tourId;
     private String subscriptionId;
+    private String customerId;
 
     private Button payButton;
     private ProgressBar progressLoading;
@@ -90,6 +92,12 @@ public class PaymentActivity extends LogActivity {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
         setContentView(R.layout.activity_payment);
+
+        if(savedInstanceState != null){
+            customerId = savedInstanceState.getString(ARG_CUSTOMER_ID_STATE);
+        } else {
+            createCustomer();
+        }
 
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
         tourId = args.getTourId();
@@ -143,7 +151,7 @@ public class PaymentActivity extends LogActivity {
 
     private void makePayment(String cardToken){
         if (subscriptionId != null){
-            createCustomer(cardToken);
+            createCard(customerId, cardToken);
         }else {
             payTour(cardToken);
         }
@@ -171,7 +179,27 @@ public class PaymentActivity extends LogActivity {
                 }));
     }
 
-    private void createCustomer(String cardToken){
+//    private void createCustomer(String cardToken){
+//
+//        String serverToken = PreferenceHelper.loadToken(this);
+//
+//        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+//        disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
+//                .subscribe(response -> {
+//                    Log.v("createCustomer", "Success response = " + response);
+//                    if (response.isSuccess()) {
+//                        createCard(response.getId(), cardToken);
+//                    } else {
+//                        hideLoading();
+//                        ToastHelper.showToast(this, response.getErrorMessage());
+//                    }
+//                }, throwable -> {
+//                    hideLoading();
+//                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+//                }));
+//    }
+
+    private void createCustomer(){
 
         String serverToken = PreferenceHelper.loadToken(this);
 
@@ -179,14 +207,15 @@ public class PaymentActivity extends LogActivity {
         disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
                 .subscribe(response -> {
                     Log.v("createCustomer", "Success response = " + response);
+                    hideLoading();
                     if (response.isSuccess()) {
-                        createCard(response.getId(), cardToken);
+                        customerId = response.getId();
                     } else {
-                        hideLoading();
+                        finish();
                         ToastHelper.showToast(this, response.getErrorMessage());
                     }
                 }, throwable -> {
-                    hideLoading();
+                    finish();
                     ToastHelper.showToast(this, getString(R.string.connection_problem));
                 }));
     }

@@ -22,12 +22,15 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.dialogs.ForgotPasswordDialog;
 import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.KeyboardHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
-import app.karacal.retrofit.models.request.LoginRequest;
+import app.karacal.network.models.request.LoginRequest;
+import app.karacal.network.models.request.ResetPasswordRequest;
 import apps.in.android_logger.LogFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -35,8 +38,9 @@ public class EmailLoginFragment extends LogFragment {
 
     private TextInputLayout textInputEmail;
     private TextInputLayout textInputPassword;
+    private View progressLoading;
 
-    private Disposable loginDisposable;
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     @Inject
     ApiHelper apiHelper;
@@ -59,7 +63,14 @@ public class EmailLoginFragment extends LogFragment {
         setupForgotButton(view);
         setupRegisterButton(view);
         setupLoginButton(view);
+        setupProgressLoading(view);
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposable.dispose();
     }
 
     private void setupTextInputs(View view) {
@@ -76,7 +87,7 @@ public class EmailLoginFragment extends LogFragment {
         TextView textView = view.findViewById(R.id.textViewForgot);
         textView.setOnClickListener(v -> {
             ForgotPasswordDialog dialog = new ForgotPasswordDialog();
-            dialog.setListener(email -> NavigationHelper.startPasswordHasBeenResetActivity(getActivity()));
+            dialog.setListener(email -> resetPassword(email, textView));
             dialog.show(getParentFragmentManager(), ForgotPasswordDialog.DIALOG_TAG);
         });
     }
@@ -86,13 +97,18 @@ public class EmailLoginFragment extends LogFragment {
         textView.setOnClickListener(v -> NavigationHelper.startRegistrationActivity(getActivity()));
     }
 
+    private void setupProgressLoading(View view) {
+        progressLoading = view.findViewById(R.id.progressLoading);
+    }
+
     private void setupLoginButton(View view) {
         Button button = view.findViewById(R.id.buttonLogin);
         button.setOnClickListener(v -> {
-            if (loginDisposable == null) {
+                progressLoading.setVisibility(View.VISIBLE);
                 LoginRequest loginRequest = validateInputs();
                 if (loginRequest != null) {
-                    loginDisposable = apiHelper.login(loginRequest).flatMap(apiHelper::getProfile)
+                    disposable.add(apiHelper.login(loginRequest)
+                            .flatMap(apiHelper::getProfile)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(profile -> {
@@ -102,13 +118,12 @@ public class EmailLoginFragment extends LogFragment {
                                 if (activity != null) {
                                     activity.finish();
                                 }
-                                loginDisposable = null;
                             }, throwable -> {
+                                progressLoading.setVisibility(View.GONE);
                                 ToastHelper.showToast(getContext(), throwable.getMessage());
-                                loginDisposable = null;
-                            });
+                            }));
                 }
-            }
+
         });
     }
 
@@ -128,6 +143,25 @@ public class EmailLoginFragment extends LogFragment {
             textInputPassword.setError(null);
         }
         return new LoginRequest(email, password);
+    }
+
+    private void resetPassword(String email, View view){
+        KeyboardHelper.hideKeyboard(getContext(), view);
+
+        progressLoading.setVisibility(View.VISIBLE);
+
+        disposable.add(apiHelper.resetPassword(new ResetPasswordRequest(email))
+                .subscribe(response -> {
+                    progressLoading.setVisibility(View.GONE);
+                    if (response.isSuccess()){
+                        NavigationHelper.startPasswordHasBeenResetActivity(getActivity());
+                    } else {
+                        ToastHelper.showToast(getContext(), response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    progressLoading.setVisibility(View.GONE);
+                    ToastHelper.showToast(getContext(), getString(R.string.connection_problem));
+                }));
     }
 
 }

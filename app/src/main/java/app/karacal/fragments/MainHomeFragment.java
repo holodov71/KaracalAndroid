@@ -30,6 +30,7 @@ import app.karacal.adapters.TourHorizontalListAdapter;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Tour;
+import app.karacal.models.TourCategory;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.MainActivityViewModel;
 
@@ -98,7 +99,7 @@ public class MainHomeFragment extends Fragment {
     private void observeNearTours(){
         viewModel.getNearTours().observe(getViewLifecycleOwner(), tours -> {
             if (!tours.isEmpty()) {
-                setupCategory(categoryNear, 1, getString(R.string.meters_from_you), tours);
+                setupCategory(categoryNear, TourCategory.CATEGORY_NEAR, getString(R.string.meters_from_you), tours);
             }
         });
     }
@@ -106,7 +107,7 @@ public class MainHomeFragment extends Fragment {
     private void observeOriginalTours(){
         viewModel.getOriginalTours().observe(getViewLifecycleOwner(), tours -> {
             if (!tours.isEmpty()) {
-                setupCategory(categoryOriginal, 2, getString(R.string.originals), tours);
+                setupCategory(categoryOriginal, TourCategory.CATEGORY_ORIGINAL, getString(R.string.originals), tours);
             }
         });
 
@@ -125,7 +126,7 @@ public class MainHomeFragment extends Fragment {
         viewModel.getTours().observe(getViewLifecycleOwner(), tours -> {
             Log.v("getTours", "observeRecommendedTours");
             if (!tours.isEmpty()) {
-                setupCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tours);
+                setupCategory(categoryRecommended, TourCategory.CATEGORY_RECOMMENDED, getString(R.string.recommended_for_you), tours);
             }
         });
     }
@@ -144,7 +145,7 @@ public class MainHomeFragment extends Fragment {
         categoryOriginal = view.findViewById(R.id.categoryOriginals);
     }
 
-    private void setupCategory(View categoryView, int id, String title, List<Tour> tours) {
+    private void setupCategory(View categoryView, TourCategory category, String title, List<Tour> tours) {
         categoryView.setVisibility(View.VISIBLE);
 
         TextView textViewTitle = categoryView.findViewById(R.id.textViewTitle);
@@ -152,7 +153,7 @@ public class MainHomeFragment extends Fragment {
             textViewTitle.setText(title);
         }
         TextView textViewViewAll = categoryView.findViewById(R.id.textViewViewAll);
-        textViewViewAll.setOnClickListener(v -> showCategory(id, title));
+        textViewViewAll.setOnClickListener(v -> showCategory(category, title));
         RecyclerView recyclerView = categoryView.findViewById(R.id.recyclerView);
         TourHorizontalListAdapter adapter = new TourHorizontalListAdapter(getContext());
         recyclerView.setAdapter(adapter);
@@ -160,8 +161,8 @@ public class MainHomeFragment extends Fragment {
         adapter.setClickListener(tourClickListener);
     }
 
-    private void showCategory(int categoryId, String categoryName){
-        CategoryActivity.Args args = new CategoryActivity.Args(categoryId, categoryName);
+    private void showCategory(TourCategory category, String categoryName){
+        CategoryActivity.Args args = new CategoryActivity.Args(category, categoryName);
         NavigationHelper.startCategoryActivity(getActivity(), args);
     }
 

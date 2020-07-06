@@ -43,6 +43,7 @@ import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.Tour;
+import app.karacal.models.TourCategory;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.service.PaymentsUpdateService;
 import app.karacal.viewmodels.MainActivityViewModel;
@@ -166,17 +167,17 @@ public class MainMenuFragment extends Fragment {
 
         View categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
         if (getContext() != null) {
-            setupTourCategory(categoryDownloaded, 2, getString(R.string.already_downloaded), DownloadedToursCache.getInstance(getContext()).getToursList());
+            setupTourCategory(categoryDownloaded, TourCategory.CATEGORY_DOWNLOADED, getString(R.string.already_downloaded), DownloadedToursCache.getInstance(getContext()).getToursList());
         }
     }
 
-    private void setupTourCategory(View categoryView, int id, String title, ArrayList<Tour> tours) {
+    private void setupTourCategory(View categoryView, TourCategory category, String title, ArrayList<Tour> tours) {
         TextView textViewTitle = categoryView.findViewById(R.id.textViewTitle);
         if (textViewTitle != null) {
             textViewTitle.setText(title);
         }
         TextView textViewViewAll = categoryView.findViewById(R.id.textViewViewAll);
-        textViewViewAll.setOnClickListener(v -> showCategory(id, title));
+        textViewViewAll.setOnClickListener(v -> showCategory(category, title));
         RecyclerView recyclerView = categoryView.findViewById(R.id.recyclerView);
         TourHorizontalListAdapter adapter = new TourHorizontalListAdapter(getContext());
         recyclerView.setAdapter(adapter);
@@ -205,8 +206,8 @@ public class MainMenuFragment extends Fragment {
         viewModel.getGuides().observe(getViewLifecycleOwner(), adapter::setGuidesList);
     }
 
-    private void showCategory(int categoryId, String categoryName) {
-        CategoryActivity.Args args = new CategoryActivity.Args(categoryId, categoryName);
+    private void showCategory(TourCategory category, String categoryName) {
+        CategoryActivity.Args args = new CategoryActivity.Args(category, categoryName);
         NavigationHelper.startCategoryActivity(getActivity(), args);
     }
 

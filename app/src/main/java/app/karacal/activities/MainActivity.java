@@ -14,6 +14,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.onesignal.OSPermissionSubscriptionState;
+import com.onesignal.OneSignal;
 import com.stripe.android.CustomerSession;
 
 import javax.inject.Inject;
@@ -44,6 +46,10 @@ public class MainActivity extends PermissionActivity {
         NavController navController = Navigation.findNavController(this, R.id.fragmentHostView);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         setupLocation();
+
+        OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
+        String userId = status.getSubscriptionStatus().getUserId();
+        Log.v(App.TAG, "OneSignal userId = "+userId);
 
     }
 

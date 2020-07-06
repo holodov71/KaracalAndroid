@@ -1,7 +1,7 @@
 package app.karacal.models;
 
 import app.karacal.R;
-import app.karacal.retrofit.models.response.GuideResponse;
+import app.karacal.network.models.response.GuideResponse;
 
 public class Guide {
 

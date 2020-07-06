@@ -201,6 +201,7 @@
     <string name="error_download_tour">Erreur lors du téléchargement!</string>
     <string name="tour_downloaded">Visite téléchargée avec succès</string>
     <string name="tour_already_downloaded">La visite est déjà téléchargée</string>
+    <string name="turn_on_wifi">Vous devez activer le WIFI pour continuer</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

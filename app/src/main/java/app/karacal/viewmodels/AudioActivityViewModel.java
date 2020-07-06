@@ -1,7 +1,6 @@
 package app.karacal.viewmodels;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -29,23 +28,25 @@ import app.karacal.data.repository.AlbumRepository;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.NetworkStateHelper;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.interfaces.ActionCallback;
-import app.karacal.interfaces.ErrorCallback;
 import app.karacal.models.Album;
 import app.karacal.models.Comment;
 import app.karacal.models.Guide;
 import app.karacal.models.Player;
 import app.karacal.models.Tour;
 import app.karacal.models.Track;
-import app.karacal.retrofit.models.response.CommentsResponse;
+import app.karacal.network.models.response.CommentsResponse;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.ResponseBody;
+
+import static app.karacal.helpers.NetworkStateHelper.DesiredInternet.WIFI_INTERNET;
 
 public class AudioActivityViewModel extends ViewModel {
 
@@ -88,11 +89,11 @@ public class AudioActivityViewModel extends ViewModel {
     private SingleLiveEvent<Void> listenAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Long> paymentAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> tourDownloadedAction = new SingleLiveEvent<>();
-    private SingleLiveEvent<Void> tourAlreadyDownloadedAction = new SingleLiveEvent<>();
     private SingleLiveEvent<String> downloadingErrorAction = new SingleLiveEvent<>();
     private SingleLiveEvent<String> errorAction = new SingleLiveEvent<>();
     private MutableLiveData<List<Comment>> commentsLiveData = new MutableLiveData<>();
     private MutableLiveData<Guide> guideLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> tourDownloadingLiveData = new MutableLiveData<>();
 
     public SingleLiveEvent<Void> getListenAction() {
         return listenAction;
@@ -106,8 +107,8 @@ public class AudioActivityViewModel extends ViewModel {
         return tourDownloadedAction;
     }
 
-    public SingleLiveEvent<Void> getTourAlreadyDownloadedAction() {
-        return tourAlreadyDownloadedAction;
+    public MutableLiveData<Boolean> getTourDownloading() {
+        return tourDownloadingLiveData;
     }
 
     public SingleLiveEvent<String> getErrorAction() {
@@ -226,35 +227,55 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public void downloadTour(Context context) {
-        if(DownloadedToursCache.getInstance(context).containsTour(tour.getId())){
-            tourAlreadyDownloadedAction.call();
+        tourDownloadingLiveData.setValue(true);
+        if(DownloadedToursCache.getInstance(context).containsTour(tour.getId())) {
+            tourDownloadingLiveData.setValue(false);
+            downloadingErrorAction.setValue(App.getResString(R.string.tour_already_downloaded));
         } else {
-            checkAccess(() -> disposable.add(Single.just(tour.getAudio())
-                    .flattenAsObservable(items -> items)
-                    .flatMap(this::downloadTrack)
-                    .toList()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(tracks -> {
-                        boolean allTracksDownloaded = true;
-                        for (Track track : tracks) {
-                            if (track.getFileUri() == null) {
-                                allTracksDownloaded = false;
-                                break;
+            if (PreferenceHelper.isDownloadOnlyViaWifi(context) &&
+                !NetworkStateHelper.isNetworkAvailable(context, WIFI_INTERNET)){
+                tourDownloadingLiveData.setValue(false);
+                downloadingErrorAction.setValue(App.getResString(R.string.turn_on_wifi));
+            } else {
+
+                checkAccess(() -> disposable.add(Single.just(tour.getAudio())
+                        .flattenAsObservable(items -> items)
+                        .flatMap(this::downloadTrack)
+                        .toList()
+                        .map(this::processDownloading)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(downloaded -> {
+                            tourDownloadingLiveData.setValue(false);
+                            if (downloaded) {
+                                tourDownloadedAction.call();
                             } else {
-                                Log.v("Tracks downloaded", track.getFileUri());
+                                downloadingErrorAction.setValue(App.getResString(R.string.error_download_tour));
                             }
-                        }
-                        if (allTracksDownloaded) {
-                            tour.setAudio(tracks);
-                            DownloadedToursCache.getInstance(context).addDownloadedTour(context, tour);
-                            tourDownloadedAction.call();
-                        } else {
-                            downloadingErrorAction.setValue(App.getResString(R.string.error_download_tour));
-                        }
-                    }, throwable -> {
-                        downloadingErrorAction.setValue(App.getResString(R.string.connection_problem));
-                    })));
+                        }, throwable -> {
+                            tourDownloadingLiveData.setValue(false);
+                            downloadingErrorAction.setValue(App.getResString(R.string.connection_problem));
+                        })));
+            }
+        }
+    }
+
+    private Boolean processDownloading(List<Track> tracks){
+        boolean allTracksDownloaded = true;
+        for (Track track : tracks) {
+            if (track.getFileUri() == null) {
+                allTracksDownloaded = false;
+                break;
+            } else {
+                Log.v("Tracks downloaded", track.getFileUri());
+            }
+        }
+        if (allTracksDownloaded) {
+            tour.setAudio(tracks);
+            DownloadedToursCache.getInstance(App.getInstance()).addDownloadedTour(App.getInstance(), tour);
+            return true;
+        } else {
+            return false;
         }
     }
 

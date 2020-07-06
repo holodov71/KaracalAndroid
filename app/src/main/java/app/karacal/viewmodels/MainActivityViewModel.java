@@ -1,6 +1,5 @@
 package app.karacal.viewmodels;
 
-import android.content.Intent;
 import android.location.Location;
 import android.util.Log;
 
@@ -16,7 +15,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import app.karacal.App;
-import app.karacal.data.datasource.ToursPagingSource;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
@@ -24,14 +22,10 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Guide;
 import app.karacal.models.Tour;
-import app.karacal.retrofit.models.request.CreateCustomerRequest;
-import app.karacal.retrofit.models.response.CreateCustomerResponse;
-import app.karacal.retrofit.models.response.SubscriptionWrapper;
-import app.karacal.retrofit.models.response.SubscriptionsListResponse;
-import io.reactivex.Flowable;
+import app.karacal.network.models.response.SubscriptionWrapper;
 import io.reactivex.disposables.Disposable;
 
-import static app.karacal.retrofit.models.response.SubscriptionsListResponse.STATUS_SUBSCRIPTION_ACTIVE;
+import static app.karacal.network.models.response.SubscriptionsListResponse.STATUS_SUBSCRIPTION_ACTIVE;
 
 public class MainActivityViewModel extends BaseLocationViewModel {
 

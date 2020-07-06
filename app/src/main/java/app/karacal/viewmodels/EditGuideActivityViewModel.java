@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -19,14 +18,10 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.LocationHelper;
-import app.karacal.helpers.PreferenceHelper;
-import app.karacal.retrofit.models.request.SaveTourRequest;
-import app.karacal.retrofit.models.response.BaseResponse;
-import app.karacal.retrofit.models.response.SaveTourResponse;
-import io.reactivex.Completable;
+import app.karacal.network.models.request.SaveTourRequest;
+import app.karacal.network.models.response.SaveTourResponse;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class EditGuideActivityViewModel extends ViewModel {
 

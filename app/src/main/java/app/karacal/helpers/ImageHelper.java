@@ -1,6 +1,5 @@
 package app.karacal.helpers;
 
-import android.content.Context;
 import android.graphics.BlendMode;
 import android.graphics.BlendModeColorFilter;
 import android.graphics.PorterDuff;

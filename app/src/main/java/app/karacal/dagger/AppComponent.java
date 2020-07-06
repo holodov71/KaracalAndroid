@@ -29,6 +29,7 @@ import app.karacal.viewmodels.CategoryActivityViewModel;
 import app.karacal.viewmodels.CommentsActivityViewModel;
 import app.karacal.viewmodels.EditGuideActivityViewModel;
 import app.karacal.viewmodels.MainActivityViewModel;
+import app.karacal.viewmodels.ProfileActivityViewModel;
 import dagger.BindsInstance;
 import dagger.Component;
 
@@ -87,6 +88,8 @@ public interface AppComponent {
     void inject (EditGuideActivityViewModel viewModel);
 
     void inject (CommentsActivityViewModel viewModel);
+
+    void inject (ProfileActivityViewModel viewModel);
 
     @Component.Builder
     interface Builder {

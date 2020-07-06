@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import app.karacal.App;
+import app.karacal.helpers.PreferenceHelper;
 import apps.in.android_logger.Logger;
 import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
@@ -83,7 +84,8 @@ public class Player implements MediaPlayer.OnPreparedListener{
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnCompletionListener(mp -> {
             Integer currentTrack = getCurrentTrack();
-            if (currentTrack != null && currentTrack < album.getValue().getTracks().size() - 1) {
+            if (currentTrack != null && currentTrack < album.getValue().getTracks().size() - 1 &&
+                    !PreferenceHelper.isPauseAudioAfterEachSegment(App.getInstance())) {
                 playTrack(currentTrack + 1);
             } else {
                 setPlayerState(PlayerState.IDLE);
@@ -113,32 +115,6 @@ public class Player implements MediaPlayer.OnPreparedListener{
     public void playTrack(int position) {
         Log.v("Player", "Play position = "+position);
         currentPosition = position;
-//        try{
-//
-//            mediaPlayer.reset();
-//            if (album.getValue() != null) {
-//                Track track = album.getValue().getTracks().get(position);
-//                Log.v("Player", "Play track = "+track.getTitle());
-//                Context context = App.getInstance();
-//                Uri mediaPath;
-//                if (track.getResId() == -1) { // audio from network
-//                    mediaPath = Uri.parse(track.getFilename());
-//                } else {
-//                    mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
-//                }
-//                mediaPlayer.setDataSource(context, mediaPath);
-//
-//                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//                mediaPlayer.prepare();
-//                mediaPlayer.setOnPreparedListener(this);
-//            } else {
-//                throw new Exception("Tracks in album is not available");
-//            }
-//        }catch (Exception ex){
-//            Logger.log(Player.this, "Error playing track", ex);
-//            setPlayerState(PlayerState.IDLE);
-//        }
-//        currentTrackMutableLiveData.postValue(position);
         Completable.fromAction(() -> {
             mediaPlayer.reset();
             if (album.getValue() != null) {

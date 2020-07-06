@@ -21,6 +21,10 @@ public class PreferenceHelper {
     private static final String PRIVACY_POLICY_APPLIED_KEY = "PRIVACY_POLICY_APPLIED";
     private static final String AUTH_TOKEN_KEY = "AUTH_TOKEN";
     private static final String DOWNLOADED_TOURS_KEY = "DOWNLOADED_TOURS";
+    private static final String DOWNLOAD_ONLY_VIA_WIFI_KEY = "DOWNLOAD_ONLY_VIA_WIFI";
+    private static final String PAUSE_AUDIO_AFTER_EACH_SEGMENT_KEY = "PAUSE_AUDIO_AFTER_EACH_SEGMENT";
+    private static final String NOTIFICATIONS_ALLOW_KEY = "NOTIFICATIONS_ALLOW";
+
 
     private static SharedPreferences getSharedPreferences() {
         return getSharedPreferences(App.getInstance());
@@ -61,5 +65,29 @@ public class PreferenceHelper {
 
     public static void setDownloadedToursCache(Context context, String downloadedToursCache) {
         getSharedPreferences(context).edit().putString(DOWNLOADED_TOURS_KEY, downloadedToursCache).apply();
+    }
+
+    public static boolean isDownloadOnlyViaWifi(Context context){
+        return getSharedPreferences(context).getBoolean(DOWNLOAD_ONLY_VIA_WIFI_KEY, false);
+    }
+
+    public static void setDownloadOnlyViaWifi(Context context, boolean value){
+        getSharedPreferences(context).edit().putBoolean(DOWNLOAD_ONLY_VIA_WIFI_KEY, value).apply();
+    }
+
+    public static boolean isPauseAudioAfterEachSegment(Context context){
+        return getSharedPreferences(context).getBoolean(PAUSE_AUDIO_AFTER_EACH_SEGMENT_KEY, false);
+    }
+
+    public static void setPauseAudioAfterEachSegment(Context context, boolean value){
+        getSharedPreferences(context).edit().putBoolean(PAUSE_AUDIO_AFTER_EACH_SEGMENT_KEY, value).apply();
+    }
+
+    public static boolean isNotificationsAllowed(Context context){
+        return getSharedPreferences(context).getBoolean(NOTIFICATIONS_ALLOW_KEY, true);
+    }
+
+    public static void setNotificationsAllowed(Context context, boolean value){
+        getSharedPreferences(context).edit().putBoolean(NOTIFICATIONS_ALLOW_KEY, value).apply();
     }
 }

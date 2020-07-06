@@ -11,6 +11,7 @@ import com.stripe.android.PaymentConfiguration;
 
 public class App extends Application {
 
+    public final static String TAG = "KARAKAL";
     private final static String API_BASE_URL = "http://karacal.store:8080/api2/";
 
     private static App instance;
@@ -41,6 +42,7 @@ public class App extends Application {
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
                 .unsubscribeWhenNotificationsAreDisabled(true)
                 .init();
+
     }
 
     public static App getInstance() {

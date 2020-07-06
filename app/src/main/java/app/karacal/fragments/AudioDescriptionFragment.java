@@ -70,6 +70,12 @@ public class AudioDescriptionFragment extends LogFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        viewModel.loadComments();
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         observeViewModel();
@@ -84,7 +90,6 @@ public class AudioDescriptionFragment extends LogFragment {
         buttonDownload = view.findViewById(R.id.buttonDownload);
         progressDownloading = view.findViewById(R.id.progressDownloading);
         buttonDownload.setOnClickListener(v -> {
-            onDownloadingStarted();
             viewModel.downloadTour(requireContext());
         });
     }
@@ -144,13 +149,17 @@ public class AudioDescriptionFragment extends LogFragment {
 
     private void setupDuration(View view){
         TextView textView = view.findViewById(R.id.textViewDuration);
-        int duration = viewModel.getTour().getDuration();
-        int durationInMinutes = duration / 60;
-        int hours = durationInMinutes / 60;
-        String hoursText = hours > 0 ? String.format(Locale.getDefault(), "%d %s", hours, getContext().getString(hours > 1 ? R.string.hours : R.string.hour)) : "";
-        int minutes = durationInMinutes % 60;
-        String minutesText = String.format(Locale.getDefault(), "%d %s", minutes, getContext().getString(minutes != 1 ? R.string.minutes : R.string.minute));
-        textView.setText(String.format("%s %s", hoursText, minutesText));
+        if (getContext() != null) {
+            textView.setText(viewModel.getTour().getFormattedTourDuration(getContext()));
+        }
+//        int duration = viewModel.getTour().getDuration();
+//        int durationInMinutes = duration / 60;
+//        int hours = durationInMinutes / 60;
+//        String hoursText = hours > 0 ? String.format(Locale.getDefault(), "%d %s", hours, getContext().getString(hours > 1 ? R.string.hours : R.string.hour)) : "";
+//        int minutes = durationInMinutes % 60;
+//        String minutesText = String.format(Locale.getDefault(), "%d %s", minutes, getContext().getString(minutes != 1 ? R.string.minutes : R.string.minute));
+//        textView.setText(String.format("%s %s", hoursText, minutesText));
+
     }
 
     private void setupReviews(View view){
@@ -160,7 +169,6 @@ public class AudioDescriptionFragment extends LogFragment {
             CommentsActivity.Args args = new CommentsActivity.Args(viewModel.getTour().getId());
             NavigationHelper.startCommentsActivity(getActivity(), args);
         });
-        viewModel.loadComments();
     }
 
     private void setupAuthor(View view){
@@ -203,18 +211,19 @@ public class AudioDescriptionFragment extends LogFragment {
 
     private void observeViewModel() {
         viewModel.getTourDownloadedAction().observe(getViewLifecycleOwner(), action -> {
-            onDownloadingFinished();
             ToastHelper.showToast(requireContext(), getString(R.string.tour_downloaded));
         });
 
-        viewModel.getTourAlreadyDownloadedAction().observe(getViewLifecycleOwner(), action -> {
-            onDownloadingFinished();
-            ToastHelper.showToast(requireContext(), getString(R.string.tour_already_downloaded));
+        viewModel.getDownloadingErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
+            ToastHelper.showToast(requireContext(), errorMsg);
         });
 
-        viewModel.getDownloadingErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
-            onDownloadingFinished();
-            ToastHelper.showToast(requireContext(), errorMsg);
+        viewModel.getTourDownloading().observe(getViewLifecycleOwner(), isDownloading -> {
+            if (isDownloading){
+                onDownloadingStarted();
+            } else {
+                onDownloadingFinished();
+            }
         });
 
         viewModel.getListenAction().observe(getViewLifecycleOwner(), action ->{

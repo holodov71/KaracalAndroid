@@ -34,7 +34,7 @@ import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
 import app.karacal.popups.EditAudioPopup;
-import app.karacal.retrofit.models.response.UploadTrackResponse;
+import app.karacal.network.models.response.UploadTrackResponse;
 import io.reactivex.disposables.Disposable;
 
 public class EditAudioActivity extends PermissionActivity {

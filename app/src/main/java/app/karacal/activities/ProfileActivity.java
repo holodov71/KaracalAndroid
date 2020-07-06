@@ -8,18 +8,18 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.widget.NestedScrollView;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.Serializable;
 
-import javax.inject.Inject;
-
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.TourVerticalListAdapter;
-import app.karacal.data.repository.GuideRepository;
-import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.ShareHelper;
 import app.karacal.models.Guide;
 import app.karacal.navigation.ActivityArgs;
@@ -28,6 +28,7 @@ import app.karacal.popups.BasePopup;
 import app.karacal.popups.ReportProblemPopup;
 import app.karacal.popups.SelectActionPopup;
 import app.karacal.popups.ShareImpressionPopup;
+import app.karacal.viewmodels.ProfileActivityViewModel;
 import app.karacal.views.NoScrollLinearLayoutManager;
 import apps.in.android_logger.LogActivity;
 
@@ -94,13 +95,15 @@ public class ProfileActivity extends LogActivity {
 
     private ConstraintLayout layoutRoot;
 
-    @Inject
-    TourRepository tourRepository;
+    private ProfileActivityViewModel viewModel;
 
-    @Inject
-    GuideRepository guideRepository;
+    private TourVerticalListAdapter adapter;
 
-    private Guide author;
+    private ImageView avatarImage;
+    private TextView textViewName;
+    private TextView textViewLocation;
+    private TextView textViewDescription;
+    private ImageView buttonShare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,11 +114,15 @@ public class ProfileActivity extends LogActivity {
 
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
         int guideId = args.getGuideId();
-        author = guideRepository.getGuide(guideId);
+        viewModel = new ViewModelProvider(this, new ProfileActivityViewModel.ProfileViewModelFactory(guideId)).get(ProfileActivityViewModel.class);
+
 
         setupButtons();
         setupAuthor();
         setupRecyclerView();
+
+        observeViewModel();
+        viewModel.loadData();
     }
 
     private void setupButtons(){
@@ -126,33 +133,21 @@ public class ProfileActivity extends LogActivity {
     }
 
     private void setupAuthor(){
-//        int avatarResId = R.mipmap.avatar_example;
-//        String name = "Alexander McQueen";
-//        String location = "Paris, France";
-//        String description = "Les considérations idéologiques d'ordre supérieur, ainsi que la mise en œuvre des objectifs planifiés, nécessitent la définition et le perfectionnement du système de formation du personnel répondant aux besoins urgents. Ainsi, la consultation avec un atout large détermine dans une large mesure la création de systèmes participatifs.";
-        ImageView avatar = findViewById(R.id.imageViewAvatar);
-        if (author.getAvatarId() != -1) {
-            avatar.setImageResource(author.getAvatarId());
-        } else {
-            avatar.setImageResource(R.drawable.ic_person);
-        }
-        TextView textViewName = findViewById(R.id.textViewGuideName);
-        textViewName.setText(author.getName());
-        TextView textViewLocation = findViewById(R.id.textViewGuideLocation);
-        textViewLocation.setText(author.getLocalization());
-        TextView textViewDescription = findViewById(R.id.textViewAuthorDescription);
-        textViewDescription.setText(author.getDescription());
-        ImageView buttonShare = findViewById(R.id.buttonShare);
-        buttonShare.setOnClickListener(v -> ShareHelper.share(this, "Share guide", String.format("%s (%s)", author.getName(), author.getLocalization()), author.getDescription()));
+        avatarImage = findViewById(R.id.imageViewAvatar);
+        textViewName = findViewById(R.id.textViewGuideName);
+        textViewLocation = findViewById(R.id.textViewGuideLocation);
+        textViewDescription = findViewById(R.id.textViewAuthorDescription);
+        buttonShare = findViewById(R.id.buttonShare);
         ImageView buttonLike = findViewById(R.id.buttonLike);
         buttonLike.setOnClickListener(v -> buttonLike.setSelected(!buttonLike.isSelected()));
     }
 
     private void setupRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        ScrollView scrollView = findViewById(R.id.scrollView);
-        TourVerticalListAdapter adapter = new TourVerticalListAdapter(this);
-        adapter.setTours(tourRepository.getToursByAuthor(author.getId()));
+        NestedScrollView scrollView = findViewById(R.id.scrollView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setNestedScrollingEnabled(false);
+        adapter = new TourVerticalListAdapter(this);
         adapter.setClickListener(tourId -> {
             AudioActivity.Args args = new AudioActivity.Args(tourId);
             NavigationHelper.startAudioActivity(this, args);
@@ -161,6 +156,28 @@ public class ProfileActivity extends LogActivity {
 
         new Handler().postDelayed(() -> scrollView.fullScroll(View.FOCUS_UP), 300);
 
+    }
+
+    private void observeViewModel(){
+        viewModel.getGuide().observe(this, this::setAuthorData);
+
+        viewModel.getTours().observe(this, tours -> {
+            if (adapter != null && tours != null) {
+                adapter.setTours(tours);
+            }
+        });
+    }
+
+    private void setAuthorData(Guide guide){
+        if (guide != null) {
+            textViewName.setText(guide.getName());
+            textViewLocation.setText(guide.getLocalization());
+            ImageHelper.setImage(avatarImage, guide.getAvatarUrl(), R.drawable.ic_person, true);
+            textViewDescription.setText(guide.getDescription());
+            buttonShare.setOnClickListener(v -> ShareHelper.share(this, "Share guide", String.format("%s (%s)", guide.getName(), guide.getLocalization()), guide.getDescription()));
+        } else {
+            finish();
+        }
     }
 
     public void showSelectActionPopup() {

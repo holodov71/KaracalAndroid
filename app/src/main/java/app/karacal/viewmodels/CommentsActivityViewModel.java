@@ -1,6 +1,5 @@
 package app.karacal.viewmodels;
 
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,8 +8,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,10 +16,9 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Comment;
-import app.karacal.retrofit.models.request.CreateCommentRequest;
-import app.karacal.retrofit.models.response.CommentsResponse;
+import app.karacal.network.models.request.CreateCommentRequest;
+import app.karacal.network.models.response.CommentsResponse;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class CommentsActivityViewModel extends ViewModel {

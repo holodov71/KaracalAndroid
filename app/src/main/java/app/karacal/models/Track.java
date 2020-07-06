@@ -4,7 +4,7 @@ import android.util.Log;
 
 import java.io.Serializable;
 
-import app.karacal.retrofit.models.response.TrackResponse;
+import app.karacal.network.models.response.TrackResponse;
 
 public class Track implements Serializable {
     private int id;

@@ -7,14 +7,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
-import app.karacal.helpers.LocationHelper;
 import app.karacal.models.Interest;
-import app.karacal.retrofit.models.request.LoginRequest;
-import app.karacal.retrofit.models.request.RegisterRequest;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import app.karacal.network.models.request.LoginRequest;
+import app.karacal.network.models.request.RegisterRequest;
 
 public class RegistrationActivityViewModel extends ViewModel {
 

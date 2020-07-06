@@ -10,6 +10,7 @@ import androidx.navigation.Navigation;
 import java.io.Serializable;
 
 import app.karacal.R;
+import app.karacal.models.TourCategory;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.viewmodels.CategoryActivityViewModel;
 import apps.in.android_logger.LogActivity;
@@ -18,16 +19,16 @@ public class CategoryActivity extends LogActivity {
 
     public static class Args extends ActivityArgs implements Serializable {
 
-        private final int categoryId;
+        private final TourCategory category;
         private final String categoryName;
 
-        public Args(int categoryId, String categoryName) {
-            this.categoryId = categoryId;
+        public Args(TourCategory category, String categoryName) {
+            this.category = category;
             this.categoryName = categoryName;
         }
 
-        public int getCategoryId() {
-            return categoryId;
+        public TourCategory getCategory() {
+            return category;
         }
 
         public String getCategoryName() {
@@ -42,8 +43,8 @@ public class CategoryActivity extends LogActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
-        int categoryId = args.getCategoryId();
-        viewModel = new ViewModelProvider(this, new CategoryActivityViewModel.CategoryActivityViewModelFactory(categoryId)).get(CategoryActivityViewModel.class);
+        TourCategory category = args.getCategory();
+        viewModel = new ViewModelProvider(this, new CategoryActivityViewModel.CategoryActivityViewModelFactory(category)).get(CategoryActivityViewModel.class);
         setupBackButton();
         String categoryName = args.getCategoryName();
         setupTitle(categoryName);

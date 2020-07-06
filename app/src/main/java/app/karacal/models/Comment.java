@@ -2,7 +2,7 @@ package app.karacal.models;
 
 import java.util.Date;
 
-import app.karacal.retrofit.models.response.CommentsResponse;
+import app.karacal.network.models.response.CommentsResponse;
 
 public class Comment {
 

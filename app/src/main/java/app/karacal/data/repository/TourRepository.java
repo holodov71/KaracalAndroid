@@ -1,9 +1,7 @@
 package app.karacal.data.repository;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
 import android.content.Context;
-import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -16,19 +14,17 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import app.karacal.App;
-import app.karacal.R;
 import app.karacal.data.DownloadedToursCache;
 import app.karacal.data.dao.ToursDao;
 import app.karacal.data.entity.TourEntity;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.models.Guide;
 import app.karacal.models.Tour;
-import app.karacal.retrofit.models.request.NearToursRequest;
-import app.karacal.retrofit.models.request.SaveTourRequest;
-import app.karacal.retrofit.models.response.BaseResponse;
-import app.karacal.retrofit.models.response.SaveTourResponse;
+import app.karacal.network.models.request.NearToursRequest;
+import app.karacal.network.models.request.SaveTourRequest;
+import app.karacal.network.models.response.SaveTourResponse;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -381,6 +377,16 @@ public class TourRepository {
                     Log.v("loadTours", "throwable "+throwable.getMessage());
                     // TODO: load list from DB
                 });
+    }
+
+    @SuppressLint("CheckResult")
+    public Single<List<Tour>> loadToursByAuthor(int authorId) {
+        return apiHelper.loadToursByAuthor(PreferenceHelper.loadToken(context), authorId)
+                .flatMapIterable(list -> list)
+                .map(Tour::new)
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @SuppressLint("CheckResult")

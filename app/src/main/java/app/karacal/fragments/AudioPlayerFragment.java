@@ -81,7 +81,6 @@ public class AudioPlayerFragment extends LogFragment {
         buttonDownload = view.findViewById(R.id.buttonDownload);
         progressDownloading = view.findViewById(R.id.progressDownloading);
         buttonDownload.setOnClickListener(v -> {
-            onDownloadingStarted();
             viewModel.downloadTour(requireContext());
         });
     }
@@ -128,12 +127,10 @@ public class AudioPlayerFragment extends LogFragment {
     private void setupPlayerControls(View view) {
         ConstraintLayout constraintLayoutPlayer = view.findViewById(R.id.constraintLayoutPlayer);
         ImageView imageView = view.findViewById(R.id.imageViewAlbumTitle);
-//        imageView.setImageResource(viewModel.getTour().getImage());
         ImageHelper.setImage(imageView, viewModel.getTour().getImageUrl(), viewModel.getTour().getImage(), false);
 
         TextView textViewAlbumTitle = view.findViewById(R.id.textViewAlbumTitle);
         textViewAlbumTitle.setText(viewModel.getTour().getTitle());
-//        textViewAlbumTitle.setText(viewModel.getAlbum().getTitle());
         TextView textViewTrackTitle = view.findViewById(R.id.textViewTrackTitle);
         buttonPause = view.findViewById(R.id.buttonPause);
         buttonPause.setOnClickListener(v -> onPlayPauseClick());
@@ -205,18 +202,19 @@ public class AudioPlayerFragment extends LogFragment {
 
     private void observeDownloading(){
         viewModel.getTourDownloadedAction().observe(getViewLifecycleOwner(), action -> {
-            onDownloadingFinished();
             ToastHelper.showToast(requireContext(), getString(R.string.tour_downloaded));
         });
 
-        viewModel.getTourAlreadyDownloadedAction().observe(getViewLifecycleOwner(), action -> {
-            onDownloadingFinished();
-            ToastHelper.showToast(requireContext(), getString(R.string.tour_already_downloaded));
+        viewModel.getDownloadingErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
+            ToastHelper.showToast(requireContext(), errorMsg);
         });
 
-        viewModel.getDownloadingErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
-            onDownloadingFinished();
-            ToastHelper.showToast(requireContext(), errorMsg);
+        viewModel.getTourDownloading().observe(getViewLifecycleOwner(), isDownloading -> {
+            if (isDownloading){
+                onDownloadingStarted();
+            } else {
+                onDownloadingFinished();
+            }
         });
     }
 

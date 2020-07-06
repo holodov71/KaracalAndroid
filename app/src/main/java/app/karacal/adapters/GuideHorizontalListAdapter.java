@@ -16,6 +16,7 @@ import java.util.List;
 
 import app.karacal.R;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.ImageHelper;
 import app.karacal.models.Guide;
 
 public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizontalListAdapter.ViewHolder> {
@@ -39,11 +40,7 @@ public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizo
 
         void bind(Guide guide) {
             textViewName.setText(guide.getName());
-            if (guide.getAvatarId() != -1) {
-                imageViewAvatar.setImageResource(guide.getAvatarId());
-            } else {
-                imageViewAvatar.setImageResource(R.drawable.ic_person);
-            }
+            ImageHelper.setImage(imageViewAvatar, guide.getAvatarUrl(), R.drawable.ic_person, true);
             itemView.setOnClickListener(view -> {
                 if (listener != null) {
                     listener.onGuideClick(guide.getId());
@@ -54,7 +51,6 @@ public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizo
 
     private final Context context;
     private final LayoutInflater inflater;
-//    private final ArrayList<Guide> guides = new ArrayList<>(Arrays.asList(new Guide(1, "Micheal", R.mipmap.guide_avatar_example_01), new Guide(2, "Anita", R.mipmap.guide_avatar_example_02), new Guide(3,"Jackie", R.mipmap.guide_avatar_example_03), new Guide(4, "Alexander", R.mipmap.guide_avatar_example_04)));
     private final List<Guide> guides = new ArrayList<>();
     private GuideClickListener listener;
 

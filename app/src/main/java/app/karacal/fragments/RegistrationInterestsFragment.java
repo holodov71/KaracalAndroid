@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,8 @@ import com.igalata.bubblepicker.BubblePickerListener;
 import com.igalata.bubblepicker.adapter.BubblePickerAdapter;
 import com.igalata.bubblepicker.model.PickerItem;
 import com.igalata.bubblepicker.rendering.BubblePicker;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
@@ -29,12 +32,12 @@ import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
-import app.karacal.retrofit.models.request.LoginRequest;
-import app.karacal.retrofit.models.request.RegisterRequest;
+import app.karacal.network.models.request.LoginRequest;
+import app.karacal.network.models.request.RegisterRequest;
 import app.karacal.viewmodels.RegistrationActivityViewModel;
 import apps.in.android_logger.LogFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class RegistrationInterestsFragment extends LogFragment {
@@ -44,9 +47,11 @@ public class RegistrationInterestsFragment extends LogFragment {
 
     private TextView textViewInterestsCount;
     private Button buttonContinue;
+    private TextView skipButton;
     private BubblePicker bubblePicker;
+    private ProgressBar progressLoading;
 
-    private Disposable registrationDisposable;
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     @Inject
     ApiHelper apiHelper;
@@ -71,6 +76,7 @@ public class RegistrationInterestsFragment extends LogFragment {
         setupContinueButton(view);
         setupSkipButton(view);
         setupBubblePicker(view);
+        setupProgressLoading(view);
         return view;
     }
 
@@ -87,6 +93,12 @@ public class RegistrationInterestsFragment extends LogFragment {
         bubblePicker.onPause();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposable.dispose();
+    }
+
     private void setupInterestsCount(View view) {
         textViewInterestsCount = view.findViewById(R.id.textViewInterestsCount);
         viewModel.getInterestCount().observe(getViewLifecycleOwner(), count -> {
@@ -97,20 +109,16 @@ public class RegistrationInterestsFragment extends LogFragment {
 
     private void setupContinueButton(View view) {
         buttonContinue = view.findViewById(R.id.buttonContinue);
-        buttonContinue.setOnClickListener(v -> {
-            if (registrationDisposable == null) {
-                finishRegistration();
-            }
-        });
+        buttonContinue.setOnClickListener(v -> registerUser());
+    }
+
+    private void setupProgressLoading(View view) {
+        progressLoading = view.findViewById(R.id.progressLoading);
     }
 
     private void setupSkipButton(View view) {
-        TextView textView = view.findViewById(R.id.textViewSkip);
-        textView.setOnClickListener(v -> {
-            if (registrationDisposable == null) {
-                finishRegistration();
-            }
-        });
+        skipButton = view.findViewById(R.id.textViewSkip);
+        skipButton.setOnClickListener(v -> registerUser());
     }
 
     private void setupBubblePicker(View view) {
@@ -121,12 +129,12 @@ public class RegistrationInterestsFragment extends LogFragment {
         bubblePicker.setBubbleSize(BUBBLE_SIZE);
         bubblePicker.setListener(new BubblePickerListener() {
             @Override
-            public void onBubbleSelected(PickerItem pickerItem) {
+            public void onBubbleSelected(@NotNull PickerItem pickerItem) {
                 viewModel.toggleInterestState(pickerItem.getTitle());
             }
 
             @Override
-            public void onBubbleDeselected(PickerItem pickerItem) {
+            public void onBubbleDeselected(@NotNull PickerItem pickerItem) {
                 viewModel.toggleInterestState(pickerItem.getTitle());
             }
         });
@@ -137,22 +145,52 @@ public class RegistrationInterestsFragment extends LogFragment {
         bubblePicker.setAdapter(adapter);
     }
 
-    private void finishRegistration() {
+    private void showLoading(){
+        progressLoading.setVisibility(View.VISIBLE);
+        buttonContinue.setVisibility(View.INVISIBLE);
+        skipButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void hideLoading(){
+        progressLoading.setVisibility(View.GONE);
+        buttonContinue.setVisibility(View.VISIBLE);
+        skipButton.setVisibility(View.VISIBLE);
+    }
+
+    private void registerUser(){
+        showLoading();
         RegisterRequest registerRequest = viewModel.getRegisterRequest();
+        disposable.add(apiHelper.register(registerRequest)
+                .subscribe(response -> {
+                    if (response.isSuccess()){
+                        login();
+                    } else {
+                        hideLoading();
+                        ToastHelper.showToast(getContext(), response.getErrorMessage());
+                    }
+                },
+                throwable -> {
+                    hideLoading();
+                    ToastHelper.showToast(getContext(), throwable.getMessage());
+                })
+        );
+    }
+
+    private void login() {
         LoginRequest loginRequest = viewModel.getLoginRequest();
-        registrationDisposable = apiHelper.register(registerRequest).andThen(apiHelper.login(loginRequest)).flatMap(apiHelper::getProfile)
+        disposable.add(apiHelper.login(loginRequest)
+                .flatMap(apiHelper::getProfile)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(profile -> {
                             profileHolder.setProfile(profile);
                             NavigationHelper.startMainActivity(getActivity());
                             getActivity().finishAffinity();
-                            registrationDisposable = null;
                         },
                         throwable -> {
+                            hideLoading();
                             ToastHelper.showToast(getContext(), throwable.getMessage());
-                            registrationDisposable = null;
-                        });
+                        }));
     }
 
 

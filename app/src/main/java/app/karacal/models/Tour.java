@@ -1,5 +1,6 @@
 package app.karacal.models;
 
+import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
@@ -8,12 +9,13 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import app.karacal.R;
 import app.karacal.data.entity.TourEntity;
-import app.karacal.retrofit.models.response.ContentResponse;
-import app.karacal.retrofit.models.response.TourResponse;
-import app.karacal.retrofit.models.response.TrackResponse;
+import app.karacal.network.models.response.ContentResponse;
+import app.karacal.network.models.response.TourResponse;
+import app.karacal.network.models.response.TrackResponse;
 
 public class Tour implements Serializable {
 
@@ -139,6 +141,22 @@ public class Tour implements Serializable {
 
     public int getDuration() {
         return duration;
+    }
+
+    public String getFormattedTourDuration(Context context) {
+        int durationInMinutes = duration / 60;
+        int hours = durationInMinutes / 60;
+        String hoursText = hours > 0 ? String.format(Locale.getDefault(), "%d %s", hours, context.getString(hours > 1 ? R.string.hours : R.string.hour)) : "";
+        int minutes = durationInMinutes % 60;
+        String minutesText = String.format(Locale.getDefault(), "%d %s", minutes, context.getString(minutes != 1 ? R.string.minutes : R.string.minute));
+        return String.format("%s %s", hoursText, minutesText);
+    }
+
+    public String getShortFormattedTourDuration(Context context) {
+        int durationInMinutes = duration / 60;
+        int hours = durationInMinutes / 60;
+        int minutes = durationInMinutes % 60;
+        return context.getString(R.string.duration_format, hours, minutes);
     }
 
     public int getAuthorId() {
