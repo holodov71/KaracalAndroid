@@ -6,6 +6,7 @@ import app.karacal.App;
 import app.karacal.activities.ApplyPrivacyPolicyActivity;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CommentsActivity;
+import app.karacal.activities.DashboardActivity;
 import app.karacal.activities.EditAudioActivity;
 import app.karacal.activities.EditGuideActivity;
 import app.karacal.activities.FollowMyListeningsActivity;
@@ -27,6 +28,7 @@ import app.karacal.fragments.RegistrationInterestsFragment;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import app.karacal.viewmodels.CategoryActivityViewModel;
 import app.karacal.viewmodels.CommentsActivityViewModel;
+import app.karacal.viewmodels.DashboardActivityViewModel;
 import app.karacal.viewmodels.EditGuideActivityViewModel;
 import app.karacal.viewmodels.MainActivityViewModel;
 import app.karacal.viewmodels.ProfileActivityViewModel;
@@ -52,6 +54,8 @@ public interface AppComponent {
     void inject(FollowMyListeningsActivity activity);
 
     void inject(EditGuideActivity activity);
+
+    void inject(DashboardActivity activity);
 
     void inject(EditAudioActivity activity);
 
@@ -86,6 +90,8 @@ public interface AppComponent {
     void inject (AudioActivityViewModel viewModel);
 
     void inject (EditGuideActivityViewModel viewModel);
+
+    void inject (DashboardActivityViewModel viewModel);
 
     void inject (CommentsActivityViewModel viewModel);
 

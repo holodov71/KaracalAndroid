@@ -32,6 +32,7 @@ import app.karacal.network.models.request.CreateCardRequest;
 import app.karacal.network.models.request.CreateCommentRequest;
 import app.karacal.network.models.request.CreateCustomerRequest;
 import app.karacal.network.models.request.CreateSubscriptionRequest;
+import app.karacal.network.models.request.GuideByEmailRequest;
 import app.karacal.network.models.request.NearToursRequest;
 import app.karacal.network.models.request.PaymentRequest;
 import app.karacal.network.models.request.ProfileRequest;
@@ -43,6 +44,7 @@ import app.karacal.network.models.response.ContentResponse;
 import app.karacal.network.models.response.CreateCardResponse;
 import app.karacal.network.models.response.CreateCustomerResponse;
 import app.karacal.network.models.response.CreateSubscriptionResponse;
+import app.karacal.network.models.response.GuideByEmailResponse;
 import app.karacal.network.models.response.GuideResponse;
 import app.karacal.network.models.request.LoginRequest;
 import app.karacal.network.ProfileService;
@@ -226,6 +228,12 @@ public class ApiHelper implements EphemeralKeyProvider {
 
     public Observable<GuideResponse> loadGuide(String token, String guideId) {
         return guideService.getGuideById("Bearer " + token, guideId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<GuideByEmailResponse> getGuide(String token, GuideByEmailRequest request) {
+        return guideService.getGuideByEmail("Bearer " + token, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

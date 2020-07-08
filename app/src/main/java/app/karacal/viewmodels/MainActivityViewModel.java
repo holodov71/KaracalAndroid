@@ -1,6 +1,7 @@
 package app.karacal.viewmodels;
 
 import android.location.Location;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,8 +23,9 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Guide;
 import app.karacal.models.Tour;
+import app.karacal.network.models.request.GuideByEmailRequest;
 import app.karacal.network.models.response.SubscriptionWrapper;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 
 import static app.karacal.network.models.response.SubscriptionsListResponse.STATUS_SUBSCRIPTION_ACTIVE;
 
@@ -45,7 +47,19 @@ public class MainActivityViewModel extends BaseLocationViewModel {
         }
     }
 
-    private Disposable disposable;
+    public static final int OBTAIN_LOCATION_INTERVAL = 60 * 1000;// one minute
+
+    private long lastObtainedLocation = 0;
+    Handler locationTimerHandler = new Handler();
+    Runnable locationTimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            obtainLocation();
+            locationTimerHandler.postDelayed(this, OBTAIN_LOCATION_INTERVAL);
+        }
+    };
+
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     @Inject
     TourRepository tourRepository;
@@ -97,14 +111,15 @@ public class MainActivityViewModel extends BaseLocationViewModel {
         tourRepository.loadContents();
     }
 
-    public void checkSubscriptions() {
-        if (disposable != null){
-            disposable.dispose();
-        }
-
+    public void processUser(){
         String serverToken = PreferenceHelper.loadToken(App.getInstance());
+        checkSubscriptions(serverToken);
+        checkIsGuide(serverToken);
+    }
 
-        disposable = apiHelper.getPurchases(serverToken)
+    private void checkSubscriptions(String serverToken) {
+
+        disposable.add(apiHelper.getPurchases(serverToken)
                 .subscribe(response -> {
                     Log.v("loadSubscriptions", "Success response = " + response);
                     if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
@@ -120,28 +135,23 @@ public class MainActivityViewModel extends BaseLocationViewModel {
                     }
                 }, throwable -> {
                     Log.v("loadSubscriptions", "Error loading");
-                });
+                }));
+    }
 
-//        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
-//        disposable = apiHelper.createCustomer(serverToken, createCustomerRequest)
-//                .map(CreateCustomerResponse::getId)
-//                .flatMap(customerId -> apiHelper.loadSubscriptions(serverToken, customerId))
-//                .subscribe(response -> {
-//                    Log.v("loadSubscriptions", "Success response = " + response);
-//                    if (response.isSuccess()) {
-//                        if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
-//                            for (SubscriptionsListResponse.Subscription subs: response.getSubscriptions()){
-//                                if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
-//                                    profileHolder.setSubscription(subs.getId());
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }, throwable -> {
-//                    Log.v("loadSubscriptions", "Error loading");
-//                });
+    private void checkIsGuide(String serverToken){
+        GuideByEmailRequest request = new GuideByEmailRequest(profileHolder.getProfile().getEmail());
 
+        disposable.add(apiHelper.getGuide(serverToken, request)
+                .subscribe(response -> {
+                    profileHolder.setGuide(response.isGuide());
+                }, throwable -> {
+                    Log.v("checkIsGuide", "Error loading");
+                }));
+    }
+
+    public void startObtainLocation(){
+        locationTimerHandler.removeCallbacks(locationTimerRunnable);
+        locationTimerHandler.postDelayed(locationTimerRunnable, 100);
     }
 
     @Override
@@ -150,5 +160,6 @@ public class MainActivityViewModel extends BaseLocationViewModel {
         if (disposable != null){
             disposable.dispose();
         }
+        locationTimerHandler.removeCallbacks(locationTimerRunnable);
     }
 }

@@ -8,25 +8,34 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.DashboardTourPagerAdapter;
+import app.karacal.helpers.ImageHelper;
+import app.karacal.models.Profile;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.viewmodels.DashboardActivityViewModel;
 import apps.in.android_logger.LogActivity;
 import apps.in.android_logger.Logger;
 
 public class DashboardActivity extends LogActivity {
 
     private ImageView avatar;
+    private DashboardActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        App.getAppComponent().inject(this);
+        viewModel = new ViewModelProvider(this).get(DashboardActivityViewModel.class);
+
         setContentView(R.layout.activity_dashboard);
         setupButtons();
         setupAuthor();
@@ -56,15 +65,18 @@ public class DashboardActivity extends LogActivity {
     }
 
     private void setupAuthor(){
-        int avatarResId = R.mipmap.avatar_example;
-        String name = "Alexander McQueen";
-        String location = "Paris, France";
+        Profile profile = viewModel.getProfile();
+
+//        String name = "Alexander McQueen";
+//        String location = "Paris, France";
+
         avatar = findViewById(R.id.imageViewAvatar);
-        avatar.setImageResource(avatarResId);
+        ImageHelper.setImage(avatar, profile.getAvatar(), R.drawable.ic_person, true);
+
         TextView textViewName = findViewById(R.id.textViewGuideName);
-        textViewName.setText(name);
+        textViewName.setText(profile.getName());
         TextView textViewLocation = findViewById(R.id.textViewGuideLocation);
-        textViewLocation.setText(location);
+        textViewLocation.setText("");
     }
 
     private void setupViewPager(){

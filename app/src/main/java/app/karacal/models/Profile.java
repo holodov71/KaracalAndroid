@@ -45,6 +45,10 @@ public class Profile {
         this.secondName = secondName;
     }
 
+    public String getName() {
+        return firstName + " " + secondName;
+    }
+
     public Date getBirthDate() {
         return birthDate;
     }

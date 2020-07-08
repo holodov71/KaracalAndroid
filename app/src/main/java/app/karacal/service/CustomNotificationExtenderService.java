@@ -2,8 +2,6 @@ package app.karacal.service;
 
 import android.util.Log;
 
-import androidx.core.app.NotificationCompat;
-
 import com.onesignal.NotificationExtenderService;
 import com.onesignal.OSNotificationDisplayedResult;
 import com.onesignal.OSNotificationReceivedResult;
@@ -14,15 +12,12 @@ public class CustomNotificationExtenderService extends NotificationExtenderServi
     @Override
     protected boolean onNotificationProcessing(OSNotificationReceivedResult receivedResult) {
         OverrideSettings overrideSettings = new OverrideSettings();
-        overrideSettings.extender = new NotificationCompat.Extender() {
-            @Override
-            public NotificationCompat.Builder extend(NotificationCompat.Builder builder) {
-                //Force remove push from Notification Center after 30 minutes
-                builder.setTimeoutAfter(1800000)
-                        // Sets the background notification color to Green on Android 5.0+ devices.
-                        .setColor(new BigInteger("FF181B2B", 16).intValue());
-                return builder;
-            }
+        overrideSettings.extender = builder -> {
+            //Force remove push from Notification Center after 30 minutes
+            builder.setTimeoutAfter(1800000)
+                    // Sets the background notification color to Green on Android 5.0+ devices.
+                    .setColor(new BigInteger("FF181B2B", 16).intValue());
+            return builder;
         };
 
         OSNotificationDisplayedResult displayedResult = displayNotification(overrideSettings);

@@ -1,6 +1,5 @@
 package app.karacal.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,8 +47,6 @@ import app.karacal.navigation.NavigationHelper;
 import app.karacal.service.PaymentsUpdateService;
 import app.karacal.viewmodels.MainActivityViewModel;
 import io.reactivex.disposables.Disposable;
-
-import static app.karacal.activities.PaymentActivity.RESULT_URL;
 
 public class MainMenuFragment extends Fragment {
 
@@ -111,8 +108,11 @@ public class MainMenuFragment extends Fragment {
         LinearLayout buttonSettings = view.findViewById(R.id.buttonSettings);
         buttonSettings.setOnClickListener(v -> NavigationHelper.startSettingsActivity(getActivity()));
         LinearLayout buttonDashboard = view.findViewById(R.id.buttonDashboardGuide);
-//        buttonDashboard.setVisibility(View.GONE);
-        buttonDashboard.setOnClickListener(v -> NavigationHelper.startDashboardActivity(getActivity()));
+        if (profileHolder.isGuide()) {
+            buttonDashboard.setOnClickListener(v -> NavigationHelper.startDashboardActivity(getActivity()));
+        } else {
+            buttonDashboard.setVisibility(View.GONE);
+        }
 
         setupCancelSubscription(view);
         LinearLayout buttonLogout = view.findViewById(R.id.buttonLogout);
@@ -163,7 +163,7 @@ public class MainMenuFragment extends Fragment {
         categoryRecommended.setVisibility(View.GONE);
 //        setupTourCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tourRepository.getRecommendedTours());
         View categoryRecommendedGuide = view.findViewById(R.id.categoryRecommendedGuides);
-        setupGuideCategory(categoryRecommendedGuide, 1, getString(R.string.recommended_for_you));
+        setupGuideCategory(categoryRecommendedGuide, getString(R.string.recommended_for_you));
 
         View categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
         if (getContext() != null) {
@@ -185,7 +185,7 @@ public class MainMenuFragment extends Fragment {
         adapter.setClickListener(tourClickListener);
     }
 
-    private void setupGuideCategory(View categoryView, int id, String title) {
+    private void setupGuideCategory(View categoryView, String title) {
         TextView textViewTitle = categoryView.findViewById(R.id.textViewTitle);
         if (textViewTitle != null) {
             textViewTitle.setText(title);

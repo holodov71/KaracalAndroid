@@ -39,7 +39,7 @@ public class MainActivity extends PermissionActivity {
         viewModel = new ViewModelProvider(this, new MainActivityViewModel.MainActivityViewModelFactory()).get(MainActivityViewModel.class);
         setContentView(R.layout.activity_main);
 
-        viewModel.checkSubscriptions();
+        viewModel.processUser();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
@@ -68,7 +68,7 @@ public class MainActivity extends PermissionActivity {
 
     private void setupLocation() {
         permissionHelper.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION,
-                () -> viewModel.obtainLocation(),
+                () -> viewModel.startObtainLocation(),
                 () -> Toast.makeText(this, R.string.permission_needed, Toast.LENGTH_SHORT).show());
     }
 }

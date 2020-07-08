@@ -18,7 +18,10 @@ public class ProfileHolder {
     private Profile profile;
 
     private String subscriptionId = null;
+
     private List<Integer> tourPurchases = new ArrayList<>();
+
+    private boolean isGuide = false;
 
     @Inject
     public ProfileHolder(TokenHelper tokenHelper){
@@ -66,5 +69,13 @@ public class ProfileHolder {
 
     public void addTourPurchase(int tourId){
         tourPurchases.add(tourId);
+    }
+
+    public boolean isGuide() {
+        return isGuide;
+    }
+
+    public void setGuide(boolean guide) {
+        isGuide = guide;
     }
 }
