@@ -1,5 +1,6 @@
 package app.karacal.network.models.response;
 
+import java.util.Date;
 import java.util.List;
 
 public class ContentResponse {
@@ -19,8 +20,8 @@ public class ContentResponse {
     private int rating;
     private String type;
     private int status;
-    private String createdAt;
-    private String updatedAt;
+    private Date createdAt;
+    private Date updatedAt;
 
     public int getId() {
         return id;
@@ -78,11 +79,11 @@ public class ContentResponse {
         return status;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 

@@ -22,16 +22,18 @@ public class DashboardTourPagerAdapter extends FragmentStatePagerAdapter {
 
     private final TourType[] tourTypes = TourType.values();
     private final Context context;
+    private int guideId;
 
-    public DashboardTourPagerAdapter(Context context, @NonNull FragmentManager fm) {
+    public DashboardTourPagerAdapter(Context context, @NonNull FragmentManager fm, int guideId) {
         super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         this.context = context;
+        this.guideId = guideId;
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        return DashboardTourItemFragment.getInstance(tourTypes[position]);
+        return DashboardTourItemFragment.getInstance(tourTypes[position], guideId);
     }
 
     @Override

@@ -94,6 +94,7 @@ public class AudioActivityViewModel extends ViewModel {
     private MutableLiveData<List<Comment>> commentsLiveData = new MutableLiveData<>();
     private MutableLiveData<Guide> guideLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> tourDownloadingLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> tourCountLiveData = new MutableLiveData<>();
 
     public SingleLiveEvent<Void> getListenAction() {
         return listenAction;
@@ -125,6 +126,10 @@ public class AudioActivityViewModel extends ViewModel {
 
     public LiveData<Guide> getGuide(){
         return guideLiveData;
+    }
+
+    public LiveData<Integer> getToursCount(){
+        return tourCountLiveData;
     }
 
     private final Tour tour;
@@ -164,7 +169,7 @@ public class AudioActivityViewModel extends ViewModel {
         if (author != null) {
             return tourRepository.getToursByAuthor(author.getId()).size();
         } else {
-            return 5;
+            return 0;
         }
     }
 
@@ -224,6 +229,14 @@ public class AudioActivityViewModel extends ViewModel {
                         commentsLiveData.setValue(new ArrayList<>());
                     }));
         }
+    }
+
+    private void loadToursCount(int guideId){
+        disposable.add(tourRepository.loadToursByAuthor(guideId)
+                .subscribe(
+                        response -> tourCountLiveData.setValue(response.size()),
+                        throwable -> tourCountLiveData.setValue(0)
+                ));
     }
 
     public void downloadTour(Context context) {
@@ -320,8 +333,10 @@ public class AudioActivityViewModel extends ViewModel {
 
     public void loadAuthor(){
         disposable.add(apiHelper.loadGuide(PreferenceHelper.loadToken(App.getInstance()), String.valueOf(tour.getAuthorId()))
-                .subscribe(response ->
-                    guideLiveData.setValue(new Guide(response))
+                .subscribe(response ->{
+                    guideLiveData.setValue(new Guide(response));
+                    loadToursCount(tour.getAuthorId());
+                }
                 , throwable ->
                     guideLiveData.setValue(null)
                 ));

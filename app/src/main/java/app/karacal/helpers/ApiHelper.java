@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.stripe.android.EphemeralKeyProvider;
 import com.stripe.android.EphemeralKeyUpdateListener;
 
+import org.bouncycastle.jcajce.provider.symmetric.ARC4;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -157,6 +158,19 @@ public class ApiHelper implements EphemeralKeyProvider {
         return profileService.loadPurchases("Bearer " + token, token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<BaseResponse> changeAvatar(String token, String path){
+        Log.v("uploadAudio", "upload file " + path);
+        File file = new File(path);
+        Log.d("uploadAudio", "file size "+ file.length());
+        RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part image = MultipartBody.Part.createFormData("image", file.getName(), fileBody);
+
+        return profileService.changeAvatar("Bearer " + token, image)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
     }
 
     // Auth region

@@ -3,14 +3,21 @@ package app.karacal.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -18,7 +25,9 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.DashboardTourPagerAdapter;
+import app.karacal.adapters.TourVerticalListAdapter;
 import app.karacal.helpers.ImageHelper;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Profile;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.DashboardActivityViewModel;
@@ -28,7 +37,9 @@ import apps.in.android_logger.Logger;
 public class DashboardActivity extends LogActivity {
 
     private ImageView avatar;
+    private ProgressBar progressLoading;
     private DashboardActivityViewModel viewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +49,12 @@ public class DashboardActivity extends LogActivity {
 
         setContentView(R.layout.activity_dashboard);
         setupButtons();
-        setupAuthor();
-        setupViewPager();
+        Profile profile = viewModel.getProfile();
+        setupAuthor(profile);
+        setupViewPager(profile);
+        setupProgressLoading();
+
+        observeViewModel();
     }
 
     private void setupButtons(){
@@ -64,11 +79,7 @@ public class DashboardActivity extends LogActivity {
         buttonCreateTour.setOnClickListener(v -> NavigationHelper.startEditGuideActivity(this,  new EditGuideActivity.Args(null)));
     }
 
-    private void setupAuthor(){
-        Profile profile = viewModel.getProfile();
-
-//        String name = "Alexander McQueen";
-//        String location = "Paris, France";
+    private void setupAuthor(Profile profile){
 
         avatar = findViewById(R.id.imageViewAvatar);
         ImageHelper.setImage(avatar, profile.getAvatar(), R.drawable.ic_person, true);
@@ -79,12 +90,16 @@ public class DashboardActivity extends LogActivity {
         textViewLocation.setText("");
     }
 
-    private void setupViewPager(){
+    private void setupViewPager(Profile profile){
         ViewPager viewPager = findViewById(R.id.viewPager);
-        DashboardTourPagerAdapter adapter = new DashboardTourPagerAdapter(this, getSupportFragmentManager());
+        DashboardTourPagerAdapter adapter = new DashboardTourPagerAdapter(this, getSupportFragmentManager(), profile.getId());
         viewPager.setAdapter(adapter);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void setupProgressLoading(){
+        progressLoading = findViewById(R.id.progressLoading);
     }
 
     @Override
@@ -93,7 +108,7 @@ public class DashboardActivity extends LogActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
-                avatar.setImageURI(resultUri);
+                viewModel.changeAvatar(this, resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 Logger.log(DashboardActivity.this, "Image cropping error", error);
@@ -102,4 +117,21 @@ public class DashboardActivity extends LogActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    private void observeViewModel() {
+        viewModel.getAvatarUploadedAction().observe(this, filePath -> {
+            ImageHelper.setImage(avatar, filePath, R.drawable.ic_person, true);
+        });
+
+        viewModel.getAvatarUploadingLiveData().observe(this, isUploading -> {
+            progressLoading.setVisibility(isUploading ? View.VISIBLE : View.GONE);
+            avatar.setVisibility(isUploading ? View.INVISIBLE : View.VISIBLE);
+        });
+
+        viewModel.getAvatarUploadingErrorAction().observe(this, errorMessage -> {
+            ToastHelper.showToast(this, errorMessage);
+        });
+    }
+
+
 }

@@ -44,7 +44,7 @@ public class DashboardTourListAdapter extends RecyclerView.Adapter<DashboardTour
         void bind(Tour tour){
             ImageHelper.setImage(imageViewTitle, tour.getImageUrl(), tour.getImage(), false);
             textViewTitle.setText(tour.getTitle());
-            Date date = new Date();
+            Date date = tour.getCreatedAt() != null ? tour.getCreatedAt() : new Date();
             textViewDate.setText(context.getString(R.string.dashboard_tour_created_format, dateFormat.format(date)));
             buttonEdit.setOnClickListener(v -> NavigationHelper.startEditGuideActivity(context, new EditGuideActivity.Args(tour.getId())));
         }

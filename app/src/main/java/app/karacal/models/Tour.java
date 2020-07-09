@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,6 +31,8 @@ public class Tour implements Serializable {
     private int authorId;
     private String author;
     private String address;
+    private Date createdAt;
+    private Date updatedAt;
     private double lat;
     private double lng;
     private List<Track> audio;
@@ -68,7 +71,6 @@ public class Tour implements Serializable {
     }
 
     public Tour(ContentResponse content) {
-        Log.v("ContentResponse", "Tour(ContentResponse content)");
         Log.v("ContentResponse", "content = "+content);
         this.id = content.getId();
         this.imageUrl = content.getImg();
@@ -87,6 +89,8 @@ public class Tour implements Serializable {
         for (TrackResponse response: content.getAudio()){
             audio.add(new Track(response));
         }
+        this.createdAt = content.getCreatedAt();
+        this.updatedAt = content.getUpdatedAt();
     }
 
     public Tour(TourEntity entity) {
@@ -198,6 +202,14 @@ public class Tour implements Serializable {
 
     public String getAddress() {
         return address;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
     @Override

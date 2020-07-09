@@ -145,8 +145,8 @@ public class ProfileActivity extends LogActivity {
     private void setupRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         NestedScrollView scrollView = findViewById(R.id.scrollView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setNestedScrollingEnabled(false);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setNestedScrollingEnabled(false);
         adapter = new TourVerticalListAdapter(this);
         adapter.setClickListener(tourId -> {
             AudioActivity.Args args = new AudioActivity.Args(tourId);

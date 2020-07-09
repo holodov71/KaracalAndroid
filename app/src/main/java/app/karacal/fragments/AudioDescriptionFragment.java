@@ -152,14 +152,6 @@ public class AudioDescriptionFragment extends LogFragment {
         if (getContext() != null) {
             textView.setText(viewModel.getTour().getFormattedTourDuration(getContext()));
         }
-//        int duration = viewModel.getTour().getDuration();
-//        int durationInMinutes = duration / 60;
-//        int hours = durationInMinutes / 60;
-//        String hoursText = hours > 0 ? String.format(Locale.getDefault(), "%d %s", hours, getContext().getString(hours > 1 ? R.string.hours : R.string.hour)) : "";
-//        int minutes = durationInMinutes % 60;
-//        String minutesText = String.format(Locale.getDefault(), "%d %s", minutes, getContext().getString(minutes != 1 ? R.string.minutes : R.string.minute));
-//        textView.setText(String.format("%s %s", hoursText, minutesText));
-
     }
 
     private void setupReviews(View view){
@@ -181,7 +173,7 @@ public class AudioDescriptionFragment extends LogFragment {
         });
         textViewGuidesCount = view.findViewById(R.id.textViewGuidesCount);
         ImageView imageViewAlert = view.findViewById(R.id.imageViewAuthorAlert);
-//        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
+        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
 
         viewModel.loadAuthor();
     }
@@ -190,7 +182,6 @@ public class AudioDescriptionFragment extends LogFragment {
         if (guide != null) {
             textViewAuthor.setText(guide.getName());
             ImageHelper.setImage(imageViewAuthor, guide.getAvatarUrl(), R.drawable.ic_person, false);
-            textViewGuidesCount.setText(getString(R.string.guide_count_format, guide.getCountGuides(), getString(guide.getCountGuides() != 1 ? R.string.guides : R.string.guide)));
         } else {
             buttonAuthor.setVisibility(View.GONE);
         }
@@ -223,6 +214,12 @@ public class AudioDescriptionFragment extends LogFragment {
                 onDownloadingStarted();
             } else {
                 onDownloadingFinished();
+            }
+        });
+
+        viewModel.getToursCount().observe(getViewLifecycleOwner(), count -> {
+            if (count != null){
+                textViewGuidesCount.setText(getString(R.string.guide_count_format, count, getString(count != 1 ? R.string.guides : R.string.guide)));
             }
         });
 
