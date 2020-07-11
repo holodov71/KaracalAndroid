@@ -5,11 +5,13 @@ import java.util.Map;
 import app.karacal.network.models.request.CreateCardRequest;
 import app.karacal.network.models.request.CreateCustomerRequest;
 import app.karacal.network.models.request.CreateSubscriptionRequest;
+import app.karacal.network.models.request.DonateAuthorRequest;
 import app.karacal.network.models.request.PaymentRequest;
 import app.karacal.network.models.response.BaseResponse;
 import app.karacal.network.models.response.CreateCardResponse;
 import app.karacal.network.models.response.CreateCustomerResponse;
 import app.karacal.network.models.response.CreateSubscriptionResponse;
+import app.karacal.network.models.response.DonateAuthorResponse;
 import app.karacal.network.models.response.PaymentResponse;
 import app.karacal.network.models.response.PaymentsListResponse;
 import app.karacal.network.models.response.SubscriptionsListResponse;
@@ -48,9 +50,12 @@ public interface StripeService {
     @DELETE("payments/cancel-subscription/{subscription_id}")
     Observable<BaseResponse> cancelSubscription(@Header("Authorization") String token, @Path("subscription_id") String subscriptionId);
 
-
     @GET("payments/list-subscription/{customer_id}")
     Observable<SubscriptionsListResponse> getSubscriptions(@Header("Authorization") String token, @Path("customer_id") String customerId);
+
+    @POST("payments/donate")
+    Observable<DonateAuthorResponse> donateAuthor(@Header("Authorization") String token, @Body DonateAuthorRequest request);
+
 
 
 }

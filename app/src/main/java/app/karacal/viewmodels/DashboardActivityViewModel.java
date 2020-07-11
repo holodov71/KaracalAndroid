@@ -65,7 +65,8 @@ public class DashboardActivityViewModel extends ViewModel {
                 .subscribe(response -> {
                             avatarUploadingLiveData.setValue(false);
                             if (response.isSuccess()){
-                                avatarUploadedAction.setValue(filePath);
+                                avatarUploadedAction.setValue(response.getUrl());
+                                profileHolder.getProfile().setAvatar(response.getUrl());
                             } else {
                                 avatarUploadingErrorAction.setValue(response.getErrorMessage());
                             }

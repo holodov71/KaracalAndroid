@@ -21,6 +21,8 @@ import app.karacal.data.repository.TourRepository;
 import apps.in.android_logger.LogFragment;
 import io.reactivex.disposables.Disposable;
 
+import static app.karacal.adapters.DashboardTourPagerAdapter.TourType.PUBLISHED;
+
 public class DashboardTourItemFragment extends LogFragment {
 
     private static final String ARG_GUIDE_ID = "guide_id";
@@ -63,26 +65,23 @@ public class DashboardTourItemFragment extends LogFragment {
         return view;
     }
 
-//    private void observeTours(DashboardTourListAdapter adapter){
-//        tourRepository.originalToursLiveData.observe(getViewLifecycleOwner(), tours -> {
-//            if (!tours.isEmpty()) {
-//                adapter.setTours(tours);
-//            }
-//        });
-//    }
     private void loadTours(DashboardTourListAdapter adapter){
-        if (disposable != null){
-            disposable.dispose();
-        }
+        if(tourType == PUBLISHED) {
+            if (disposable != null) {
+                disposable.dispose();
+            }
 
-        disposable = tourRepository.loadToursByAuthor(guideId)
-                .subscribe(
-                        response -> {
-                            if (!response.isEmpty()) {
-                                adapter.setTours(response);
-                            }
-                        },
-                        throwable -> adapter.setTours(new ArrayList<>())
-                );
+            disposable = tourRepository.loadToursByAuthor(guideId)
+                    .subscribe(
+                            response -> {
+                                if (!response.isEmpty()) {
+                                    adapter.setTours(response);
+                                }
+                            },
+                            throwable -> adapter.setTours(new ArrayList<>())
+                    );
+        } else {
+            adapter.setTours(new ArrayList<>());
+        }
     }
 }

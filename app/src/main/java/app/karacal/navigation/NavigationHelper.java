@@ -28,8 +28,9 @@ import app.karacal.service.PaymentsUpdateService;
 
 public class NavigationHelper {
 
-    public static void startDontateActivity(Activity context) {
+    public static void startDonateActivity(Activity context, DonateActivity.Args args) {
         Intent intent = new Intent(context, DonateActivity.class);
+        intent.putExtras(args.toBundle());
         context.startActivity(intent);
     }
 

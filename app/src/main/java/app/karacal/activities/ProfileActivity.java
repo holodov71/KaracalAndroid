@@ -4,13 +4,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.Serializable;
@@ -25,11 +23,8 @@ import app.karacal.models.Guide;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
-import app.karacal.popups.ReportProblemPopup;
-import app.karacal.popups.SelectActionPopup;
 import app.karacal.popups.ShareImpressionPopup;
 import app.karacal.viewmodels.ProfileActivityViewModel;
-import app.karacal.views.NoScrollLinearLayoutManager;
 import apps.in.android_logger.LogActivity;
 
 public class ProfileActivity extends LogActivity {
@@ -48,32 +43,34 @@ public class ProfileActivity extends LogActivity {
 
     }
 
-    private SelectActionPopup.SelectActionPopupCallbacks selectActionPopupCallbacks = new SelectActionPopup.SelectActionPopupCallbacks() {
-        @Override
-        public void onButtonLikeClick(BasePopup popup) {
-            showShareImpressionPopup();
-        }
-
-        @Override
-        public void onButtonDownloadAlbumClick(BasePopup popup) {
-            DummyHelper.dummyAction(ProfileActivity.this);
-        }
-
-        @Override
-        public void onButtonShareTrackClick(BasePopup popup) {
-            DummyHelper.dummyAction(ProfileActivity.this);
-        }
-
-        @Override
-        public void onButtonReportProblemClick(BasePopup popup) {
-            showReportProblemPopup();
-        }
-    };
+//    private SelectActionPopup.SelectActionPopupCallbacks selectActionPopupCallbacks = new SelectActionPopup.SelectActionPopupCallbacks() {
+//        @Override
+//        public void onButtonLikeClick(BasePopup popup) {
+//            showShareImpressionPopup();
+//        }
+//
+//        @Override
+//        public void onButtonDownloadAlbumClick(BasePopup popup) {
+//            DummyHelper.dummyAction(ProfileActivity.this);
+//        }
+//
+//        @Override
+//        public void onButtonShareTrackClick(BasePopup popup) {
+//            DummyHelper.dummyAction(ProfileActivity.this);
+//        }
+//
+//        @Override
+//        public void onButtonReportProblemClick(BasePopup popup) {
+//            showReportProblemPopup();
+//        }
+//    };
 
     private ShareImpressionPopup.ShareImpressionPopupCallbacks shareImpressionPopupCallbacks = new ShareImpressionPopup.ShareImpressionPopupCallbacks() {
         @Override
         public void onButtonDonateClick(BasePopup popup) {
-            NavigationHelper.startDontateActivity(ProfileActivity.this);
+            DonateActivity.Args args = new DonateActivity.Args(viewModel.getGuideId());
+            NavigationHelper.startDonateActivity(ProfileActivity.this, args);
+            popup.close();
         }
 
         @Override
@@ -129,7 +126,7 @@ public class ProfileActivity extends LogActivity {
         ImageView buttonBack = findViewById(R.id.buttonBack);
         buttonBack.setOnClickListener(v -> onBackPressed());
         ImageView buttonAlert = findViewById(R.id.buttonAuthorAlert);
-        buttonAlert.setOnClickListener(v -> showSelectActionPopup());
+        buttonAlert.setOnClickListener(v -> showShareImpressionPopup());
     }
 
     private void setupAuthor(){
@@ -145,8 +142,6 @@ public class ProfileActivity extends LogActivity {
     private void setupRecyclerView(){
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         NestedScrollView scrollView = findViewById(R.id.scrollView);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setNestedScrollingEnabled(false);
         adapter = new TourVerticalListAdapter(this);
         adapter.setClickListener(tourId -> {
             AudioActivity.Args args = new AudioActivity.Args(tourId);
@@ -180,19 +175,19 @@ public class ProfileActivity extends LogActivity {
         }
     }
 
-    public void showSelectActionPopup() {
-        SelectActionPopup popup = new SelectActionPopup(layoutRoot, selectActionPopupCallbacks);
-        popup.show();
-    }
-
-    public void showReportProblemPopup() {
-        ReportProblemPopup popup = new ReportProblemPopup(layoutRoot, new ReportProblemPopup.ReportProblemPopupDefaultCallbacks(this));
-        popup.show();
-    }
+//    public void showSelectActionPopup() {
+//        SelectActionPopup popup = new SelectActionPopup(layoutRoot, selectActionPopupCallbacks);
+//        popup.show();
+//    }
+//
+//    public void showReportProblemPopup() {
+//        ReportProblemPopup popup = new ReportProblemPopup(layoutRoot, new ReportProblemPopup.ReportProblemPopupDefaultCallbacks(this));
+//        popup.show();
+//    }
 
 
     public void showShareImpressionPopup() {
-        ShareImpressionPopup popup = new ShareImpressionPopup(layoutRoot, shareImpressionPopupCallbacks);
+        ShareImpressionPopup popup = new ShareImpressionPopup(layoutRoot, shareImpressionPopupCallbacks, false);
         popup.show();
     }
 

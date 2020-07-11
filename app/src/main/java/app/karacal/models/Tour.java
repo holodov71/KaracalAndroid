@@ -36,6 +36,7 @@ public class Tour implements Serializable {
     private double lat;
     private double lng;
     private List<Track> audio;
+    private String tags;
 
     public Tour(int id, int image, String title, String description, long price, int rating, int duration, int authorId, double lat, double lng, String address) {
         this.id = id;
@@ -91,6 +92,7 @@ public class Tour implements Serializable {
         }
         this.createdAt = content.getCreatedAt();
         this.updatedAt = content.getUpdatedAt();
+        this.tags = content.getTags();
     }
 
     public Tour(TourEntity entity) {
@@ -210,6 +212,10 @@ public class Tour implements Serializable {
 
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getTags() {
+        return tags;
     }
 
     @Override

@@ -91,10 +91,20 @@ public class TourRepository {
         ArrayList<Tour> filteredTours = new ArrayList<>();
         if(originalToursLiveData.getValue() != null) {
             for (Tour tour : originalToursLiveData.getValue()) {
-                String loverQuery = query.toLowerCase();
-                String loverTitle = tour.getTitle().toLowerCase();
-                if (loverTitle.contains(loverQuery)) {
+                String lowerQuery = query.toLowerCase();
+                String lowerTitle = tour.getTitle().toLowerCase();
+                if (lowerTitle.contains(lowerQuery)) {
                     filteredTours.add(tour);
+                } else {
+                    String lowerTags = tour.getTags().toLowerCase();
+                    if (lowerTags.contains(lowerQuery)) {
+                        filteredTours.add(tour);
+                    } else {
+                        String lowerAddress = tour.getAddress().toLowerCase();
+                        if (lowerAddress.contains(lowerQuery)) {
+                            filteredTours.add(tour);
+                        }
+                    }
                 }
             }
         }
@@ -195,7 +205,7 @@ public class TourRepository {
         }
     }
 
-    public Observable<SaveTourResponse> saveTour(SaveTourRequest tour) {
-        return apiHelper.createTour(PreferenceHelper.loadToken(context), tour);
+    public Observable<SaveTourResponse> saveTour(SaveTourRequest tour, String imagePath) {
+        return apiHelper.createTour(PreferenceHelper.loadToken(context), tour, imagePath);
     }
 }

@@ -143,7 +143,7 @@ public class MainActivityViewModel extends BaseLocationViewModel {
 
         disposable.add(apiHelper.getGuide(serverToken, request)
                 .subscribe(response -> {
-                    profileHolder.setGuide(response.isGuide());
+                    profileHolder.setGuide(response.isGuide(), response.getId());
                 }, throwable -> {
                     Log.v("checkIsGuide", "Error loading");
                 }));

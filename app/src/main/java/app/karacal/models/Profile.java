@@ -1,7 +1,5 @@
 package app.karacal.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Date;
 
 public class Profile {
@@ -91,5 +89,9 @@ public class Profile {
 
     public String getAvatar() {
         return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

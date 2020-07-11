@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Size;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.stripe.android.EphemeralKeyProvider;
 import com.stripe.android.EphemeralKeyUpdateListener;
@@ -13,8 +14,10 @@ import org.bouncycastle.jcajce.provider.symmetric.ARC4;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -33,6 +36,7 @@ import app.karacal.network.models.request.CreateCardRequest;
 import app.karacal.network.models.request.CreateCommentRequest;
 import app.karacal.network.models.request.CreateCustomerRequest;
 import app.karacal.network.models.request.CreateSubscriptionRequest;
+import app.karacal.network.models.request.DonateAuthorRequest;
 import app.karacal.network.models.request.GuideByEmailRequest;
 import app.karacal.network.models.request.NearToursRequest;
 import app.karacal.network.models.request.PaymentRequest;
@@ -40,11 +44,13 @@ import app.karacal.network.models.request.ProfileRequest;
 import app.karacal.network.models.request.ResetPasswordRequest;
 import app.karacal.network.models.request.SaveTourRequest;
 import app.karacal.network.models.response.BaseResponse;
+import app.karacal.network.models.response.ChangeAvatarResponse;
 import app.karacal.network.models.response.CommentsResponse;
 import app.karacal.network.models.response.ContentResponse;
 import app.karacal.network.models.response.CreateCardResponse;
 import app.karacal.network.models.response.CreateCustomerResponse;
 import app.karacal.network.models.response.CreateSubscriptionResponse;
+import app.karacal.network.models.response.DonateAuthorResponse;
 import app.karacal.network.models.response.GuideByEmailResponse;
 import app.karacal.network.models.response.GuideResponse;
 import app.karacal.network.models.request.LoginRequest;
@@ -69,6 +75,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
+import retrofit2.http.Part;
 
 @Singleton
 public class ApiHelper implements EphemeralKeyProvider {
@@ -160,10 +167,10 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<BaseResponse> changeAvatar(String token, String path){
-        Log.v("uploadAudio", "upload file " + path);
+    public Observable<ChangeAvatarResponse> changeAvatar(String token, String path){
+        Log.v("changeAvatar", "upload file " + path);
         File file = new File(path);
-        Log.d("uploadAudio", "file size "+ file.length());
+        Log.d("changeAvatar", "file size "+ file.length());
         RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
         MultipartBody.Part image = MultipartBody.Part.createFormData("image", file.getName(), fileBody);
 
@@ -284,11 +291,24 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<SaveTourResponse> createTour(String token, SaveTourRequest request) {
-        return tourService.createTour("Bearer " + token, request)
+    public Observable<SaveTourResponse> createTour(String token, SaveTourRequest request, String imagePath) {
+        Log.v("createTour", "upload file " + imagePath);
+
+        MultipartBody.Part image = null;
+        if (imagePath != null){
+            File file = new File(imagePath);
+            Log.d("createTour", "file size "+ file.length());
+            RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
+            image = MultipartBody.Part.createFormData("img", file.getName(), fileBody);
+        }
+
+        MultipartBody.Part data = MultipartBody.Part.createFormData("body", new Gson().toJson(request));
+
+        return tourService.createTour("Bearer " + token, image, data)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
 
     public Observable<TourDetailsResponse> loadTourById(String token, int tourId) {
         return tourService.getTourById("Bearer " + token, String.valueOf(tourId))
@@ -364,6 +384,12 @@ public class ApiHelper implements EphemeralKeyProvider {
 
     public Observable<BaseResponse> cancelSubscription(String token, String subscriptionId){
         return stripeService.cancelSubscription("Bearer " + token, subscriptionId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<DonateAuthorResponse> donateAuthor(String token, DonateAuthorRequest request){
+        return stripeService.donateAuthor("Bearer " + token, request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

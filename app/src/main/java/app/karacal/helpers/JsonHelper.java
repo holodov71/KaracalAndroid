@@ -3,11 +3,11 @@ package app.karacal.helpers;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,20 +20,31 @@ public class JsonHelper {
         return (JsonObject) jsonParser.parse(string);
     }
 
-    public static String extractStrings(String string){
-        Log.v(App.TAG, "extractStrings(String string) = "+string);
+    public static String extractStrings(Object object){
         try {
-            JsonObject jsonObject = getJsonObject(string);
-            return extractStrings(jsonObject);
+            if (object instanceof String){
+                return object.toString();
+            } else {
+                return extractStrings(new Gson().toJson(object));
+            }
         } catch (Exception e) {
             return null;
         }
     }
 
-    public static String extractStrings(JsonObject jsonObject){
-        Log.v(App.TAG, "extractStrings(JsonObject jsonObject)");
-
+    public static String extractStrings(String string){
         try {
+            JsonObject jsonObject = getJsonObject(string);
+            return extractStrings(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String extractStrings(JsonObject jsonObject){
+        try {
+
             List<String> strings = new LinkedList<>();
             for (String key : jsonObject.keySet()) {
                 Log.v(App.TAG, "String key = "+key);

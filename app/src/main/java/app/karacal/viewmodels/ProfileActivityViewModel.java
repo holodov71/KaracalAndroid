@@ -69,6 +69,10 @@ public class ProfileActivityViewModel extends ViewModel {
         return guideLiveData;
     }
 
+    public int getGuideId() {
+        return guideId;
+    }
+
     public LiveData<List<Tour>> getTours(){
         return toursLiveData;
     }

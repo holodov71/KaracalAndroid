@@ -23,6 +23,8 @@ public class ProfileHolder {
 
     private boolean isGuide = false;
 
+    private Integer guideId = null;
+
     @Inject
     public ProfileHolder(TokenHelper tokenHelper){
         this.tokenHelper = tokenHelper;
@@ -75,7 +77,14 @@ public class ProfileHolder {
         return isGuide;
     }
 
-    public void setGuide(boolean guide) {
+    public void setGuide(boolean guide, int guideId) {
         isGuide = guide;
+        this.guideId = guideId;
     }
+
+    public Integer getGuideId (){
+        return guideId;
+    }
+
+
 }

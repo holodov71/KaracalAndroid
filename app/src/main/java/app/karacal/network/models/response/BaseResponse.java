@@ -8,7 +8,8 @@ import app.karacal.R;
 import app.karacal.helpers.JsonHelper;
 
 public class BaseResponse {
-    private JsonObject errorMessage;
+//    private JsonObject errorMessage;
+    private Object errorMessage;
     private boolean isSuccess;
 
     public String getErrorMessage() {

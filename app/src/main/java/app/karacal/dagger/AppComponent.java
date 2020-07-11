@@ -7,6 +7,7 @@ import app.karacal.activities.ApplyPrivacyPolicyActivity;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CommentsActivity;
 import app.karacal.activities.DashboardActivity;
+import app.karacal.activities.DonateActivity;
 import app.karacal.activities.EditAudioActivity;
 import app.karacal.activities.EditGuideActivity;
 import app.karacal.activities.FollowMyListeningsActivity;
@@ -64,6 +65,8 @@ public interface AppComponent {
     void inject(CommentsActivity activity);
 
     void inject(PaymentActivity activity);
+
+    void inject(DonateActivity activity);
 
     void inject(LoginTypeSelectFragment fragment);
 

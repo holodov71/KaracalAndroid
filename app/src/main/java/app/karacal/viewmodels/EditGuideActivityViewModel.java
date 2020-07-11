@@ -9,6 +9,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +21,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.LocationHelper;
+import app.karacal.helpers.ProfileHolder;
 import app.karacal.network.models.request.SaveTourRequest;
 import app.karacal.network.models.response.SaveTourResponse;
 import io.reactivex.Observable;
@@ -66,8 +70,12 @@ public class EditGuideActivityViewModel extends ViewModel {
     @Inject
     TourRepository tourRepository;
 
+    @Inject
+    ProfileHolder profileHolder;
+
     private Location locationCoordinates;
 
+    private String imagePath;
     private String title;
     private String location;
     private String description;
@@ -114,6 +122,10 @@ public class EditGuideActivityViewModel extends ViewModel {
         return tags.remove(tag);
     }
 
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     @SuppressLint("CheckResult")
     public void obtainLocation() {
         LocationHelper.getLastKnownLocation().timeout(GEO_CODING_TIMEOUT, TimeUnit.SECONDS)
@@ -136,16 +148,22 @@ public class EditGuideActivityViewModel extends ViewModel {
     }
 
     public Observable<SaveTourResponse> saveTour() {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String dateStr = dateFormat.format(Calendar.getInstance().getTime());
+
         SaveTourRequest request = new SaveTourRequest(
-                "",
-                "Paris",
+                title,
+                profileHolder.getProfile().getName(),
+                dateStr,
                 locationCoordinates!= null ? String.valueOf(locationCoordinates.getLatitude()) : "",
                 locationCoordinates!= null ? String.valueOf(locationCoordinates.getLongitude()) : "",
-                title,
+                tags.toString(),
                 description,
-                "",
+                "Paris, France",
                 "0",
-                "1");
-        return tourRepository.saveTour(request);
+                "0",
+                profileHolder.getGuideId());
+        return tourRepository.saveTour(request, imagePath);
     }
 }

@@ -22,9 +22,12 @@ public class ShareImpressionPopup extends BasePopup {
 
     private final View view;
 
-    public ShareImpressionPopup(ViewGroup parent, ShareImpressionPopup.ShareImpressionPopupCallbacks callbacks) {
+    private final boolean needComment;
+
+    public ShareImpressionPopup(ViewGroup parent, ShareImpressionPopup.ShareImpressionPopupCallbacks callbacks, boolean needComment) {
         super(parent);
         this.callbacks = callbacks;
+        this.needComment = needComment;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         view = inflater.inflate(R.layout.popup_share_impression, parent, false);
         setup(view);
@@ -36,11 +39,17 @@ public class ShareImpressionPopup extends BasePopup {
         LinearLayout buttonPutGuideInFavor = view.findViewById(R.id.buttonPutGuideInFavor);
         buttonPutGuideInFavor.setOnClickListener(v -> callbacks.onButtonPutGuideInFavorClick(this));
         LinearLayout buttonWriteComment = view.findViewById(R.id.buttonWriteComment);
-        buttonWriteComment.setOnClickListener(v -> callbacks.onButtonWriteCommentClick(this));
+        if (needComment){
+            buttonWriteComment.setOnClickListener(v -> callbacks.onButtonWriteCommentClick(this));
+        } else {
+            buttonWriteComment.setVisibility(View.GONE);
+        }
         Button buttonSubmit = view.findViewById(R.id.buttonSubmit);
         buttonSubmit.setOnClickListener(v -> callbacks.onButtonSubmitClick(this));
         RatingView ratingView = view.findViewById(R.id.ratingView);
         ratingView.setRatingChangeListener(rating -> buttonSubmit.setEnabled(rating > 0));
+
+
     }
 
     @Override

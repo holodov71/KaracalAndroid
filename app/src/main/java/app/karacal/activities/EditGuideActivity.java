@@ -36,6 +36,7 @@ import app.karacal.R;
 import app.karacal.adapters.HelpfulInformationPagerAdapter;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.FileHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.TextInputHelper;
 import app.karacal.helpers.ToastHelper;
@@ -126,10 +127,8 @@ public class EditGuideActivity extends PermissionActivity {
         buttonDelete = findViewById(R.id.buttonDelete);
         if (tour != null) {
             ImageHelper.setImage(imageViewTitle, tour.getImageUrl(), tour.getImage(), false);
-
             constraintLayoutImage.setVisibility(View.VISIBLE);
             placeholder.setVisibility(View.GONE);
-//            imageViewTitle.setImageResource(tour.getImage());
         } else {
             constraintLayoutImage.setVisibility(View.GONE);
             placeholder.setVisibility(View.VISIBLE);
@@ -137,6 +136,7 @@ public class EditGuideActivity extends PermissionActivity {
         buttonDelete.setOnClickListener(v -> {
             constraintLayoutImage.setVisibility(View.GONE);
             placeholder.setVisibility(View.VISIBLE);
+            viewModel.setImagePath(null);
         });
         View.OnClickListener imageClickListener = v -> CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.OFF)
@@ -277,7 +277,7 @@ public class EditGuideActivity extends PermissionActivity {
                             EditAudioActivity.Args args = new EditAudioActivity.Args(response.getId());
                             NavigationHelper.startEditAudioActivity(this, args);
                         } else {
-                            ToastHelper.showToast(this, "Can not save tour");
+                            ToastHelper.showToast(this, response.getErrorMessage());
                         }
                     }, throwable -> {
                         ToastHelper.showToast(this, "Can not save tour");
@@ -298,6 +298,7 @@ public class EditGuideActivity extends PermissionActivity {
                 imageViewTitle.setImageURI(resultUri);
                 placeholder.setVisibility(View.GONE);
                 constraintLayoutImage.setVisibility(View.VISIBLE);
+                viewModel.setImagePath(FileHelper.getRealImagePathFromUri(this, resultUri));
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 Logger.log(EditGuideActivity.this, "Image cropping error", error);

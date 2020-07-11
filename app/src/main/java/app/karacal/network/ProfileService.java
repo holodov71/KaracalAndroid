@@ -3,6 +3,7 @@ package app.karacal.network;
 import app.karacal.models.Profile;
 import app.karacal.network.models.request.ProfileRequest;
 import app.karacal.network.models.response.BaseResponse;
+import app.karacal.network.models.response.ChangeAvatarResponse;
 import app.karacal.network.models.response.PurchasesResponse;
 import app.karacal.network.models.response.UploadTrackResponse;
 import io.reactivex.Observable;
@@ -39,7 +40,7 @@ public interface ProfileService {
     @Multipart
     @Streaming
     @POST("profile/upload-img")
-    Observable<BaseResponse> changeAvatar(@Header("Authorization") String token,
-                                                @Part MultipartBody.Part avatar);
+    Observable<ChangeAvatarResponse> changeAvatar(@Header("Authorization") String token,
+                                                  @Part MultipartBody.Part avatar);
 
 }

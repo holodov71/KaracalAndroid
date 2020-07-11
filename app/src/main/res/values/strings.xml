@@ -204,6 +204,10 @@
     <string name="turn_on_wifi">Vous devez activer le WIFI pour continuer</string>
     <string name="error_uploading_avatar">Erreur lors du téléchargement de l\'avatar</string>
 
+    <string name="date_format">yyyy-MM-dd</string>
+
+
+
 
     <!--    <string name="app_name">Karacal</string>-->
 <!--    <string name="hello">Hello!</string>-->

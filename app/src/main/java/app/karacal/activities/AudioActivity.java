@@ -22,6 +22,7 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.WebLinkHelper;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
@@ -47,9 +48,6 @@ public class AudioActivity extends LogActivity {
         }
 
     }
-
-    private static final String HTTP = "http";
-    private static final String HTTP1 = "http://";
 
     private AudioActivityViewModel viewModel;
 
@@ -80,7 +78,8 @@ public class AudioActivity extends LogActivity {
     private ShareImpressionPopup.ShareImpressionPopupCallbacks shareImpressionPopupCallbacks = new ShareImpressionPopup.ShareImpressionPopupCallbacks() {
         @Override
         public void onButtonDonateClick(BasePopup popup) {
-            NavigationHelper.startDontateActivity(AudioActivity.this);
+            DonateActivity.Args args = new DonateActivity.Args(viewModel.getGuideId());
+            NavigationHelper.startDonateActivity(AudioActivity.this, args);
         }
 
         @Override
@@ -109,7 +108,7 @@ public class AudioActivity extends LogActivity {
         @Override
         public void onButtonSinglePriceClick(BasePopup popup) {
             onBackPressed();
-            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice(), null);
+            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), null, viewModel.getTour().getPrice(), null);
             NavigationHelper.startPaymentActivity(AudioActivity.this, args);
         }
 
@@ -147,7 +146,7 @@ public class AudioActivity extends LogActivity {
 
 
     public void showShareImpressionPopup() {
-        ShareImpressionPopup popup = new ShareImpressionPopup(layoutRoot, shareImpressionPopupCallbacks);
+        ShareImpressionPopup popup = new ShareImpressionPopup(layoutRoot, shareImpressionPopupCallbacks, true);
         popup.show();
     }
 
@@ -171,25 +170,15 @@ public class AudioActivity extends LogActivity {
             if (requestCode == PaymentActivity.REQUEST_CODE) {
                 String url = data.getStringExtra(PaymentActivity.RESULT_URL);
                 if (url != null){
-                    openWebLink(url);
+                    WebLinkHelper.openWebLink(this, url);
                 }
                 Log.v("onActivityResult", "Payment completed");
             }
         }
     }
 
-    private void openWebLink(String link){
-        Uri uri = Uri.parse(link.contains(HTTP) ? link : HTTP1 + link);
-        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
-                        .addDefaultShareMenuItem()
-                        .setShowTitle(true)
-                        .setInstantAppsEnabled(true)
-                        .build();
-        customTabsIntent.launchUrl(this, uri);
-    }
-
     private void orderSubscription(String subscriptionId){
-        PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), viewModel.getTour().getPrice(), subscriptionId);
+        PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), null, viewModel.getTour().getPrice(), subscriptionId);
         NavigationHelper.startPaymentActivity(AudioActivity.this, args);
     }
 

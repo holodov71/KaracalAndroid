@@ -2,12 +2,14 @@ package app.karacal.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.stripe.android.ApiResultCallback;
@@ -32,6 +34,7 @@ import app.karacal.navigation.ActivityArgs;
 import app.karacal.network.models.request.CreateCardRequest;
 import app.karacal.network.models.request.CreateCustomerRequest;
 import app.karacal.network.models.request.CreateSubscriptionRequest;
+import app.karacal.network.models.request.DonateAuthorRequest;
 import app.karacal.network.models.request.PaymentRequest;
 import apps.in.android_logger.LogActivity;
 import io.reactivex.disposables.CompositeDisposable;
@@ -46,18 +49,25 @@ public class PaymentActivity extends LogActivity {
 
         private final Integer tourId;
 
+        private final Integer guideId;
+
         private final Long amount;
 
         private final String subscriptionId;
 
-        public Args(Integer tourId, Long amount, String subscriptionId) {
+        public Args(Integer tourId, Integer guideId, Long amount, String subscriptionId) {
             this.tourId = tourId;
+            this.guideId = guideId;
             this.amount = amount;
             this.subscriptionId = subscriptionId;
         }
 
         public Integer getTourId() {
             return tourId;
+        }
+
+        public Integer getGuideId() {
+            return guideId;
         }
 
         public Long getAmount() {
@@ -79,8 +89,9 @@ public class PaymentActivity extends LogActivity {
 
     private Stripe stripe;
 
-    private long amount;
-    private int tourId;
+    private Long amount;
+    private Integer tourId;
+    private Integer guideId;
     private String subscriptionId;
     private String customerId;
 
@@ -101,6 +112,7 @@ public class PaymentActivity extends LogActivity {
 
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
         tourId = args.getTourId();
+        guideId = args.getGuideId();
         amount = args.getAmount();
         subscriptionId = args.getSubscriptionId();
 
@@ -109,6 +121,12 @@ public class PaymentActivity extends LogActivity {
         setupLoading();
         setupBackButton();
         setupCardInput();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putString(ARG_CUSTOMER_ID_STATE, customerId);
     }
 
     private void setupBackButton() {
@@ -152,9 +170,34 @@ public class PaymentActivity extends LogActivity {
     private void makePayment(String cardToken){
         if (subscriptionId != null){
             createCard(customerId, cardToken);
-        }else {
+        } else if (tourId != null) {
             payTour(cardToken);
+        } else {
+            donateAuthor(cardToken);
         }
+    }
+
+    private void donateAuthor(String token){
+        Log.v("donateAuthor", "customerId = " + customerId);
+
+        DonateAuthorRequest request = new DonateAuthorRequest(guideId, token, amount);
+        disposable.add(apiHelper.donateAuthor(PreferenceHelper.loadToken(this), request)
+                .subscribe(response -> {
+                    Log.v("donateAuthor", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        ToastHelper.showToast(this, getString(R.string.payment_success));
+                        Intent intent = new Intent();
+                        intent.putExtra(RESULT_URL, response.getReceiptUrl());
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    } else {
+                        hideLoading();
+                        ToastHelper.showToast(this, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    hideLoading();
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                }));
     }
 
     private void payTour(String token){
@@ -178,26 +221,6 @@ public class PaymentActivity extends LogActivity {
                     ToastHelper.showToast(this, getString(R.string.connection_problem));
                 }));
     }
-
-//    private void createCustomer(String cardToken){
-//
-//        String serverToken = PreferenceHelper.loadToken(this);
-//
-//        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
-//        disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
-//                .subscribe(response -> {
-//                    Log.v("createCustomer", "Success response = " + response);
-//                    if (response.isSuccess()) {
-//                        createCard(response.getId(), cardToken);
-//                    } else {
-//                        hideLoading();
-//                        ToastHelper.showToast(this, response.getErrorMessage());
-//                    }
-//                }, throwable -> {
-//                    hideLoading();
-//                    ToastHelper.showToast(this, getString(R.string.connection_problem));
-//                }));
-//    }
 
     private void createCustomer(){
 
