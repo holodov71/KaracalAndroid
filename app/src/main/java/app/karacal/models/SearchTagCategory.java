@@ -1,13 +1,13 @@
 package app.karacal.models;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SearchTagCategory {
 
     private String title;
-    private ArrayList<String> tags;
+    private List<Tag> tags;
 
-    public SearchTagCategory(String title, ArrayList<String> tags) {
+    public SearchTagCategory(String title, List<Tag> tags) {
         this.title = title;
         this.tags = tags;
     }
@@ -16,7 +16,7 @@ public class SearchTagCategory {
         return title;
     }
 
-    public ArrayList<String> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 }

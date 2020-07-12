@@ -73,13 +73,13 @@
             android:name=".activities.ReferFriendActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.DashboardActivity"
+            android:name=".activities.GuideDashboardActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.PasswordHasBeenResetActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.EditGuideActivity"
+            android:name=".activities.AddEditTourActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.EditAudioActivity"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.EditGuideActivity">
+    tools:context=".activities.AddEditTourActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -232,22 +232,32 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/textInputLayoutTags"
-                    style="@style/TextInput"
-                    android:layout_width="0dp"
+<!--                <com.google.android.material.textfield.TextInputLayout-->
+<!--                    android:id="@+id/textInputLayoutTags"-->
+<!--                    style="@style/TextInput"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent">-->
+
+<!--                    <com.google.android.material.textfield.TextInputEditText-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:hint="@string/tags"-->
+<!--                        android:inputType="none" />-->
+
+<!--                </com.google.android.material.textfield.TextInputLayout>-->
+
+                <AutoCompleteTextView
+                    android:id="@+id/textInputTags"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/tags"
+                    android:inputType="none"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/tags"
-                        android:inputType="none" />
-
-                </com.google.android.material.textfield.TextInputLayout>
+                    app:layout_constraintTop_toTopOf="parent"/>
 
                 <ImageView
                     android:id="@+id/buttonAddTag"
@@ -257,8 +267,8 @@
                     android:contentDescription="@null"
                     android:src="@drawable/ic_plus"
                     android:tint="@drawable/selector_orange_text_color"
-                    app:layout_constraintBottom_toBottomOf="@id/textInputLayoutTags"
-                    app:layout_constraintEnd_toEndOf="@id/textInputLayoutTags" />
+                    app:layout_constraintBottom_toBottomOf="@id/textInputTags"
+                    app:layout_constraintEnd_toEndOf="@id/textInputTags" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipGroupTags"
@@ -269,7 +279,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textInputLayoutTags" />
+                    app:layout_constraintTop_toBottomOf="@id/textInputTags" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

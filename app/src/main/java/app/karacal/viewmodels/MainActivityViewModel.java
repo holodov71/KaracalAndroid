@@ -22,6 +22,7 @@ import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Guide;
+import app.karacal.models.Tag;
 import app.karacal.models.Tour;
 import app.karacal.network.models.request.GuideByEmailRequest;
 import app.karacal.network.models.response.SubscriptionWrapper;
@@ -74,6 +75,7 @@ public class MainActivityViewModel extends BaseLocationViewModel {
     ProfileHolder profileHolder;
 
     private MutableLiveData<ArrayList<Tour>> nearTours = new MutableLiveData<>();
+    private MutableLiveData<List<Tag>> tagsLiveData = new MutableLiveData<>();
 
     public MainActivityViewModel() {
         App.getAppComponent().inject(this);
@@ -97,6 +99,10 @@ public class MainActivityViewModel extends BaseLocationViewModel {
 
     public LiveData<List<Tour>> getNearTours() {
         return tourRepository.nearToursLiveData;
+    }
+
+    public LiveData<List<Tag>> getTags() {
+        return tagsLiveData;
     }
 
     public void loadNearTours(Location location){
@@ -152,6 +158,15 @@ public class MainActivityViewModel extends BaseLocationViewModel {
     public void startObtainLocation(){
         locationTimerHandler.removeCallbacks(locationTimerRunnable);
         locationTimerHandler.postDelayed(locationTimerRunnable, 100);
+    }
+
+    public void obtainTags() {
+        disposable.add(apiHelper.loadTags(PreferenceHelper.loadToken(App.getInstance()))
+                .subscribe(response -> {
+                    tagsLiveData.setValue(response);
+                }, throwable -> {
+                    Log.v("checkIsGuide", "Error loading");
+                }));
     }
 
     @Override

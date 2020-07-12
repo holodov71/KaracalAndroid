@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.chip.Chip
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/chip"
     style="@style/Widget.MaterialComponents.Chip.Action"
@@ -7,6 +8,6 @@
     android:layout_height="wrap_content"
     android:textAppearance="@style/TextWhite.ItemTitle"
     android:textColor="@color/colorTextWhite"
-    android:theme="@style/Theme.MaterialComponents.Light"
+    android:theme="@style/Theme.MaterialComponents"
     app:chipBackgroundColor="#1AC4C4C4"
     app:rippleColor="@color/colorMain"/>

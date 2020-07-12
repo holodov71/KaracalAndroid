@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -32,11 +33,13 @@ import app.karacal.helpers.TextInputHelper;
 import app.karacal.models.SearchFilter;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.viewmodels.MainActivityViewModel;
 
 import static android.app.Activity.RESULT_OK;
 
 public class MainSearchFragment extends Fragment {
 
+    private MainActivityViewModel viewModel;
 
     @Inject
     TourRepository tourRepository;
@@ -56,6 +59,7 @@ public class MainSearchFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
+        viewModel = new ViewModelProvider(getActivity()).get(MainActivityViewModel.class);
     }
 
     @Nullable
@@ -65,6 +69,10 @@ public class MainSearchFragment extends Fragment {
         setupFilterButton(view);
         setupSearchResult(view);
         setupSearchField(view);
+
+        observeTags();
+        viewModel.obtainTags();
+
         return view;
     }
 
@@ -89,8 +97,8 @@ public class MainSearchFragment extends Fragment {
             //TODO implement
             TransitionManager.beginDelayedTransition(searchFieldLayout);
             buttonClear.setVisibility(search.length() < 2 ? View.GONE : View.VISIBLE);
-//            recyclerViewTags.setVisibility(search.length() < 2 ? View.VISIBLE : View.INVISIBLE);
-            recyclerViewTags.setVisibility(View.INVISIBLE);
+            recyclerViewTags.setVisibility(search.length() < 2 ? View.VISIBLE : View.INVISIBLE);
+//            recyclerViewTags.setVisibility(View.INVISIBLE);
             searchByText(search);
         }, (throwable) -> {
             //TODO implement
@@ -102,14 +110,14 @@ public class MainSearchFragment extends Fragment {
     private void setupSearchResult(View view){
         recyclerViewTags = view.findViewById(R.id.recyclerViewTags);
         adapterTags = new SearchTagsAdapter(getContext());
-        adapterTags.setTagClickListener(tag -> editTextSearch.setText(tag));
+        adapterTags.setTagClickListener(tag -> editTextSearch.setText(tag.getName()));
         recyclerViewTags.setAdapter(adapterTags);
-        recyclerViewTags.setVisibility(View.INVISIBLE);
+        recyclerViewTags.setVisibility(View.VISIBLE);
         recyclerViewResults = view.findViewById(R.id.recyclerViewResults);
         adapterResults = new TourVerticalListAdapter(getContext());
         adapterResults.setClickListener(this::showTour);
         recyclerViewResults.setAdapter(adapterResults);
-        recyclerViewResults.setVisibility(View.VISIBLE);
+        recyclerViewResults.setVisibility(View.INVISIBLE);
         observeTours();
     }
 
@@ -123,6 +131,14 @@ public class MainSearchFragment extends Fragment {
         });
     }
 
+    private void observeTags(){
+        viewModel.getTags().observe(getViewLifecycleOwner(), tags -> {
+            if (tags != null && !tags.isEmpty()) {
+                adapterTags.setTags(tags);
+            }
+        });
+    }
+
     private void searchByText(String query){
         ArrayList<Tour> tours = new ArrayList<>();
         if (query.isEmpty()){
@@ -131,7 +147,7 @@ public class MainSearchFragment extends Fragment {
             tours.addAll(tourRepository.searchToursByText(query));
         }
         adapterResults.setTours(tours);
-//        recyclerViewResults.setVisibility(query.length() < 2 ? View.INVISIBLE : View.VISIBLE);
+        recyclerViewResults.setVisibility(query.length() < 2 ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void showTour(int tourId){

@@ -87,6 +87,38 @@ public class TourRepository {
         return downloadedTour;
     }
 
+    @SuppressLint("CheckResult")
+    public void updateTour(int tourId){
+        Log.v(App.TAG, "updateTour tourId = "+tourId);
+        apiHelper.loadTourById(PreferenceHelper.loadToken(context), tourId)
+                .subscribe(tour -> {
+                    if(originalToursLiveData.getValue() != null) {
+                        for (int i = 0; i < originalToursLiveData.getValue().size(); i ++) {
+                            Tour desiredTour = originalToursLiveData.getValue().get(i);
+                            if (desiredTour.getId() == tour.getId()){
+                                Tour newTour = new Tour(tour);
+                                originalToursLiveData.getValue().set(i, newTour);
+                                break;
+                            }
+                        }
+                    }
+                    if(nearToursLiveData.getValue() != null) {
+                        for (int i = 0; i < nearToursLiveData.getValue().size(); i ++) {
+                            Tour desiredTour = nearToursLiveData.getValue().get(i);
+                            if (desiredTour.getId() == tour.getId()){
+                                Tour newTour = new Tour(tour);
+                                nearToursLiveData.getValue().set(i, newTour);
+                                break;
+                            }
+                        }
+                    }
+
+                }, throwable -> {
+                    Log.v("loadTours", "throwable "+throwable.getMessage());
+                    // TODO: load list from DB
+                });
+    }
+
     public ArrayList<Tour> searchToursByText(String query) {
         ArrayList<Tour> filteredTours = new ArrayList<>();
         if(originalToursLiveData.getValue() != null) {
@@ -96,7 +128,7 @@ public class TourRepository {
                 if (lowerTitle.contains(lowerQuery)) {
                     filteredTours.add(tour);
                 } else {
-                    String lowerTags = tour.getTags().toLowerCase();
+                    String lowerTags = tour.getTags().toString().toLowerCase();
                     if (lowerTags.contains(lowerQuery)) {
                         filteredTours.add(tour);
                     } else {
@@ -207,5 +239,9 @@ public class TourRepository {
 
     public Observable<SaveTourResponse> saveTour(SaveTourRequest tour, String imagePath) {
         return apiHelper.createTour(PreferenceHelper.loadToken(context), tour, imagePath);
+    }
+
+    public Observable<SaveTourResponse> updateTour(int tourId, SaveTourRequest request, String imagePath) {
+        return apiHelper.updateTour(PreferenceHelper.loadToken(context), tourId, request, imagePath);
     }
 }

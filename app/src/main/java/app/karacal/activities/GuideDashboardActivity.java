@@ -3,30 +3,26 @@ package app.karacal.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import javax.inject.Inject;
+
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.DashboardTourPagerAdapter;
-import app.karacal.adapters.TourVerticalListAdapter;
 import app.karacal.helpers.ImageHelper;
+import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Profile;
 import app.karacal.navigation.NavigationHelper;
@@ -34,11 +30,14 @@ import app.karacal.viewmodels.DashboardActivityViewModel;
 import apps.in.android_logger.LogActivity;
 import apps.in.android_logger.Logger;
 
-public class DashboardActivity extends LogActivity {
+public class GuideDashboardActivity extends LogActivity {
 
     private ImageView avatar;
     private ProgressBar progressLoading;
     private DashboardActivityViewModel viewModel;
+
+    @Inject
+    ProfileHolder profileHolder;
 
 
     @Override
@@ -72,11 +71,11 @@ public class DashboardActivity extends LogActivity {
                     .start(this);
         });
         Button buttonFollowListenings = findViewById(R.id.buttonFollowMyListenings);
-//        buttonFollowListenings.setVisibility(View.GONE);
+        buttonFollowListenings.setVisibility(View.GONE);
         buttonFollowListenings.setOnClickListener(v -> NavigationHelper.startFollowMyListeningsActivity(this));
         Button buttonCreateTour = findViewById(R.id.buttonCreateTour);
 //        buttonCreateTour.setVisibility(View.GONE);
-        buttonCreateTour.setOnClickListener(v -> NavigationHelper.startEditGuideActivity(this,  new EditGuideActivity.Args(null)));
+        buttonCreateTour.setOnClickListener(v -> NavigationHelper.startEditGuideActivity(this,  new AddEditTourActivity.Args(null)));
     }
 
     private void setupAuthor(Profile profile){
@@ -92,7 +91,7 @@ public class DashboardActivity extends LogActivity {
 
     private void setupViewPager(Profile profile){
         ViewPager viewPager = findViewById(R.id.viewPager);
-        DashboardTourPagerAdapter adapter = new DashboardTourPagerAdapter(this, getSupportFragmentManager(), profile.getId());
+        DashboardTourPagerAdapter adapter = new DashboardTourPagerAdapter(this, getSupportFragmentManager(), profileHolder.getGuideId());
         viewPager.setAdapter(adapter);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);
@@ -111,7 +110,7 @@ public class DashboardActivity extends LogActivity {
                 viewModel.changeAvatar(this, resultUri);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Logger.log(DashboardActivity.this, "Image cropping error", error);
+                Logger.log(GuideDashboardActivity.this, "Image cropping error", error);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

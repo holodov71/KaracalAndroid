@@ -34,6 +34,7 @@ import app.karacal.adapters.TourHorizontalListAdapter;
 import app.karacal.data.DownloadedToursCache;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
+import app.karacal.dialogs.MessageDialog;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.EmailHelper;
@@ -111,7 +112,13 @@ public class MainMenuFragment extends Fragment {
         if (profileHolder.isGuide()) {
             buttonDashboard.setOnClickListener(v -> NavigationHelper.startDashboardActivity(getActivity()));
         } else {
-            buttonDashboard.setVisibility(View.GONE);
+            buttonDashboard.setOnClickListener(v -> {
+                MessageDialog dialog = new MessageDialog()
+                        .setListener(() -> {})
+                        .setMessage(getString(R.string.request_guide));
+
+                dialog.show(getParentFragmentManager(), MessageDialog.DIALOG_TAG);
+            });
         }
 
         setupCancelSubscription(view);

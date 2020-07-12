@@ -26,6 +26,8 @@ import javax.inject.Singleton;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.models.Profile;
+import app.karacal.models.Tag;
+import app.karacal.models.Track;
 import app.karacal.network.CommentsService;
 import app.karacal.network.GuideService;
 import app.karacal.network.InitService;
@@ -41,8 +43,10 @@ import app.karacal.network.models.request.GuideByEmailRequest;
 import app.karacal.network.models.request.NearToursRequest;
 import app.karacal.network.models.request.PaymentRequest;
 import app.karacal.network.models.request.ProfileRequest;
+import app.karacal.network.models.request.RenameTrackRequest;
 import app.karacal.network.models.request.ResetPasswordRequest;
 import app.karacal.network.models.request.SaveTourRequest;
+import app.karacal.network.models.request.UploadTrackRequest;
 import app.karacal.network.models.response.BaseResponse;
 import app.karacal.network.models.response.ChangeAvatarResponse;
 import app.karacal.network.models.response.CommentsResponse;
@@ -309,30 +313,70 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<SaveTourResponse> updateTour(String token, int id, SaveTourRequest request, String imagePath) {
+        Log.v("createTour", "upload file " + imagePath);
 
-    public Observable<TourDetailsResponse> loadTourById(String token, int tourId) {
+        MultipartBody.Part image = null;
+        if (imagePath != null){
+            File file = new File(imagePath);
+            Log.d("createTour", "file size "+ file.length());
+            RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
+            image = MultipartBody.Part.createFormData("img", file.getName(), fileBody);
+        }
+
+        MultipartBody.Part data = MultipartBody.Part.createFormData("body", new Gson().toJson(request));
+
+        return tourService.editTour("Bearer " + token, id, image, data)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+
+    public Observable<ContentResponse> loadTourById(String token, int tourId) {
         return tourService.getTourById("Bearer " + token, String.valueOf(tourId))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    //Tags Region
+    public Observable<List<Tag>> loadTags(String token) {
+        return tourService.getTags("Bearer " + token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    //Tracks Region
     public Observable<List<TrackResponse>> loadTracks(String token, String tourId) {
         return tracksService.getTracksList("Bearer " + token, tourId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<UploadTrackResponse> uploadAudioToServer(String token, String guideId, String tourId, String path){
-        Log.v("uploadAudio", "upload file " + path);
-        File file = new File(path);
+    public Observable<UploadTrackResponse> uploadAudioToServer(String token, String guideId, String tourId, Track track){
+        Log.v("uploadAudio", "upload file " + track.getFileUri());
+        File file = new File(track.getFileUri());
         Log.d("uploadAudio", "file size "+ file.length());
         RequestBody fileBody = RequestBody.create(MediaType.parse("audio/*"), file);
         MultipartBody.Part audio = MultipartBody.Part.createFormData("mp3", file.getName(), fileBody);
 
-        return tracksService.uploadAudio("Bearer " + token, guideId, tourId, audio)
+        MultipartBody.Part data = MultipartBody.Part.createFormData("body", new Gson().toJson(new UploadTrackRequest(track.getTitle())));
+
+        return tracksService.uploadAudio("Bearer " + token, guideId, tourId, audio, data)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
+    }
+
+    public Observable<BaseResponse> deleteTrack(String token, String trackId) {
+        return tracksService.deleteTrack("Bearer " + token, trackId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<BaseResponse> renameTrack(String token, int trackId, RenameTrackRequest request) {
+        return tracksService.renameTrack("Bearer " + token, trackId, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     //Comments Region

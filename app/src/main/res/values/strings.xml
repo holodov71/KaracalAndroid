@@ -205,8 +205,11 @@
     <string name="error_uploading_avatar">Erreur lors du téléchargement de l\'avatar</string>
 
     <string name="date_format">yyyy-MM-dd</string>
-
-
+    <string name="tag_undefined">Tag non défini</string>
+    <string name="can_not_save_tour">Impossible d\'enregistrer la visite</string>
+    <string name="attention">Attention!</string>
+    <string name="ok">OK</string>
+    <string name="request_guide">Vous n\'êtes pas un guide. Si vous souhaitez devenir guide, écrivez-nous support@karacal.fr</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

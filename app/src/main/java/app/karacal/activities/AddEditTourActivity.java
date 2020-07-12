@@ -10,6 +10,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
@@ -27,6 +30,8 @@ import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -40,14 +45,16 @@ import app.karacal.helpers.FileHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.TextInputHelper;
 import app.karacal.helpers.ToastHelper;
+import app.karacal.models.Tag;
 import app.karacal.models.Tour;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
-import app.karacal.viewmodels.EditGuideActivityViewModel;
+import app.karacal.viewmodels.AddEditTourActivityViewModel;
 import apps.in.android_logger.Logger;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
-public class EditGuideActivity extends PermissionActivity {
+public class AddEditTourActivity extends PermissionActivity {
 
     public static class Args extends ActivityArgs implements Serializable {
 
@@ -66,11 +73,11 @@ public class EditGuideActivity extends PermissionActivity {
     @Inject
     TourRepository tourRepository;
 
-    private Disposable disposable;
+    private CompositeDisposable disposable = new CompositeDisposable();
 
     private Tour tour;
 
-    private EditGuideActivityViewModel viewModel;
+    private AddEditTourActivityViewModel viewModel;
 
     private Button buttonContinue;
     private ConstraintLayout placeholder;
@@ -80,18 +87,26 @@ public class EditGuideActivity extends PermissionActivity {
     private TextInputLayout textInputLayoutTitle;
     private TextInputLayout textInputLayoutLocation;
     private TextInputLayout textInputLayoutDescription;
+    private AutoCompleteTextView textInputTags;
+    private ImageView buttonAddTag;
+    private ChipGroup tagGroup;
     private View progressLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
-        viewModel = new ViewModelProvider(this).get(EditGuideActivityViewModel.class);
-        EditGuideActivity.Args args = EditGuideActivity.Args.fromBundle(EditGuideActivity.Args.class, getIntent().getExtras());
+        viewModel = new ViewModelProvider(this).get(AddEditTourActivityViewModel.class);
+        AddEditTourActivity.Args args = AddEditTourActivity.Args.fromBundle(AddEditTourActivity.Args.class, getIntent().getExtras());
         Integer tourId = args.getTourId();
         if (tourId != null) {
             tour = tourRepository.getTourById(tourId);
         }
+
+        if (tour != null){
+            viewModel.setTour(tour);
+        }
+
         setContentView(R.layout.activity_edit_guide);
         setupBackButton();
         setupInfoButton();
@@ -100,6 +115,8 @@ public class EditGuideActivity extends PermissionActivity {
         setupContinueButton();
         setupViewPager();
         setupProgressLoading();
+
+        observeViewModel();
     }
 
     @Override
@@ -117,6 +134,7 @@ public class EditGuideActivity extends PermissionActivity {
 
     private void setupInfoButton() {
         ImageView button = findViewById(R.id.buttonInfo);
+        button.setVisibility(View.GONE);
         button.setOnClickListener(v -> DummyHelper.dummyAction(this));
     }
 
@@ -125,7 +143,7 @@ public class EditGuideActivity extends PermissionActivity {
         constraintLayoutImage = findViewById(R.id.constraintLayoutImage);
         imageViewTitle = findViewById(R.id.imageViewTitle);
         buttonDelete = findViewById(R.id.buttonDelete);
-        if (tour != null) {
+        if (tour != null && tour.getImageUrl() != null) {
             ImageHelper.setImage(imageViewTitle, tour.getImageUrl(), tour.getImage(), false);
             constraintLayoutImage.setVisibility(View.VISIBLE);
             placeholder.setVisibility(View.GONE);
@@ -170,7 +188,13 @@ public class EditGuideActivity extends PermissionActivity {
     private void setupLocationInput() {
         ProgressBar progressBar = findViewById(R.id.progressBarGeoCoding);
         textInputLayoutLocation = findViewById(R.id.textInputLayoutLocation);
-        viewModel.setLocation("");
+
+        String locationStr = "";
+        if (tour != null){
+            viewModel.setLocation(tour.getTourLocation());
+        }
+
+//        viewModel.setLocation(locationStr);
         textInputLayoutLocation.getEditText().setText(viewModel.getLocation() != null ? viewModel.getLocation() : "");
         TextInputHelper.editTextObservable(textInputLayoutLocation).subscribe((s) -> {
             viewModel.setLocation(TextUtils.isEmpty(s) ? null : s);
@@ -210,18 +234,46 @@ public class EditGuideActivity extends PermissionActivity {
     }
 
     private void setupTagsInput() {
-        ChipGroup chipGroup = findViewById(R.id.chipGroupTags);
-        for (String tag : viewModel.getTags()) {
-            chipGroup.addView(makeChip(chipGroup, tag));
+        tagGroup = findViewById(R.id.chipGroupTags);
+        for (Tag tag : viewModel.getTags()) {
+            tagGroup.addView(makeChip(tagGroup, tag));
         }
-        TextInputLayout textInputLayoutTags = findViewById(R.id.textInputLayoutTags);
-        ImageView buttonAdd = findViewById(R.id.buttonAddTag);
-        buttonAdd.setOnClickListener(v -> {
-            String tag = textInputLayoutTags.getEditText().getText().toString();
+
+        textInputTags = findViewById(R.id.textInputTags);
+        buttonAddTag = findViewById(R.id.buttonAddTag);
+
+        viewModel.loadTags();
+    }
+
+    private void setTagsList(List<Tag> tags){
+        List<String> tagsTitles = new ArrayList<>();
+
+        for (Tag tag: tags){
+            tagsTitles.add(tag.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, tagsTitles);
+
+        textInputTags.setAdapter(adapter);
+
+        buttonAddTag.setOnClickListener(v -> {
+            String tag = textInputTags.getText().toString();
             if (!TextUtils.isEmpty(tag)) {
-                if (viewModel.addTag(tag)) {
-                    chipGroup.addView(makeChip(chipGroup, tag));
-                    textInputLayoutTags.getEditText().setText("");
+                if (tagsTitles.contains(tag)) {
+                    Tag selectedTag = null;
+                    for (Tag mTag: tags){
+                        if (mTag.getName().equalsIgnoreCase(tag)){
+                            selectedTag = mTag;
+                            break;
+                        }
+                    }
+                    if (viewModel.addTag(selectedTag) && selectedTag != null) {
+                        tagGroup.addView(makeChip(tagGroup, selectedTag));
+                        textInputTags.setText("");
+                    }
+                } else {
+                    ToastHelper.showToast(this, getString(R.string.tag_undefined));
                 }
             }
         });
@@ -229,7 +281,7 @@ public class EditGuideActivity extends PermissionActivity {
 
     private void setupContinueButton() {
         buttonContinue = findViewById(R.id.buttonContinue);
-        buttonContinue.setOnClickListener(v -> proceed());
+        buttonContinue.setOnClickListener(v -> viewModel.saveTour());
     }
 
     private void setupViewPager() {
@@ -265,28 +317,15 @@ public class EditGuideActivity extends PermissionActivity {
         progressLoading = findViewById(R.id.progressLoading);
     }
 
-    private void proceed() {
-        if (tour == null) { // temporary realization
-            if (disposable != null) {
-                disposable.dispose();
-            }
+    private void observeViewModel(){
+        viewModel.getTagsList().observe(this, this::setTagsList);
 
-            disposable = viewModel.saveTour()
-                    .subscribe(response -> {
-                        if (response.isSuccess()) {
-                            EditAudioActivity.Args args = new EditAudioActivity.Args(response.getId());
-                            NavigationHelper.startEditAudioActivity(this, args);
-                        } else {
-                            ToastHelper.showToast(this, response.getErrorMessage());
-                        }
-                    }, throwable -> {
-                        ToastHelper.showToast(this, "Can not save tour");
-                        Log.v("saveTour", "throwable " + throwable.getMessage());
-                    });
-        } else {
-            EditAudioActivity.Args args = new EditAudioActivity.Args(tour.getId());
+        viewModel.getErrorEvent().observe(this, errorMsg -> ToastHelper.showToast(this, errorMsg));
+
+        viewModel.getTourSavedEvent().observe(this, tourId -> {
+            EditAudioActivity.Args args = new EditAudioActivity.Args(tourId);
             NavigationHelper.startEditAudioActivity(this, args);
-        }
+        });
     }
 
     @Override
@@ -301,21 +340,22 @@ public class EditGuideActivity extends PermissionActivity {
                 viewModel.setImagePath(FileHelper.getRealImagePathFromUri(this, resultUri));
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
-                Logger.log(EditGuideActivity.this, "Image cropping error", error);
+                Logger.log(AddEditTourActivity.this, "Image cropping error", error);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private Chip makeChip(ChipGroup parent, String tag) {
+    private Chip makeChip(ChipGroup parent, Tag tag) {
         LayoutInflater inflater = LayoutInflater.from(this);
         Chip chip = (Chip) inflater.inflate(R.layout.item_tour_tag, parent, false);
-        chip.setText(tag);
+        chip.setText(tag.getName());
         chip.setCloseIcon(getDrawable(R.drawable.ic_clear));
         chip.setCloseIconTint(ColorStateList.valueOf(getColor(R.color.colorTextOrange)));
         chip.setCloseIconSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics()));
         chip.setCloseIconVisible(true);
+        chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorMainBackground)));
         chip.setOnCloseIconClickListener(v -> {
             if (viewModel.removeTag(tag)) {
                 parent.removeView(chip);

@@ -3,13 +3,13 @@ package app.karacal.dagger;
 import javax.inject.Singleton;
 
 import app.karacal.App;
+import app.karacal.activities.AddEditTourActivity;
 import app.karacal.activities.ApplyPrivacyPolicyActivity;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CommentsActivity;
-import app.karacal.activities.DashboardActivity;
+import app.karacal.activities.GuideDashboardActivity;
 import app.karacal.activities.DonateActivity;
 import app.karacal.activities.EditAudioActivity;
-import app.karacal.activities.EditGuideActivity;
 import app.karacal.activities.FollowMyListeningsActivity;
 import app.karacal.activities.LoginActivity;
 import app.karacal.activities.PaymentActivity;
@@ -30,7 +30,8 @@ import app.karacal.viewmodels.AudioActivityViewModel;
 import app.karacal.viewmodels.CategoryActivityViewModel;
 import app.karacal.viewmodels.CommentsActivityViewModel;
 import app.karacal.viewmodels.DashboardActivityViewModel;
-import app.karacal.viewmodels.EditGuideActivityViewModel;
+import app.karacal.viewmodels.AddEditTourActivityViewModel;
+import app.karacal.viewmodels.EditAudioViewModel;
 import app.karacal.viewmodels.MainActivityViewModel;
 import app.karacal.viewmodels.ProfileActivityViewModel;
 import dagger.BindsInstance;
@@ -54,9 +55,9 @@ public interface AppComponent {
 
     void inject(FollowMyListeningsActivity activity);
 
-    void inject(EditGuideActivity activity);
+    void inject(AddEditTourActivity activity);
 
-    void inject(DashboardActivity activity);
+    void inject(GuideDashboardActivity activity);
 
     void inject(EditAudioActivity activity);
 
@@ -92,13 +93,15 @@ public interface AppComponent {
 
     void inject (AudioActivityViewModel viewModel);
 
-    void inject (EditGuideActivityViewModel viewModel);
+    void inject (AddEditTourActivityViewModel viewModel);
 
     void inject (DashboardActivityViewModel viewModel);
 
     void inject (CommentsActivityViewModel viewModel);
 
     void inject (ProfileActivityViewModel viewModel);
+
+    void inject (EditAudioViewModel viewModel);
 
     @Component.Builder
     interface Builder {

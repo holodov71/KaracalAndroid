@@ -3,13 +3,15 @@ package app.karacal.network.models.response;
 import java.util.Date;
 import java.util.List;
 
+import app.karacal.models.Tag;
+
 public class ContentResponse {
     private int id;
     private String title;
     private String author;
     private int guideId;
     private String date;
-    private String tags;
+    private List<Tag> arrTags;
     private String address;
     private String city;
     private String desc;
@@ -43,8 +45,8 @@ public class ContentResponse {
         return date;
     }
 
-    public String getTags() {
-        return tags;
+    public List<Tag> getTags() {
+        return arrTags;
     }
 
     public String getAddress() {
@@ -123,7 +125,7 @@ public class ContentResponse {
                 ", author='" + author + '\'' +
                 ", guideId='" + guideId + '\'' +
                 ", date='" + date + '\'' +
-                ", tags='" + tags + '\'' +
+                ", tags='" + arrTags + '\'' +
                 ", address='" + address + '\'' +
                 ", city='" + city + '\'' +
                 ", desc='" + desc + '\'' +

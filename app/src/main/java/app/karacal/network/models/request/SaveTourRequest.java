@@ -1,6 +1,7 @@
 package app.karacal.network.models.request;
 
 import java.util.Date;
+import java.util.List;
 
 public class SaveTourRequest {
 
@@ -9,20 +10,20 @@ public class SaveTourRequest {
     private final String date;
     private final String latitude;
     private final String longitude;
-    private final String tags;
+    private final List<Integer> arr_tags;
     private final String desc;
     private final String address;
     private final String city;
     private final String price;
     private final int guide_id;
 
-    public SaveTourRequest(String title, String author, String date, String latitude, String longitude, String tags, String desc, String address, String city, String price, int guideId) {
+    public SaveTourRequest(String title, String author, String date, String latitude, String longitude, List<Integer> tags, String desc, String address, String city, String price, int guideId) {
         this.title = title;
         this.author = author;
         this.date = date;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.tags = tags;
+        this.arr_tags = tags;
         this.desc = desc;
         this.address = address;
         this.city = city;
@@ -50,8 +51,8 @@ public class SaveTourRequest {
         return longitude;
     }
 
-    public String getTags() {
-        return tags;
+    public List<Integer> getTags() {
+        return arr_tags;
     }
 
     public String getDesc() {
@@ -82,7 +83,7 @@ public class SaveTourRequest {
                 ", date='" + date + '\'' +
                 ", latitude='" + latitude + '\'' +
                 ", longitude='" + longitude + '\'' +
-                ", tags='" + tags + '\'' +
+                ", tags='" + arr_tags + '\'' +
                 ", desc='" + desc + '\'' +
                 ", address='" + address + '\'' +
                 ", city='" + city + '\'' +

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 import app.karacal.R;
-import app.karacal.activities.EditGuideActivity;
+import app.karacal.activities.AddEditTourActivity;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
@@ -46,7 +46,7 @@ public class DashboardTourListAdapter extends RecyclerView.Adapter<DashboardTour
             textViewTitle.setText(tour.getTitle());
             Date date = tour.getCreatedAt() != null ? tour.getCreatedAt() : new Date();
             textViewDate.setText(context.getString(R.string.dashboard_tour_created_format, dateFormat.format(date)));
-            buttonEdit.setOnClickListener(v -> NavigationHelper.startEditGuideActivity(context, new EditGuideActivity.Args(tour.getId())));
+            buttonEdit.setOnClickListener(v -> NavigationHelper.startEditGuideActivity(context, new AddEditTourActivity.Args(tour.getId())));
         }
     }
 

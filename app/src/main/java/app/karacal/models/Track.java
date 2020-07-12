@@ -31,6 +31,7 @@ public class Track implements Serializable {
     }
 
     public Track(TrackResponse trackResponse){
+        this.id = trackResponse.getId();
         this.resId = -1;
         this.title = trackResponse.getTitle();
         this.filename = trackResponse.getFilename();

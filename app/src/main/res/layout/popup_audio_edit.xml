@@ -55,36 +55,36 @@
             style="@style/Divider"
             android:layout_marginStart="16dp"/>
 
-        <LinearLayout
-            android:id="@+id/buttonEdit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="?attr/selectableItemBackground">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/buttonEdit"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:background="?attr/selectableItemBackground">-->
 
-            <ImageView
-                style="@style/PopupIcon"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_edit_audio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:layout_gravity="center_vertical"/>
+<!--            <ImageView-->
+<!--                style="@style/PopupIcon"-->
+<!--                android:contentDescription="@null"-->
+<!--                android:src="@drawable/ic_edit_audio"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="16dp"-->
+<!--                android:layout_gravity="center_vertical"/>-->
 
-            <TextView
-                style="@style/TextWhite.ItemTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/edit"
-                android:layout_margin="16dp"
-                android:layout_gravity="center_vertical"/>
+<!--            <TextView-->
+<!--                style="@style/TextWhite.ItemTitle"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/edit"-->
+<!--                android:layout_margin="16dp"-->
+<!--                android:layout_gravity="center_vertical"/>-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
 
-        <View
-            android:layout_width="match_parent"
-            style="@style/Divider"
-            android:layout_marginStart="16dp"/>
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            style="@style/Divider"-->
+<!--            android:layout_marginStart="16dp"/>-->
 
         <LinearLayout
             android:id="@+id/buttonDownload"
@@ -113,6 +113,7 @@
         </LinearLayout>
 
         <View
+            android:id="@+id/downloadDivider"
             android:layout_width="match_parent"
             style="@style/Divider"
             android:layout_marginStart="16dp"/>

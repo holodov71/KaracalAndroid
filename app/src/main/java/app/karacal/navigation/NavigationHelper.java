@@ -3,16 +3,16 @@ package app.karacal.navigation;
 import android.app.Activity;
 import android.content.Intent;
 
+import app.karacal.activities.AddEditTourActivity;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.AudioRecorderActivity;
 import app.karacal.activities.CategoryActivity;
 import app.karacal.activities.ChangePasswordActivity;
 import app.karacal.activities.CommentsActivity;
 import app.karacal.activities.CongratulationsActivity;
-import app.karacal.activities.DashboardActivity;
+import app.karacal.activities.GuideDashboardActivity;
 import app.karacal.activities.DonateActivity;
 import app.karacal.activities.EditAudioActivity;
-import app.karacal.activities.EditGuideActivity;
 import app.karacal.activities.FollowMyListeningsActivity;
 import app.karacal.activities.LoginActivity;
 import app.karacal.activities.MainActivity;
@@ -96,7 +96,7 @@ public class NavigationHelper {
     }
 
     public static void startDashboardActivity(Activity context) {
-        Intent intent = new Intent(context, DashboardActivity.class);
+        Intent intent = new Intent(context, GuideDashboardActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
     }
@@ -106,8 +106,8 @@ public class NavigationHelper {
         context.startActivity(intent);
     }
 
-    public static void startEditGuideActivity(Activity context, EditGuideActivity.Args args) {
-        Intent intent = new Intent(context, EditGuideActivity.class);
+    public static void startEditGuideActivity(Activity context, AddEditTourActivity.Args args) {
+        Intent intent = new Intent(context, AddEditTourActivity.class);
         intent.putExtras(args.toBundle());
         context.startActivity(intent);
     }

@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:textAppearance="@style/TextWhite.ItemTitle"
     android:textColor="@color/colorTextWhite"
-    android:theme="@style/Theme.MaterialComponents.Light"
+    android:theme="@style/Theme.MaterialComponents"
     app:chipBackgroundColor="#1AC4C4C4"
     app:chipIconTint="@color/colorTextOrange"
     app:rippleColor="@color/colorMain"/>

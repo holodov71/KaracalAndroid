@@ -5,17 +5,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,17 +28,23 @@ import app.karacal.adapters.TrackEditListAdapter;
 import app.karacal.data.repository.AlbumRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.dialogs.AudioTitleDialog;
+import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.FileHelper;
+import app.karacal.helpers.PreferenceHelper;
+import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
+import app.karacal.models.Player;
 import app.karacal.models.Tour;
 import app.karacal.models.Track;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.network.models.request.RenameTrackRequest;
 import app.karacal.popups.BasePopup;
 import app.karacal.popups.EditAudioPopup;
 import app.karacal.network.models.response.UploadTrackResponse;
-import io.reactivex.disposables.Disposable;
+import app.karacal.viewmodels.EditAudioViewModel;
+import io.reactivex.disposables.CompositeDisposable;
 
 public class EditAudioActivity extends PermissionActivity {
 
@@ -55,11 +64,19 @@ public class EditAudioActivity extends PermissionActivity {
 
     }
 
+    private EditAudioViewModel viewModel;
+
     @Inject
     AlbumRepository albumRepository;
 
     @Inject
     TourRepository tourRepository;
+
+    @Inject
+    ProfileHolder profileHolder;
+
+    @Inject
+    ApiHelper apiHelper;
 
     Integer tourId;
 
@@ -68,7 +85,7 @@ public class EditAudioActivity extends PermissionActivity {
     private ArrayList<Track> tracks = new ArrayList<>();
     private TrackEditListAdapter adapter;
 
-    Disposable disposable;
+    CompositeDisposable disposable = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +95,9 @@ public class EditAudioActivity extends PermissionActivity {
 
         tourId = args.getTourId();
 
+        viewModel = new ViewModelProvider(this).get(EditAudioViewModel.class);
+
+
         setContentView(R.layout.activity_edit_audio);
         layoutRoot = findViewById(R.id.layoutRoot);
         setupBackButton();
@@ -85,6 +105,8 @@ public class EditAudioActivity extends PermissionActivity {
         setupBottomButtons();
         setupRecyclerView();
         setupProgressLoading();
+
+        loadData(tourId);
     }
 
     @Override
@@ -106,26 +128,18 @@ public class EditAudioActivity extends PermissionActivity {
     }
 
     private void setupRecyclerView() {
-        if (tourId != null) {
-            Tour tour = tourRepository.getTourById(tourId);
-            if (tour != null) {
-                tracks = albumRepository.getAlbumByTourId(tourId).getTracks();
-            }
-        }
-
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         adapter = new TrackEditListAdapter(this);
         adapter.setTracks(tracks);
         adapter.setClickListener(position -> {
-            EditAudioPopup popup = new EditAudioPopup(layoutRoot, new EditAudioPopup.EditAudioPopupCallbacks() {
+            boolean canDownload = tracks.get(position).getFilename() != null;
+            EditAudioPopup popup = new EditAudioPopup(layoutRoot, canDownload, new EditAudioPopup.EditAudioPopupCallbacks() {
                 @Override
                 public void onButtonRenameClick(BasePopup popup) {
                     popup.close();
                     AudioTitleDialog dialog = AudioTitleDialog.getInstance(tracks.get(position).getTitle());
                     dialog.setListener(title -> {
-                        tracks.get(position).setTitle(title);
-                        adapter.setTracks(tracks);
-                        adapter.notifyDataSetChanged();
+                        renameTrack(position, title);
                     });
                     dialog.show(getSupportFragmentManager(), AudioTitleDialog.DIALOG_TAG);
                 }
@@ -142,8 +156,7 @@ public class EditAudioActivity extends PermissionActivity {
 
                 @Override
                 public void onButtonDeleteClick(BasePopup popup) {
-                    tracks.remove(position);
-                    adapter.setTracks(tracks);
+                    deleteTrack(position);
                     popup.close();
                 }
             });
@@ -196,7 +209,7 @@ public class EditAudioActivity extends PermissionActivity {
                     audioFileUri = data.getData();
                     if (audioFileUri != null){
                         Track newTrack = new Track(
-                                FileHelper.getRealFileName(this, audioFileUri),
+                                FileHelper.getRealFileName(this, audioFileUri).replace(".mp3", ""),
                                 FileHelper.getRealAudioPathFromUri(this, audioFileUri),
                                 FileHelper.getAudioDuration(this, audioFileUri));
                         tracks.add(newTrack);
@@ -210,35 +223,117 @@ public class EditAudioActivity extends PermissionActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void loadData(int tourId){
+        progressLoading.setVisibility(View.VISIBLE);
+
+        Tour tour = tourRepository.getTourById(tourId);
+        Log.v(App.TAG, "Edit audio tour = "+tour);
+        if (tour != null){
+            tracks.clear();
+            tracks.addAll(tour.getAudio());
+            adapter.setTracks(tracks);
+        }
+        progressLoading.setVisibility(View.GONE);
+
+    }
+
+    private void deleteTrack(int position){
+
+        int trackId = tracks.get(position).getId();
+
+        if (trackId != 0) {
+            progressLoading.setVisibility(View.VISIBLE);
+
+            disposable.add(apiHelper.deleteTrack(PreferenceHelper.loadToken(this), String.valueOf(trackId))
+                    .subscribe(response -> {
+                                tracks.remove(position);
+                                adapter.setTracks(tracks);
+                                tourRepository.updateTour(tourId);
+                                progressLoading.setVisibility(View.GONE);
+                            },
+                            throwable -> {
+                                progressLoading.setVisibility(View.GONE);
+                                ToastHelper.showToast(this, getString(R.string.connection_problem));
+                            }));
+        } else {
+            tracks.remove(position);
+            adapter.setTracks(tracks);
+        }
+    }
+
+    private void renameTrack(int position, String title){
+
+        int trackId = tracks.get(position).getId();
+
+        if (trackId != 0) {
+            progressLoading.setVisibility(View.VISIBLE);
+
+            disposable.add(apiHelper.renameTrack(PreferenceHelper.loadToken(this), trackId, new RenameTrackRequest(title))
+                    .subscribe(response -> {
+                                if (response.isSuccess()) {
+                                    tracks.get(position).setTitle(title);
+                                    adapter.setTracks(tracks);
+                                    tourRepository.updateTour(tourId);
+                                } else {
+                                    ToastHelper.showToast(this, response.getErrorMessage());
+                                }
+                                progressLoading.setVisibility(View.GONE);
+                            },
+                            throwable -> {
+                                progressLoading.setVisibility(View.GONE);
+                                ToastHelper.showToast(this, getString(R.string.connection_problem));
+                            }));
+        } else {
+            tracks.get(position).setTitle(title);
+            adapter.setTracks(tracks);
+        }
+    }
+
     private void uploadTracks (){
         if (tourId != null) {
             progressLoading.setVisibility(View.VISIBLE);
-            if (disposable != null) {
-                disposable.dispose();
+
+            int guideId = profileHolder.getGuideId();
+
+            List<Track> tracksToUpload = new ArrayList<>();
+
+            for (Track track: tracks){
+                if (track.getFilename() == null){
+                    tracksToUpload.add(track);
+                    Log.v(App.TAG, "tracksToUpload track = "+track);
+
+                }
             }
 
-            disposable = albumRepository.uploadAudioToServer("1", tourId.toString(), tracks)
-                    .subscribe(
-                            (responseList) -> {
-                                boolean isSuccess = true;
-                                for (UploadTrackResponse response : responseList) {
-                                    if (!response.isSuccess()) {
-                                        isSuccess = false;
-                                        break;
+            if (tracksToUpload.isEmpty()){
+                NavigationHelper.startCongratulationsActivity(EditAudioActivity.this);
+            } else {
+
+                disposable.add(albumRepository.uploadAudioToServer(String.valueOf(guideId), tourId.toString(), tracksToUpload)
+                        .subscribe(
+                                (responseList) -> {
+                                    boolean isSuccess = true;
+                                    for (UploadTrackResponse response : responseList) {
+                                        if (!response.isSuccess()) {
+                                            isSuccess = false;
+                                            break;
+                                        }
                                     }
-                                }
-                                if (isSuccess) {
+
+                                    if (isSuccess) {
+                                        tourRepository.updateTour(tourId);
+                                        NavigationHelper.startCongratulationsActivity(EditAudioActivity.this);
+                                    } else {
+                                        progressLoading.setVisibility(View.GONE);
+                                        Toast.makeText(EditAudioActivity.this, "One ore more audio was not uploaded!", Toast.LENGTH_SHORT).show();
+                                    }
+                                },
+                                (e) -> {
                                     progressLoading.setVisibility(View.GONE);
-                                    NavigationHelper.startCongratulationsActivity(EditAudioActivity.this);
-                                } else {
-                                    Toast.makeText(EditAudioActivity.this, "One ore more audio was not uploaded!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(EditAudioActivity.this, "Error uploading audio", Toast.LENGTH_SHORT).show();
                                 }
-                            },
-                            (e) -> {
-                                progressLoading.setVisibility(View.GONE);
-                                Toast.makeText(EditAudioActivity.this, "Error uploading audio", Toast.LENGTH_SHORT).show();
-                            }
-                    );
+                        ));
+            }
         } else {
             ToastHelper.showToast(this, "Can not upload audio!");
         }

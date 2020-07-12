@@ -1,12 +1,14 @@
 package app.karacal.adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
@@ -14,14 +16,16 @@ import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import app.karacal.R;
 import app.karacal.models.SearchTagCategory;
+import app.karacal.models.Tag;
 
 public class SearchTagsAdapter extends RecyclerView.Adapter<SearchTagsAdapter.ViewHolder> {
 
     public interface TagClickListener{
-        void onTagClicked(String tag);
+        void onTagClicked(Tag tag);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -38,9 +42,10 @@ public class SearchTagsAdapter extends RecyclerView.Adapter<SearchTagsAdapter.Vi
         void bind(SearchTagCategory category) {
             textViewTitle.setText(category.getTitle());
             chipGroup.removeAllViews();
-            for (String tag : category.getTags()) {
+            for (Tag tag : category.getTags()) {
                 Chip chip = (Chip) inflater.inflate(R.layout.item_search_tag, chipGroup, false);
-                chip.setText(tag);
+                chip.setText(tag.getName());
+                chip.setChipBackgroundColor(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorMainBackground)));
                 chip.setOnClickListener(v -> {
                     if (listener != null){
                         listener.onTagClicked(tag);
@@ -55,11 +60,18 @@ public class SearchTagsAdapter extends RecyclerView.Adapter<SearchTagsAdapter.Vi
     private LayoutInflater inflater;
     private TagClickListener listener;
 
-    private ArrayList<SearchTagCategory> categories = new ArrayList<>(Arrays.asList(
-            new SearchTagCategory("Visites originales", new ArrayList<>(Arrays.asList("Music", "Jazz", "Fantasy", "Humor", "Audio-Description", "Fantasy", "Jazz", "Fantasy", "Humor"))),
-            new SearchTagCategory("Niveau", new ArrayList<>(Arrays.asList("Expert", "Newbie", "Amateur"))),
-            new SearchTagCategory("Visites originales", new ArrayList<>(Arrays.asList("Music", "Jazz", "Fantasy", "Humor", "Audio-Description", "Fantasy", "Jazz", "Fantasy", "Humor"))))
-    );
+    private ArrayList<SearchTagCategory> categories = new ArrayList<>();
+//    private ArrayList<SearchTagCategory> categories = new ArrayList<>(Arrays.asList(
+//            new SearchTagCategory("Visites originales", new ArrayList<>(Arrays.asList("Music", "Jazz", "Fantasy", "Humor", "Audio-Description", "Fantasy", "Jazz", "Fantasy", "Humor"))),
+//            new SearchTagCategory("Niveau", new ArrayList<>(Arrays.asList("Expert", "Newbie", "Amateur"))),
+//            new SearchTagCategory("Visites originales", new ArrayList<>(Arrays.asList("Music", "Jazz", "Fantasy", "Humor", "Audio-Description", "Fantasy", "Jazz", "Fantasy", "Humor"))))
+//    );
+
+    public void setTags(List<Tag> tags) {
+        categories.clear();
+        categories.add(new SearchTagCategory("", tags));
+        notifyDataSetChanged();
+    }
 
     public SearchTagsAdapter(Context context) {
         this.context = context;
