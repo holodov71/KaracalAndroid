@@ -21,10 +21,10 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
 
     def versionMajor = 1
-    def versionMinor = 0
-    def versionPatch = 2
+    def versionMinor = 1
+    def versionPatch = 0
 
-    def code = versionMajor * 100 + versionMinor
+    def code = versionMajor * 100 + versionMinor * 10 + versionPatch
 
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -54,7 +54,7 @@ android {
     }
     buildTypes {
         release {
-            debuggable true
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
