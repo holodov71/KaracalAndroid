@@ -10,12 +10,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Random;
+import java.util.List;
 
 import app.karacal.R;
+import app.karacal.data.NotificationsCache;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.models.NotificationInfo;
 
@@ -38,7 +38,7 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
         public void bind(NotificationInfo notificationInfo){
             itemView.setOnClickListener(v -> DummyHelper.dummyAction(v.getContext()));
-            imageViewTitle.setImageResource(notificationInfo.getImage());
+            imageViewTitle.setImageResource(R.drawable.karacal_logo);
             textViewTitle.setText(notificationInfo.getTitle());
             textViewTime.setText(getTimeText(notificationInfo.getDate()));
         }
@@ -62,22 +62,12 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private final Context context;
     private final LayoutInflater inflater;
 
-    private ArrayList<NotificationInfo> notifications;
+    private List<NotificationInfo> notifications;
 
     public NotificationListAdapter(Context context) {
         this.context = context;
         inflater = LayoutInflater.from(context);
-        notifications = new ArrayList<>();
-        int[] images = new int[] {
-                R.mipmap.notification_item_example_1,
-                R.mipmap.notification_item_example_2,
-                R.mipmap.notification_item_example_3,
-                R.mipmap.notification_item_example_4
-        };
-        Random random = new Random();
-        for (int i = 0; i < 10; i++) {
-            notifications.add(new NotificationInfo(images[random.nextInt(images.length)], "Notification title", new Date(new Date().getTime() - random.nextInt(1000 * 60 * 60 * 24 * 2))));
-        }
+        notifications = NotificationsCache.getInstance(context).getNotificationsList();
         Collections.sort(notifications, (d1, d2) -> d2.getDate().compareTo(d1.getDate()));
     }
 

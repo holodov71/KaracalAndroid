@@ -7,6 +7,10 @@ import com.onesignal.OSNotificationDisplayedResult;
 import com.onesignal.OSNotificationReceivedResult;
 
 import java.math.BigInteger;
+import java.util.Calendar;
+
+import app.karacal.data.NotificationsCache;
+import app.karacal.models.NotificationInfo;
 
 public class CustomNotificationExtenderService extends NotificationExtenderService {
     @Override
@@ -21,8 +25,27 @@ public class CustomNotificationExtenderService extends NotificationExtenderServi
         };
 
         OSNotificationDisplayedResult displayedResult = displayNotification(overrideSettings);
-        Log.d("OneSignalExample", "Notification displayed with id: " + displayedResult.androidNotificationId);
+
+        saveToCache(displayedResult, receivedResult);
+        Log.d("OneSignalExample", "Notification received with id: " + displayedResult.androidNotificationId);
 
         return true;
+    }
+
+    private void saveToCache(OSNotificationDisplayedResult displayedResult, OSNotificationReceivedResult receivedResult){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        NotificationsCache notificationsCache = NotificationsCache.getInstance(this);
+        NotificationInfo notificationInfo = new NotificationInfo(
+                displayedResult.androidNotificationId,
+                receivedResult.payload.title,
+                receivedResult.payload.body,
+                calendar.getTime()
+        );
+
+        Log.d("OneSignalExample", "Notification received: " + notificationInfo);//message
+
+        notificationsCache.addNotification(this, notificationInfo);
     }
 }

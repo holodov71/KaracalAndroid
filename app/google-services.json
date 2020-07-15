@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "734867170563",
+    "firebase_url": "https://karacal-276412.firebaseio.com",
+    "project_id": "karacal-276412",
+    "storage_bucket": "karacal-276412.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734867170563:android:c16219c069470dc2453536",
+        "android_client_info": {
+          "package_name": "app.karacal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "734867170563-fcc3tar9eh36p31qsnnsi4evqrctb8qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6v-NiVNqVxempxJGPZDQmk7ePxNvqsMA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "734867170563-fcc3tar9eh36p31qsnnsi4evqrctb8qt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "734867170563-oc3hbvlnsorv98tdd9epifojfc9nrtt2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "store.karacal"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

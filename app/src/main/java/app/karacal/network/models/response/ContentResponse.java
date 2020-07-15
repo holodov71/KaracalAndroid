@@ -24,6 +24,7 @@ public class ContentResponse {
     private int status;
     private Date createdAt;
     private Date updatedAt;
+    private String price;
 
     public int getId() {
         return id;
@@ -115,6 +116,19 @@ public class ContentResponse {
             }
         }
         return result;
+    }
+
+    public long getPrice() {
+        if (price == null) return 0;
+
+        double result = 0.0;
+        try{
+            result = Double.parseDouble(price.replaceAll("€", ""));
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        return (long) (result * 100);
     }
 
     @Override

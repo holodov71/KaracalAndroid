@@ -184,11 +184,11 @@ public class TourRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tours -> {
                     Log.v("loadTours", "contentsLiveData.setValue(tours) size = "+tours.size());
-                    for (Tour tour: tours){
-                        if (tour.getId() == 1 || tour.getId() == 2 || tour.getId() == 7 || tour.getId() == 8){
-                            tour.setPrice(999);
-                        }
-                    }
+//                    for (Tour tour: tours){
+//                        if (tour.getId() == 1 || tour.getId() == 2 || tour.getId() == 7 || tour.getId() == 8){
+//                            tour.setPrice(999);
+//                        }
+//                    }
                     originalToursLiveData.setValue(tours);
                     // TODO: save to DB
 

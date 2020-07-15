@@ -50,7 +50,17 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.AudioActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+            <intent-filter android:label="@string/audio_activity">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "http://www.app.karacal/view/tour/” -->
+                <data android:scheme="http"
+                    android:host="www.app.karacal"
+                    android:pathPrefix="/view/tour/" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.ProfileActivity"
             android:screenOrientation="portrait" />

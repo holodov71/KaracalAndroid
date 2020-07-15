@@ -12,7 +12,6 @@ import app.karacal.R;
 
 public class SelectPlanPopup extends BasePopup {
 
-    private static final double SINGLE_PRICE = 3.99;
     private static final double REGULAR_PRICE = 9.99;
 
     public interface SelectPlanPopupCallbacks{
@@ -43,8 +42,8 @@ public class SelectPlanPopup extends BasePopup {
         TextView textViewSinglePrice = view.findViewById(R.id.textViewSinglePrice);
         double doublePrice = ((double)price)/100;
         textViewSinglePrice.setText(context.getString(R.string.price_format, doublePrice, context.getString(R.string.euro)));
-//        TextView textViewRegularPrice = view.findViewById(R.id.textViewRegularPrice);
-//        textViewRegularPrice.setText(context.getString(R.string.price_format, REGULAR_PRICE, context.getString(R.string.euro)));
+        TextView textViewRegularPrice = view.findViewById(R.id.textViewRegularPrice);
+        textViewRegularPrice.setText(context.getString(R.string.price_format, REGULAR_PRICE, context.getString(R.string.euro)));
 //        textViewRegularPrice.setText(context.getString(R.string.choose_plan));
         ConstraintLayout buttonSinglePrice = view.findViewById(R.id.buttonSinglePrice);
         buttonSinglePrice.setOnClickListener(v -> callbacks.onButtonSinglePriceClick(this));

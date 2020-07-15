@@ -134,7 +134,11 @@ public class Player implements MediaPlayer.OnPreparedListener{
                         Log.v("Player", "path = "+ file.getPath());
                         mediaPath = Uri.fromFile(file);
                     } else {
+                        Log.v("Player", "Play track from url");
                         mediaPath = Uri.parse(track.getFilename());
+                        Log.v("Player", "Play track from url = "+mediaPath);
+                        Log.v("Player", "Play track from url = "+mediaPath.getPath());
+
                     }
                 }
                 mediaPlayer.setDataSource(context, mediaPath);

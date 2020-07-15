@@ -16,8 +16,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import java.util.Locale;
-
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CommentsActivity;
@@ -26,6 +24,7 @@ import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.ShareHelper;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Guide;
+import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import app.karacal.views.StarsView;
@@ -34,14 +33,24 @@ import apps.in.android_logger.LogFragment;
 public class AudioDescriptionFragment extends LogFragment {
 
     private AudioActivityViewModel viewModel;
+    private ImageView imageViewTour;
     private TextView textViewComments;
     private View progressLoading;
+    private TextView textViewPrice;
+    private ConstraintLayout constraintLayoutPrice;
+    private ImageView buttonShare;
     private ProgressBar progressDownloading;
     private ImageView buttonDownload;
     private ImageView imageViewAuthor;
     private TextView textViewAuthor;
     private TextView textViewGuidesCount;
     private View buttonAuthor;
+    private StarsView starsViewTop;
+    private StarsView starsViewDescription;
+    private TextView textViewTitle;
+    private TextView textViewDescription;
+    private TextView textViewAddress;
+    private TextView textViewDuration;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,13 +104,11 @@ public class AudioDescriptionFragment extends LogFragment {
     }
 
     private void setupBackground(View view){
-        ImageView imageView = view.findViewById(R.id.imageViewBackground);
-        ImageHelper.setImage(imageView, viewModel.getTour().getImageUrl(), viewModel.getTour().getImage(), false);
+        imageViewTour = view.findViewById(R.id.imageViewBackground);
     }
 
     private void setupButtons(View view){
-        ImageView buttonShare = view.findViewById(R.id.buttonShare);
-        buttonShare.setOnClickListener(v -> ShareHelper.share(getActivity(), "Share tour", viewModel.getTour().getTitle(), viewModel.getTour().getDescription()));
+        buttonShare = view.findViewById(R.id.buttonShare);
         ImageView buttonPlay = view.findViewById(R.id.buttonPlay);
         buttonPlay.setOnClickListener(v -> {
             showLoading();
@@ -112,76 +119,56 @@ public class AudioDescriptionFragment extends LogFragment {
     }
 
     private void setupPrice(View view){
-        TextView textView = view.findViewById(R.id.textViewPrice);
-        ConstraintLayout constraintLayout = view.findViewById(R.id.layoutAlert);
-        if (viewModel.getTour().getPrice() != 0){
-            textView.setText(getContext().getString(R.string.price_format, viewModel.getTour().getDoublePrice(), getContext().getString(R.string.euro)));
-            textView.setVisibility(View.VISIBLE);
-            constraintLayout.setVisibility(View.VISIBLE);
-        } else {
-            textView.setVisibility(View.INVISIBLE);
-            constraintLayout.setVisibility(View.INVISIBLE);
-        }
+        textViewPrice = view.findViewById(R.id.textViewPrice);
+        constraintLayoutPrice = view.findViewById(R.id.layoutAlert);
+
     }
 
     private void setupRating(View view){
-        StarsView starsViewTop = view.findViewById(R.id.starsViewTop);
-        StarsView starsViewDescription = view.findViewById(R.id.starsViewDescription);
-        int rating = viewModel.getTour().getRating();
-        starsViewTop.setRating(rating);
-        starsViewDescription.setRating(rating);
+        starsViewTop = view.findViewById(R.id.starsViewTop);
+        starsViewDescription = view.findViewById(R.id.starsViewDescription);
     }
 
     private void setupTitle(View view){
-        TextView textView = view.findViewById(R.id.textViewTitle);
-        textView.setText(viewModel.getTour().getTitle());
+        textViewTitle = view.findViewById(R.id.textViewTitle);
     }
 
     private void setupDescription(View view){
-        TextView textView = view.findViewById(R.id.textViewDescription);
-        textView.setText(viewModel.getTour().getDescription());
+        textViewDescription = view.findViewById(R.id.textViewDescription);
     }
 
     private void setupAddress(View view){
-        TextView textView = view.findViewById(R.id.textViewAddress);
-        textView.setText(viewModel.getTour().getAddress());
+        textViewAddress = view.findViewById(R.id.textViewAddress);
     }
 
     private void setupDuration(View view){
-        TextView textView = view.findViewById(R.id.textViewDuration);
-        if (getContext() != null) {
-            textView.setText(viewModel.getTour().getFormattedTourDuration(getContext()));
-        }
+        textViewDuration = view.findViewById(R.id.textViewDuration);
     }
 
     private void setupReviews(View view){
         textViewComments = view.findViewById(R.id.textViewReviews);
         setCommentsCount(0);
-        textViewComments.setOnClickListener(v -> {
-            CommentsActivity.Args args = new CommentsActivity.Args(viewModel.getTour().getId());
-            NavigationHelper.startCommentsActivity(getActivity(), args);
-        });
     }
 
     private void setupAuthor(View view){
         imageViewAuthor = view.findViewById(R.id.imageViewAuthor);
         textViewAuthor = view.findViewById(R.id.textViewAuthor);
         buttonAuthor = view.findViewById(R.id.buttonAuthor);
-        buttonAuthor.setOnClickListener(v -> {
-            ProfileActivity.Args args = new ProfileActivity.Args(viewModel.getGuideId());
-            NavigationHelper.startProfileActivity(getActivity(), args);
-        });
+
         textViewGuidesCount = view.findViewById(R.id.textViewGuidesCount);
         ImageView imageViewAlert = view.findViewById(R.id.imageViewAuthorAlert);
         imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
-
-        viewModel.loadAuthor();
     }
 
     private void setAuthorData(Guide guide){
         if (guide != null) {
             textViewAuthor.setText(guide.getName());
             ImageHelper.setImage(imageViewAuthor, guide.getAvatarUrl(), R.drawable.ic_person, false);
+
+            buttonAuthor.setOnClickListener(v -> {
+                ProfileActivity.Args args = new ProfileActivity.Args(guide.getId());
+                NavigationHelper.startProfileActivity(getActivity(), args);
+            });
         } else {
             buttonAuthor.setVisibility(View.GONE);
         }
@@ -201,6 +188,12 @@ public class AudioDescriptionFragment extends LogFragment {
     }
 
     private void observeViewModel() {
+        viewModel.getTour().observe(getViewLifecycleOwner(), tour -> {
+            if (tour != null){
+                setData(tour);
+            }
+        });
+
         viewModel.getTourDownloadedAction().observe(getViewLifecycleOwner(), action -> {
             ToastHelper.showToast(requireContext(), getString(R.string.tour_downloaded));
         });
@@ -248,6 +241,38 @@ public class AudioDescriptionFragment extends LogFragment {
         });
 
         viewModel.getGuide().observe(getViewLifecycleOwner(), this::setAuthorData);
+    }
+
+    private void setData(Tour tour) {
+        ImageHelper.setImage(imageViewTour, tour.getImageUrl(), tour.getImage(), false);
+
+        if (tour.getPrice() != 0){
+            textViewPrice.setText(getContext().getString(R.string.price_format, tour.getDoublePrice(), getContext().getString(R.string.euro)));
+            textViewPrice.setVisibility(View.VISIBLE);
+            constraintLayoutPrice.setVisibility(View.VISIBLE);
+        } else {
+            textViewPrice.setVisibility(View.INVISIBLE);
+            constraintLayoutPrice.setVisibility(View.INVISIBLE);
+        }
+
+        buttonShare.setOnClickListener(v -> ShareHelper.share(getActivity(), "Share tour", tour.getTitle(), tour.getDescription()));
+
+        int rating = tour.getRating();
+        starsViewTop.setRating(rating);
+        starsViewDescription.setRating(rating);
+
+        textViewTitle.setText(tour.getTitle());
+        textViewDescription.setText(tour.getDescription());
+        textViewAddress.setText(tour.getAddress());
+        if (getContext() != null) {
+            textViewDuration.setText(tour.getFormattedTourDuration(getContext()));
+        }
+
+        textViewComments.setOnClickListener(v -> {
+            CommentsActivity.Args args = new CommentsActivity.Args(tour.getId());
+            NavigationHelper.startCommentsActivity(getActivity(), args);
+        });
+
     }
 
     private void setCommentsCount(int count){

@@ -3,6 +3,7 @@ package app.karacal.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -85,8 +86,10 @@ public class AddEditTourActivity extends PermissionActivity {
     private ImageView imageViewTitle;
     private ImageView buttonDelete;
     private TextInputLayout textInputLayoutTitle;
-    private TextInputLayout textInputLayoutLocation;
+    private TextInputLayout textInputLayoutLatitude;
+    private TextInputLayout textInputLayoutLongitude;
     private TextInputLayout textInputLayoutDescription;
+    private TextInputLayout textInputLayoutAddress;
     private AutoCompleteTextView textInputTags;
     private ImageView buttonAddTag;
     private ChipGroup tagGroup;
@@ -171,6 +174,7 @@ public class AddEditTourActivity extends PermissionActivity {
     private void setupInputs() {
         setupTitleInput();
         setupLocationInput();
+        setupAddressInput();
         setupDescriptionInput();
         setupTagsInput();
     }
@@ -187,34 +191,62 @@ public class AddEditTourActivity extends PermissionActivity {
 
     private void setupLocationInput() {
         ProgressBar progressBar = findViewById(R.id.progressBarGeoCoding);
-        textInputLayoutLocation = findViewById(R.id.textInputLayoutLocation);
+        textInputLayoutLatitude = findViewById(R.id.textInputLayoutLatitude);
+        textInputLayoutLongitude = findViewById(R.id.textInputLayoutLongitude);
 
-        String locationStr = "";
+//        String latitude = "";
+//        String longitude = "";
+//
         if (tour != null){
+//            Location location = tour.getTourLocation();
             viewModel.setLocation(tour.getTourLocation());
+//
+//            if (location != null){
+//                latitude = String.valueOf(location.getLatitude());
+//                longitude = String.valueOf(location.getLongitude());
+//            }
         }
+//
+//        textInputLayoutLatitude.getEditText().setText(latitude);
+//        textInputLayoutLongitude.getEditText().setText(longitude);
 
-//        viewModel.setLocation(locationStr);
-        textInputLayoutLocation.getEditText().setText(viewModel.getLocation() != null ? viewModel.getLocation() : "");
-        TextInputHelper.editTextObservable(textInputLayoutLocation).subscribe((s) -> {
-            viewModel.setLocation(TextUtils.isEmpty(s) ? null : s);
+        TextInputHelper.editTextObservable(textInputLayoutLatitude).subscribe((s) -> {
+            viewModel.setLatitude(TextUtils.isEmpty(s) ? null : s);
             validateInputs();
         });
+
+        TextInputHelper.editTextObservable(textInputLayoutLongitude).subscribe((s) -> {
+            viewModel.setLongitude(TextUtils.isEmpty(s) ? null : s);
+            validateInputs();
+        });
+
+
         ImageView buttonLocation = findViewById(R.id.buttonLocation);
         buttonLocation.setOnClickListener(v -> permissionHelper.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION,
                 () -> viewModel.obtainLocation(),
                 () -> Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show()));
-        viewModel.subscribeLocationUpdates(this, location -> {
-            if (location != null) {
-                textInputLayoutLocation.getEditText().setText(location);
-            } else {
-                Toast.makeText(this, R.string.error_obtaining_location, Toast.LENGTH_LONG).show();
-            }
-        });
+//        viewModel.subscribeLocationUpdates(this, location -> {
+//            if (location != null) {
+//                textInputLayoutLocation.getEditText().setText(location);
+//            } else {
+//                Toast.makeText(this, R.string.error_obtaining_location, Toast.LENGTH_LONG).show();
+//            }
+//        });
         viewModel.getGeoCodingState().observe(this, isActive -> {
-            textInputLayoutLocation.setEnabled((!isActive));
+            textInputLayoutLongitude.setEnabled((!isActive));
+            textInputLayoutLatitude.setEnabled((!isActive));
             buttonLocation.setEnabled((!isActive));
             progressBar.setVisibility(isActive ? View.VISIBLE : View.INVISIBLE);
+            validateInputs();
+        });
+    }
+
+    private void setupAddressInput() {
+        textInputLayoutAddress = findViewById(R.id.textInputLayoutAddress);
+        viewModel.setAddress(tour != null ? tour.getAddress() : null);
+        textInputLayoutAddress.getEditText().setText(tour != null ? tour.getAddress() : "");
+        TextInputHelper.editTextObservable(textInputLayoutAddress).subscribe((s) -> {
+            viewModel.setAddress(TextUtils.isEmpty(s) ? null : s);
             validateInputs();
         });
     }
@@ -230,7 +262,13 @@ public class AddEditTourActivity extends PermissionActivity {
     }
 
     private void validateInputs() {
-        buttonContinue.setEnabled(viewModel.getTitle() != null && viewModel.getLocation() != null && !viewModel.isGeoCodingInProgress() && viewModel.getDescription() != null);
+        buttonContinue.setEnabled(
+                viewModel.getTitle() != null
+                        && viewModel.getLatitude() != null
+                        && viewModel.getLongitude() != null
+                        && !viewModel.isGeoCodingInProgress()
+                        && viewModel.getAddress() != null
+                        && viewModel.getDescription() != null);
     }
 
     private void setupTagsInput() {
@@ -325,6 +363,19 @@ public class AddEditTourActivity extends PermissionActivity {
         viewModel.getTourSavedEvent().observe(this, tourId -> {
             EditAudioActivity.Args args = new EditAudioActivity.Args(tourId);
             NavigationHelper.startEditAudioActivity(this, args);
+        });
+
+        viewModel.getLocationCoordinates().observe(this, location -> {
+            String latitude = "";
+            String longitude = "";
+
+            if (location != null){
+                latitude = String.valueOf(location.getLatitude());
+                longitude = String.valueOf(location.getLongitude());
+            }
+
+            textInputLayoutLatitude.getEditText().setText(latitude);
+            textInputLayoutLongitude.getEditText().setText(longitude);
         });
     }
 

@@ -35,6 +35,8 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class AddEditTourActivityViewModel extends ViewModel {
 
+
+
     public interface LocationObtainListener {
         void onLocationUpdated(String location);
     }
@@ -102,11 +104,13 @@ public class AddEditTourActivityViewModel extends ViewModel {
 
     private Tour currentTour;
 
-    private Location locationCoordinates;
+    private MutableLiveData<Location> locationCoordinates = new MutableLiveData<>();
 
     private String imagePath;
     private String title;
-    private String location = "";
+    private String latitude = "";
+    private String longitude = "";
+    private String address;
     private String description;
 
     private HashSet<Tag> selectedTags = new HashSet<>();
@@ -128,20 +132,63 @@ public class AddEditTourActivityViewModel extends ViewModel {
         this.title = title;
     }
 
-    public String getLocation() {
-        return location;
+    public String getLatitude() {
+        return latitude;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+
+        try {
+            double lat = Double.parseDouble(latitude);
+            if (locationCoordinates.getValue() != null){
+                locationCoordinates.getValue().setLatitude(lat);
+            } else {
+                Location location = new Location("dummyProvider");
+                location.setLatitude(lat);
+                locationCoordinates.setValue(location);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+
+        try {
+            double lgn = Double.parseDouble(longitude);
+            if (locationCoordinates.getValue() != null){
+                locationCoordinates.getValue().setLongitude(lgn);
+            } else {
+                Location location = new Location("dummyProvider");
+                location.setLongitude(lgn);
+                locationCoordinates.setValue(location);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     public void setLocation(Location location) {
-        this.locationCoordinates = location;
-        if (location != null) {
-            this.location = String.format(Locale.ROOT, "%f, %f", location.getLatitude(), location.getLongitude());
-        }
+        this.locationCoordinates.setValue(location);
+    }
 
+    public LiveData<Location> getLocationCoordinates(){
+        return locationCoordinates;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getDescription() {
@@ -174,12 +221,12 @@ public class AddEditTourActivityViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(disposable -> isGeoCodingInProgress.postValue(true))
                 .subscribe(loc -> {
-                            locationCoordinates = loc;
+                            locationCoordinates.setValue(loc);
                             isGeoCodingInProgress.postValue(false);
-                            location = String.format(Locale.ROOT, "%f, %f", loc.getLatitude(), loc.getLongitude());
-                            if (locationUpdateHandler != null) {
-                                locationUpdateHandler.notifyLocationUpdate(location);
-                            }
+//                            location = String.format(Locale.ROOT, "%f, %f", loc.getLatitude(), loc.getLongitude());
+//                            if (locationUpdateHandler != null) {
+//                                locationUpdateHandler.notifyLocationUpdate(location);
+//                            }
                         },
                         throwable -> {
                             isGeoCodingInProgress.postValue(false);
@@ -220,11 +267,11 @@ public class AddEditTourActivityViewModel extends ViewModel {
                 title,
                 profileHolder.getProfile().getName(),
                 dateStr,
-                locationCoordinates!= null ? String.valueOf(locationCoordinates.getLatitude()) : "",
-                locationCoordinates!= null ? String.valueOf(locationCoordinates.getLongitude()) : "",
+                locationCoordinates!= null ? String.valueOf(locationCoordinates.getValue().getLatitude()) : "",
+                locationCoordinates!= null ? String.valueOf(locationCoordinates.getValue().getLongitude()) : "",
                 tags,
                 description,
-                "Paris, France",
+                address,
                 "0",
                 "0",
                 profileHolder.getGuideId());
@@ -259,11 +306,11 @@ public class AddEditTourActivityViewModel extends ViewModel {
                     title,
                     profileHolder.getProfile().getName(),
                     dateStr,
-                    locationCoordinates != null ? String.valueOf(locationCoordinates.getLatitude()) : "",
-                    locationCoordinates != null ? String.valueOf(locationCoordinates.getLongitude()) : "",
+                    locationCoordinates != null ? String.valueOf(locationCoordinates.getValue().getLatitude()) : "",
+                    locationCoordinates != null ? String.valueOf(locationCoordinates.getValue().getLongitude()) : "",
                     tags,
                     description,
-                    "Paris, France",
+                    address,
                     "0",
                     "0",
                     profileHolder.getGuideId());
@@ -292,14 +339,15 @@ public class AddEditTourActivityViewModel extends ViewModel {
         if (title != null && !title.equals(currentTour.getTitle())) return true;
 
         if(locationCoordinates != null){
-            if(locationCoordinates.getLatitude() != currentTour.getTourLocation().getLatitude()) return true;
-            if(locationCoordinates.getLongitude() != currentTour.getTourLocation().getLongitude()) return true;
+            if(locationCoordinates.getValue().getLatitude() != currentTour.getTourLocation().getLatitude()) return true;
+            if(locationCoordinates.getValue().getLongitude() != currentTour.getTourLocation().getLongitude()) return true;
         }
 
         if (!selectedTags.containsAll(currentTour.getTags())) return true;
         if (!currentTour.getTags().containsAll(selectedTags)) return true;
 
         if (description != null && !description.equals(currentTour.getDescription())) return true;
+        if (address != null && !address.equals(currentTour.getAddress())) return true;
 
         return false;
     }

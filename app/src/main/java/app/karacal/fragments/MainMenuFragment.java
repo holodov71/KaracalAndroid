@@ -114,7 +114,11 @@ public class MainMenuFragment extends Fragment {
         } else {
             buttonDashboard.setOnClickListener(v -> {
                 MessageDialog dialog = new MessageDialog()
-                        .setListener(() -> {})
+                        .setListener(() -> {
+                            if (getActivity() != null) {
+                                EmailHelper.supportKaracal(getActivity());
+                            }
+                        })
                         .setMessage(getString(R.string.request_guide));
 
                 dialog.show(getParentFragmentManager(), MessageDialog.DIALOG_TAG);

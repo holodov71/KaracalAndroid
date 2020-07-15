@@ -41,7 +41,6 @@ import app.karacal.models.Track;
 import app.karacal.network.models.response.CommentsResponse;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -85,7 +84,10 @@ public class AudioActivityViewModel extends ViewModel {
 
     private CompositeDisposable disposable = new CompositeDisposable();
 
+    private final int tourId;
 
+    private MutableLiveData<Tour> tour = new MutableLiveData<>();
+    private SingleLiveEvent<Integer> goToDonateAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> listenAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Long> paymentAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> tourDownloadedAction = new SingleLiveEvent<>();
@@ -95,6 +97,14 @@ public class AudioActivityViewModel extends ViewModel {
     private MutableLiveData<Guide> guideLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> tourDownloadingLiveData = new MutableLiveData<>();
     private MutableLiveData<Integer> tourCountLiveData = new MutableLiveData<>();
+
+    public LiveData<Tour> getTour(){
+        return tour;
+    }
+
+    public SingleLiveEvent<Integer> getGoToDonateAction() {
+        return goToDonateAction;
+    }
 
     public SingleLiveEvent<Void> getListenAction() {
         return listenAction;
@@ -132,52 +142,33 @@ public class AudioActivityViewModel extends ViewModel {
         return tourCountLiveData;
     }
 
-    private final Tour tour;
-
-    private final Guide author;
-
-    private final MutableLiveData<Album> album;
+    private final MutableLiveData<Album> album = new MutableLiveData<>();
 
     private final Player player;
 
     public AudioActivityViewModel(int tourId) {
         Log.v("AudioActivityViewModel", "tourId = "+tourId);
         App.getAppComponent().inject(this);
-        tour = tourRepository.getTourById(tourId);
-        author = guideRepository.getGuide(tour.getAuthorId());
-        if (tour.getAudio() != null){
-            album = new MutableLiveData<>();
-        } else {
-            album = albumRepository.albumLiveData;
-        }
+        this.tourId = tourId;
         player = new Player(album);
-    }
-
-    public Tour getTour() {
-        return tour;
+        loadData();
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public int getGuideId(){
-        return tour.getAuthorId();
-    }
-
-    public int getCountGuides(){
-        if (author != null) {
-            return tourRepository.getToursByAuthor(author.getId()).size();
-        } else {
-            return 0;
+    public void onDonateClicked() {
+        if (guideLiveData.getValue() != null){
+            goToDonateAction.setValue(guideLiveData.getValue().getId());
         }
     }
 
     public void loadTracks() {
-        if (tour.getAudio() != null){
-            album.setValue(tour.getAlbum());
+        if (tour.getValue() != null && tour.getValue().getAudio() != null){
+            album.setValue(tour.getValue().getAlbum());
         } else {
-            albumRepository.loadTracksByTour(String.valueOf(tour.getId()));
+            albumRepository.loadTracksByTour(String.valueOf(tourId));
         }
     }
 
@@ -201,22 +192,39 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     private void checkAccess(ActionCallback successCallback){
-        if(tour.getPrice() == 0){
-            successCallback.invoke();
-        } else {
-            if (profileHolder.isHasSubscription() || profileHolder.isPurchasesContainsTour(tour.getId())) {
-                Log.v("checkAccess", "has Subscription");
+        if (tour.getValue() != null) {
+            if (tour.getValue().getPrice() == 0) {
                 successCallback.invoke();
             } else {
-                paymentAction.setValue(tour.getPrice());
+                if (profileHolder.isHasSubscription() || profileHolder.isPurchasesContainsTour(tour.getValue().getId())) {
+                    Log.v("checkAccess", "has Subscription");
+                    successCallback.invoke();
+                } else {
+                    paymentAction.setValue(tour.getValue().getPrice());
+                }
             }
         }
+    }
+
+    private void loadData(){
+        loadTour(tourId);
+        loadComments();
+    }
+
+    private void loadTour(int tourId){
+        disposable.add(apiHelper.loadTourById(PreferenceHelper.loadToken(App.getInstance()), tourId)
+                .subscribe(response -> {
+                    tour.setValue(new Tour(response));
+                    loadAuthor(response.getGuideId());
+                }, throwable -> {
+                    commentsLiveData.setValue(new ArrayList<>());
+                }));
     }
 
     public void loadComments(){
         List<Comment> list = commentsLiveData.getValue();
         if (list == null || list.isEmpty()) {
-            disposable.add(apiHelper.loadComments(PreferenceHelper.loadToken(App.getInstance()), tour.getId())
+            disposable.add(apiHelper.loadComments(PreferenceHelper.loadToken(App.getInstance()), tourId)
                     .subscribe(response -> {
                         List<Comment> comments = new ArrayList<>();
                         if (response.isSuccess()) {
@@ -241,7 +249,7 @@ public class AudioActivityViewModel extends ViewModel {
 
     public void downloadTour(Context context) {
         tourDownloadingLiveData.setValue(true);
-        if(DownloadedToursCache.getInstance(context).containsTour(tour.getId())) {
+        if(DownloadedToursCache.getInstance(context).containsTour(tourId)) {
             tourDownloadingLiveData.setValue(false);
             downloadingErrorAction.setValue(App.getResString(R.string.tour_already_downloaded));
         } else {
@@ -249,9 +257,8 @@ public class AudioActivityViewModel extends ViewModel {
                 !NetworkStateHelper.isNetworkAvailable(context, WIFI_INTERNET)){
                 tourDownloadingLiveData.setValue(false);
                 downloadingErrorAction.setValue(App.getResString(R.string.turn_on_wifi));
-            } else {
-
-                checkAccess(() -> disposable.add(Single.just(tour.getAudio())
+            } else if(tour.getValue() != null){
+                checkAccess(() -> disposable.add(Single.just(tour.getValue().getAudio())
                         .flattenAsObservable(items -> items)
                         .flatMap(this::downloadTrack)
                         .toList()
@@ -269,6 +276,9 @@ public class AudioActivityViewModel extends ViewModel {
                             tourDownloadingLiveData.setValue(false);
                             downloadingErrorAction.setValue(App.getResString(R.string.connection_problem));
                         })));
+            } else {
+                tourDownloadingLiveData.setValue(false);
+                downloadingErrorAction.setValue(App.getResString(R.string.error_download_tour));
             }
         }
     }
@@ -284,8 +294,10 @@ public class AudioActivityViewModel extends ViewModel {
             }
         }
         if (allTracksDownloaded) {
-            tour.setAudio(tracks);
-            DownloadedToursCache.getInstance(App.getInstance()).addDownloadedTour(App.getInstance(), tour);
+            if (tour.getValue() != null){
+                tour.getValue().setAudio(tracks);
+                DownloadedToursCache.getInstance(App.getInstance()).addDownloadedTour(App.getInstance(), tour.getValue());
+            }
             return true;
         } else {
             return false;
@@ -331,15 +343,15 @@ public class AudioActivityViewModel extends ViewModel {
         return Observable.just(track);
     }
 
-    public void loadAuthor(){
-        disposable.add(apiHelper.loadGuide(PreferenceHelper.loadToken(App.getInstance()), String.valueOf(tour.getAuthorId()))
-                .subscribe(response ->{
-                    guideLiveData.setValue(new Guide(response));
-                    loadToursCount(tour.getAuthorId());
-                }
-                , throwable ->
-                    guideLiveData.setValue(null)
-                ));
+    private void loadAuthor(int guideId){
+            disposable.add(apiHelper.loadGuide(PreferenceHelper.loadToken(App.getInstance()), String.valueOf(guideId))
+                    .subscribe(response -> {
+                                guideLiveData.setValue(new Guide(response));
+                                loadToursCount(guideId);
+                            }
+                            , throwable ->
+                                    guideLiveData.setValue(null)
+                    ));
     }
 
     @Override

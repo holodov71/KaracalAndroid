@@ -25,6 +25,7 @@ import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Player;
+import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import apps.in.android_logger.LogFragment;
@@ -38,11 +39,14 @@ public class AudioPlayerFragment extends LogFragment {
     private TrackListAdapter adapter;
 
     private ProgressBar progressDownloading;
+    private ImageView imageViewTour;
     private ImageView buttonDownload;
     private ImageView playButton;
     private ImageView buttonPause;
     private TextView tracksTextView;
     private TextView commentsTextView;
+    private ImageView imageViewAlbumTitle;
+    private TextView textViewAlbumTitle;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +68,10 @@ public class AudioPlayerFragment extends LogFragment {
         setupTracksList(view);
         setupAudioButtons(view);
         setupPlayerControls(view);
+
         viewModel.loadTracks();
+
+        observeTour();
         observeTracks();
         observeDownloading();
         observeComments();
@@ -87,10 +94,7 @@ public class AudioPlayerFragment extends LogFragment {
 
 
     private void setupBackground(View view){
-        ImageView imageView = view.findViewById(R.id.imageViewTitle);
-        ImageHelper.setImage(imageView, viewModel.getTour().getImageUrl(), viewModel.getTour().getImage(), false);
-
-//        imageView.setImageResource(viewModel.getTour().getImage());
+        imageViewTour = view.findViewById(R.id.imageViewTitle);
     }
 
     private void setupAudioButtons(View view) {
@@ -109,10 +113,6 @@ public class AudioPlayerFragment extends LogFragment {
     private void setupCommentsTextView(View view) {
         commentsTextView = view.findViewById(R.id.textViewComments);
         setCommentsCount(0);
-        commentsTextView.setOnClickListener(v -> {
-            CommentsActivity.Args args = new CommentsActivity.Args(viewModel.getTour().getId());
-            NavigationHelper.startCommentsActivity(getActivity(), args);
-        });
         viewModel.loadComments();
     }
 
@@ -126,11 +126,10 @@ public class AudioPlayerFragment extends LogFragment {
 
     private void setupPlayerControls(View view) {
         ConstraintLayout constraintLayoutPlayer = view.findViewById(R.id.constraintLayoutPlayer);
-        ImageView imageView = view.findViewById(R.id.imageViewAlbumTitle);
-        ImageHelper.setImage(imageView, viewModel.getTour().getImageUrl(), viewModel.getTour().getImage(), false);
+        imageViewAlbumTitle = view.findViewById(R.id.imageViewAlbumTitle);
 
-        TextView textViewAlbumTitle = view.findViewById(R.id.textViewAlbumTitle);
-        textViewAlbumTitle.setText(viewModel.getTour().getTitle());
+        textViewAlbumTitle = view.findViewById(R.id.textViewAlbumTitle);
+
         TextView textViewTrackTitle = view.findViewById(R.id.textViewTrackTitle);
         buttonPause = view.findViewById(R.id.buttonPause);
         buttonPause.setOnClickListener(v -> onPlayPauseClick());
@@ -177,6 +176,28 @@ public class AudioPlayerFragment extends LogFragment {
             Log.v(TAG, "getPlayerState() == Another");
             viewModel.getPlayer().playTrack();
         }
+    }
+
+    private void observeTour(){
+        viewModel.getTour().observe(getViewLifecycleOwner(), tour -> {
+            if (tour != null){
+                setTourData(tour);
+            }
+        });
+    }
+
+    private void setTourData(Tour tour) {
+        ImageHelper.setImage(imageViewTour, tour.getImageUrl(), tour.getImage(), false);
+
+        commentsTextView.setOnClickListener(v -> {
+            CommentsActivity.Args args = new CommentsActivity.Args(tour.getId());
+            NavigationHelper.startCommentsActivity(getActivity(), args);
+        });
+
+        ImageHelper.setImage(imageViewAlbumTitle, tour.getImageUrl(), tour.getImage(), false);
+
+        textViewAlbumTitle.setText(tour.getTitle());
+
     }
 
     private void observeTracks(){

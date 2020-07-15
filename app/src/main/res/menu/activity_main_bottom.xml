@@ -13,9 +13,9 @@
         android:title="@null"
         android:icon="@drawable/selector_ic_search"/>
 
-<!--    <item android:id="@+id/mainNotificationFragment"-->
-<!--        android:title="@null"-->
-<!--        android:icon="@drawable/selector_ic_notification"/>-->
+    <item android:id="@+id/mainNotificationFragment"
+        android:title="@null"
+        android:icon="@drawable/selector_ic_notification"/>
 
     <item android:id="@+id/mainMenuFragment"
         android:title="@null"

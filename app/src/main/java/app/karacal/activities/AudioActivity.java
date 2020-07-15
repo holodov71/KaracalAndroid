@@ -23,6 +23,7 @@ import app.karacal.R;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.WebLinkHelper;
+import app.karacal.models.Tour;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.popups.BasePopup;
@@ -61,7 +62,8 @@ public class AudioActivity extends LogActivity {
 
         @Override
         public void onButtonDownloadAlbumClick(BasePopup popup) {
-            DummyHelper.dummyAction(AudioActivity.this);
+            viewModel.downloadTour(AudioActivity.this);
+            onBackPressed();
         }
 
         @Override
@@ -78,8 +80,7 @@ public class AudioActivity extends LogActivity {
     private ShareImpressionPopup.ShareImpressionPopupCallbacks shareImpressionPopupCallbacks = new ShareImpressionPopup.ShareImpressionPopupCallbacks() {
         @Override
         public void onButtonDonateClick(BasePopup popup) {
-            DonateActivity.Args args = new DonateActivity.Args(viewModel.getGuideId());
-            NavigationHelper.startDonateActivity(AudioActivity.this, args);
+            viewModel.onDonateClicked();
         }
 
         @Override
@@ -108,14 +109,17 @@ public class AudioActivity extends LogActivity {
         @Override
         public void onButtonSinglePriceClick(BasePopup popup) {
             onBackPressed();
-            PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), null, viewModel.getTour().getPrice(), null);
-            NavigationHelper.startPaymentActivity(AudioActivity.this, args);
+            Tour tour = viewModel.getTour().getValue();
+            if (tour != null) {
+                PaymentActivity.Args args = new PaymentActivity.Args(tour.getId(), null, tour.getPrice(), null);
+                NavigationHelper.startPaymentActivity(AudioActivity.this, args);
+            }
         }
 
         @Override
         public void onButtonRegularPriceClick(BasePopup popup) {
             onBackPressed();
-            showSubscriptionListDialog();
+            orderSubscription(getString(R.string.monthly_subscription));
         }
     };
 
@@ -127,10 +131,19 @@ public class AudioActivity extends LogActivity {
         super.onCreate(savedInstanceState);
         App.getAppComponent().inject(this);
         setContentView(R.layout.activity_audio);
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        Uri data = intent.getData();
+
+        Log.v(App.TAG, "Link to Activity = "+data);
+
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
-        int tourId = args.getTourId();
+
+            int tourId = args.getTourId();
         viewModel = new ViewModelProvider(this, new AudioActivityViewModel.AudioActivityViewModelFactory(tourId)).get(AudioActivityViewModel.class);
         layoutRoot = findViewById(R.id.layoutRoot);
+        observeViewModel();
     }
 
 
@@ -178,37 +191,49 @@ public class AudioActivity extends LogActivity {
     }
 
     private void orderSubscription(String subscriptionId){
-        PaymentActivity.Args args = new PaymentActivity.Args(viewModel.getTour().getId(), null, viewModel.getTour().getPrice(), subscriptionId);
-        NavigationHelper.startPaymentActivity(AudioActivity.this, args);
+        Tour tour = viewModel.getTour().getValue();
+        if (tour != null) {
+            PaymentActivity.Args args = new PaymentActivity.Args(tour.getId(), null, tour.getPrice(), subscriptionId);
+            NavigationHelper.startPaymentActivity(AudioActivity.this, args);
+        }
     }
 
-    private void showSubscriptionListDialog() {
-        BottomSheetDialog dialog = new BottomSheetDialog(this);
-        View bottomSheet = getLayoutInflater().inflate(R.layout.layout_list_subscription, null);
+//    private void showSubscriptionListDialog() {
+//        BottomSheetDialog dialog = new BottomSheetDialog(this);
+//        View bottomSheet = getLayoutInflater().inflate(R.layout.layout_list_subscription, null);
+//
+//        Button buttonSubsMonthly = bottomSheet.findViewById(R.id.buttonSubsMonthly);
+//        buttonSubsMonthly.setOnClickListener(v -> {
+//            orderSubscription(getString(R.string.monthly_subscription));
+//            dialog.dismiss();
+//        });
+//
+//        Button buttonSubsSixMonth = bottomSheet.findViewById(R.id.buttonSubsSixMonth);
+//        buttonSubsSixMonth.setOnClickListener(v -> {
+//            orderSubscription(getString(R.string.six_monthly_subscription));
+//            dialog.dismiss();
+//        });
+//
+//        Button buttonSubsYearly = bottomSheet.findViewById(R.id.buttonSubsYearly);
+//        buttonSubsYearly.setOnClickListener(v -> {
+//            orderSubscription(getString(R.string.yearly_subscription));
+//            dialog.dismiss();
+//        });
+//
+//        Button buttonCancel = bottomSheet.findViewById(R.id.buttonCancel);
+//        buttonCancel.setOnClickListener(v -> dialog.dismiss());
+//
+//        dialog.setContentView(bottomSheet);
+//        dialog.show();
+//
+//    }
 
-        Button buttonSubsMonthly = bottomSheet.findViewById(R.id.buttonSubsMonthly);
-        buttonSubsMonthly.setOnClickListener(v -> {
-            orderSubscription(getString(R.string.monthly_subscription));
-            dialog.dismiss();
+    private void observeViewModel(){
+        viewModel.getGoToDonateAction().observe(this, guideId -> {
+            if(guideId != null){
+                DonateActivity.Args args = new DonateActivity.Args(guideId);
+                NavigationHelper.startDonateActivity(AudioActivity.this, args);
+            }
         });
-
-        Button buttonSubsSixMonth = bottomSheet.findViewById(R.id.buttonSubsSixMonth);
-        buttonSubsSixMonth.setOnClickListener(v -> {
-            orderSubscription(getString(R.string.six_monthly_subscription));
-            dialog.dismiss();
-        });
-
-        Button buttonSubsYearly = bottomSheet.findViewById(R.id.buttonSubsYearly);
-        buttonSubsYearly.setOnClickListener(v -> {
-            orderSubscription(getString(R.string.yearly_subscription));
-            dialog.dismiss();
-        });
-
-        Button buttonCancel = bottomSheet.findViewById(R.id.buttonCancel);
-        buttonCancel.setOnClickListener(v -> dialog.dismiss());
-
-        dialog.setContentView(bottomSheet);
-        dialog.show();
-
     }
 }

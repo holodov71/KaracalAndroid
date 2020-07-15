@@ -209,7 +209,11 @@
     <string name="can_not_save_tour">Impossible d\'enregistrer la visite</string>
     <string name="attention">Attention!</string>
     <string name="ok">OK</string>
+    <string name="audio_activity">audio_activity</string>
     <string name="request_guide">Vous n\'êtes pas un guide. Si vous souhaitez devenir guide, écrivez-nous support@karacal.fr</string>
+    <string name="location_hint">Emplacement</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

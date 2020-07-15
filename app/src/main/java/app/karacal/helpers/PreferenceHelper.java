@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.data.DownloadedToursCache;
+import app.karacal.data.NotificationsCache;
 import app.karacal.models.Tour;
 
 public class PreferenceHelper {
@@ -21,6 +22,7 @@ public class PreferenceHelper {
     private static final String PRIVACY_POLICY_APPLIED_KEY = "PRIVACY_POLICY_APPLIED";
     private static final String AUTH_TOKEN_KEY = "AUTH_TOKEN";
     private static final String DOWNLOADED_TOURS_KEY = "DOWNLOADED_TOURS";
+    private static final String NOTIFICATIONS_KEY = "NOTIFICATIONS_KEY";
     private static final String DOWNLOAD_ONLY_VIA_WIFI_KEY = "DOWNLOAD_ONLY_VIA_WIFI";
     private static final String PAUSE_AUDIO_AFTER_EACH_SEGMENT_KEY = "PAUSE_AUDIO_AFTER_EACH_SEGMENT";
     private static final String NOTIFICATIONS_ALLOW_KEY = "NOTIFICATIONS_ALLOW";
@@ -65,6 +67,15 @@ public class PreferenceHelper {
 
     public static void setDownloadedToursCache(Context context, String downloadedToursCache) {
         getSharedPreferences(context).edit().putString(DOWNLOADED_TOURS_KEY, downloadedToursCache).apply();
+    }
+
+    public static String getNotificationsCache(Context context) {
+        String defValue = NotificationsCache.getEmptyInstance().retrieveStringFormat();
+        return getSharedPreferences(context).getString(NOTIFICATIONS_KEY, defValue);
+    }
+
+    public static void setNotificationsCache(Context context, String notificationsCache) {
+        getSharedPreferences(context).edit().putString(NOTIFICATIONS_KEY, notificationsCache).apply();
     }
 
     public static boolean isDownloadOnlyViaWifi(Context context){

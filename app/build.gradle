@@ -14,6 +14,10 @@ repositories {
 
 apply plugin: 'com.android.application'
 
+apply plugin: 'com.google.gms.google-services'
+
+apply plugin: 'com.google.firebase.crashlytics'
+
 android {
 
     def versionMajor = 1
@@ -136,6 +140,12 @@ dependencies {
 
     // OneSignal
     implementation 'com.onesignal:OneSignal:[3.13.0, 3.99.99]'
+
+    //Firebase analytics
+    implementation 'com.google.firebase:firebase-analytics:17.4.4'
+
+    // Firebase Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
 
 
 

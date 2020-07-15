@@ -78,7 +78,7 @@ public class Tour implements Serializable {
         this.image = -1;
         this.title = content.getTitle();
         this.description = content.getDesc();
-        this.price = 0;
+        this.price = content.getPrice();
         this.rating = content.getRating();
         this.duration = content.parseDuration();
         this.author = content.getAuthor();
