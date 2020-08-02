@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_payment_method"
+    app:startDestination="@id/paymentMethodList">
+
+    <fragment
+        android:id="@+id/paymentMethodList"
+        android:name="app.karacal.fragments.PaymentMethodListFragment"
+        android:label="dummy"
+        tools:layout="@layout/fragment_payment_methods_list" />
+
+    <fragment
+        android:id="@+id/paymentMethodAdd"
+        android:name="app.karacal.fragments.PaymentMethodAddFragment"
+        android:label="dummy"
+        tools:layout="@layout/fragment_payment_method_add" />
+</navigation>

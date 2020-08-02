@@ -188,7 +188,7 @@
     <string name="google_sign_in_error">Erreur de connexion à Google</string>
     <string name="facebook_sign_in_error">Erreur de connexion à Facebook</string>
     <string name="logout">Déconnexion</string>
-    <string name="pay">Payer</string>
+    <string name="pay">Ajouter</string>
     <string name="enter_card">Entrez la carte</string>
     <string name="common_error">Quelque chose n\'allait pas</string>
     <string name="payment_success">Succès de paiement</string>
@@ -199,7 +199,7 @@
     <string name="yearly_subscription_title">One year subscription €100.00</string>
     <string name="choose_plan">Choisissez le plan</string>
     <string name="error_download_tour">Erreur lors du téléchargement!</string>
-    <string name="tour_downloaded">Visite téléchargée avec succès</string>
+    <string name="tour_downloaded">Vous pouvez maintenant écouter votre visite sans connexion et la retrouver dans votre espace Mon compte</string>
     <string name="tour_already_downloaded">La visite est déjà téléchargée</string>
     <string name="turn_on_wifi">Vous devez activer le WIFI pour continuer</string>
     <string name="error_uploading_avatar">Erreur lors du téléchargement de l\'avatar</string>
@@ -214,6 +214,21 @@
     <string name="location_hint">Emplacement</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
+    <string name="no_near_tours">Pas de podcasts autour de vous</string>
+    <string name="can_not_add_payment_method">Impossible d\'appliquer le mode de paiement</string>
+    <string name="can_not_delete_payment_method">Impossible de supprimer le mode de paiement</string>
+    <string name="make_card_default">Définir comme méthode de paiement par défaut</string>
+    <string name="payment">Paiement</string>
+    <string name="add_payment_method">Ajouter un nouveau mode de paiement</string>
+    <string name="add_payment_method_title">Ajouter un  mode de paiement</string>
+    <string name="payment_mode">Mode de pyament</string>
+    <string name="card_hint">Numéro de carte</string>
+    <string name="expiry">Exp: %1$s/%2$s</string>
+    <string name="action_subscribe">Souscrire</string>
+    <string name="subscription_explanation">L\’abonnement vous permet d\’écouter tous les podcasts en illimiter pour un prix de\n9.99€/mois</string>
+    <string name="payment_method_missing">Vous devez ajouter un mode de paiement pour pouvoir souscrire à un abonnement</string>
+    <string name="manage_subscription">Gérer l\’abonement</string>
+    <string name="subscription">Abonnement</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

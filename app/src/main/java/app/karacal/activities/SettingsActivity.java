@@ -1,5 +1,6 @@
 package app.karacal.activities;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -40,7 +42,9 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.RestartAppHelper;
 import app.karacal.helpers.ToastHelper;
+import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.Profile;
+import app.karacal.navigation.NavigationHelper;
 import app.karacal.network.models.request.ProfileRequest;
 import app.karacal.network.models.request.ResetPasswordRequest;
 import app.karacal.service.PaymentsUpdateService;
@@ -97,6 +101,8 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         setupBackButton();
         setupApplyButton();
         setupChangePasswordButton();
+        setupPaymentMethodsButton();
+        setupManageSubscriptionButton();
         setupTermsButton();
         setupPrivacyPolicyButton();
         setupDeleteAccountButton();
@@ -147,6 +153,16 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 //            buttonChangePassword.setOnClickListener(v -> NavigationHelper.startChangePasswordActivity(this));
             buttonChangePassword.setOnClickListener(v -> resetPassword());
         }
+    }
+
+    private void setupPaymentMethodsButton() {
+        LinearLayout buttonPaymentMethods = findViewById(R.id.buttonPaymentMethods);
+        buttonPaymentMethods.setOnClickListener(v -> NavigationHelper.startPaymentMethodsActivity(this));
+    }
+
+    private void setupManageSubscriptionButton() {
+        LinearLayout buttonSubscription = findViewById(R.id.buttonSubscription);
+        buttonSubscription.setOnClickListener(v -> NavigationHelper.startSubscriptionActivity(this));
     }
 
     private void setupTermsButton() {
@@ -409,6 +425,20 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
             PaymentsUpdateService.stopTimer();
         } catch (Exception ex){
             ex.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(data != null && resultCode == RESULT_OK) {
+            if (requestCode == SubscriptionActivity.SUBSCRIPTION_REQUEST_CODE) {
+                String url = data.getStringExtra(SubscriptionActivity.RESULT_URL);
+                if (url != null){
+                    WebLinkHelper.openWebLink(this, url);
+                }
+                Log.v("onActivityResult", "Subscription opened");
+            }
         }
     }
 

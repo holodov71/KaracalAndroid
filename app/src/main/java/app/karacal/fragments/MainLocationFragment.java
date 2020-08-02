@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
+import app.karacal.activities.CategoryActivity;
 import app.karacal.adapters.DashboardTourListAdapter;
 import app.karacal.adapters.TourVerticalListAdapter;
 import app.karacal.data.repository.TourRepository;
@@ -46,7 +47,9 @@ import app.karacal.helpers.LocationHelper;
 import app.karacal.helpers.PermissionHelper;
 import app.karacal.helpers.TextInputHelper;
 import app.karacal.helpers.TourMarkerRender;
+import app.karacal.models.CategoryViewMode;
 import app.karacal.models.Tour;
+import app.karacal.models.TourCategory;
 import app.karacal.models.TourMarker;
 import app.karacal.navigation.NavigationHelper;
 import apps.in.android_logger.Logger;
@@ -125,7 +128,7 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     private void setupSearchResults(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
         adapter = new TourVerticalListAdapter(getContext());
-        adapter.setClickListener(this::showTour);
+        adapter.setClickListener(this::showTours);
         recyclerView.setAdapter(adapter);
         observeTours(adapter);
     }
@@ -248,15 +251,20 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
 //        recyclerView.setVisibility(query.length() < 2 ? View.INVISIBLE : View.VISIBLE);
     }
 
-    private void showTour(int tourId){
-        AudioActivity.Args args = new AudioActivity.Args(tourId);
-        NavigationHelper.startAudioActivity(getActivity(), args);
+//    private void showTour(int tourId){
+//        AudioActivity.Args args = new AudioActivity.Args(tourId);
+//        NavigationHelper.startAudioActivity(getActivity(), args);
+//    }
+
+    private void showTours(int tourId){
+        CategoryActivity.Args args = new CategoryActivity.Args(TourCategory.CATEGORY_ORIGINAL, getString(R.string.originals), CategoryViewMode.STACK);
+        NavigationHelper.startCategoryActivity(getActivity(), args);
     }
 
 
     @Override
     public boolean onClusterItemClick(TourMarker tourMarker) {
-        showTour(tourMarker.getTourId());
+        showTours(tourMarker.getTourId());
         return true;
     }
 }

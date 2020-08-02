@@ -10,6 +10,7 @@ import androidx.navigation.Navigation;
 import java.io.Serializable;
 
 import app.karacal.R;
+import app.karacal.models.CategoryViewMode;
 import app.karacal.models.TourCategory;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.viewmodels.CategoryActivityViewModel;
@@ -21,10 +22,12 @@ public class CategoryActivity extends LogActivity {
 
         private final TourCategory category;
         private final String categoryName;
+        private final CategoryViewMode categoryViewMode;
 
-        public Args(TourCategory category, String categoryName) {
+        public Args(TourCategory category, String categoryName, CategoryViewMode categoryViewMode) {
             this.category = category;
             this.categoryName = categoryName;
+            this.categoryViewMode = categoryViewMode;
         }
 
         public TourCategory getCategory() {
@@ -33,6 +36,10 @@ public class CategoryActivity extends LogActivity {
 
         public String getCategoryName() {
             return categoryName;
+        }
+
+        public CategoryViewMode getCategoryViewMode(){
+            return categoryViewMode;
         }
     }
 
@@ -44,7 +51,8 @@ public class CategoryActivity extends LogActivity {
         setContentView(R.layout.activity_category);
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
         TourCategory category = args.getCategory();
-        viewModel = new ViewModelProvider(this, new CategoryActivityViewModel.CategoryActivityViewModelFactory(category)).get(CategoryActivityViewModel.class);
+        CategoryViewMode categoryViewMode = args.getCategoryViewMode();
+        viewModel = new ViewModelProvider(this, new CategoryActivityViewModel.CategoryActivityViewModelFactory(category, categoryViewMode)).get(CategoryActivityViewModel.class);
         setupBackButton();
         String categoryName = args.getCategoryName();
         setupTitle(categoryName);
@@ -58,12 +66,12 @@ public class CategoryActivity extends LogActivity {
 
     private void setupModeButtons() {
         ImageView imageViewListMode = findViewById(R.id.buttonList);
-        imageViewListMode.setOnClickListener(v -> viewModel.setViewMode(CategoryActivityViewModel.CategoryViewMode.LIST));
+        imageViewListMode.setOnClickListener(v -> viewModel.setViewMode(CategoryViewMode.LIST));
         ImageView imageViewStackMode = findViewById(R.id.buttonStack);
-        imageViewStackMode.setOnClickListener(v -> viewModel.setViewMode(CategoryActivityViewModel.CategoryViewMode.STACK));
+        imageViewStackMode.setOnClickListener(v -> viewModel.setViewMode(CategoryViewMode.STACK));
         viewModel.getViewModeLiveData().observe(this, categoryViewMode -> {
-            imageViewListMode.setSelected(categoryViewMode == CategoryActivityViewModel.CategoryViewMode.LIST);
-            imageViewStackMode.setSelected(categoryViewMode == CategoryActivityViewModel.CategoryViewMode.STACK);
+            imageViewListMode.setSelected(categoryViewMode == CategoryViewMode.LIST);
+            imageViewStackMode.setSelected(categoryViewMode == CategoryViewMode.STACK);
             int destination;
             switch (categoryViewMode) {
                 case LIST:

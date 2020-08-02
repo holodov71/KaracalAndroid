@@ -104,7 +104,10 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/CropActivity" />
         <activity
-            android:name=".activities.PaymentActivity"
+            android:name=".activities.PaymentMethodActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.SubscriptionActivity"
             android:screenOrientation="portrait" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"

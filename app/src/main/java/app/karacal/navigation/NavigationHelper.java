@@ -17,13 +17,14 @@ import app.karacal.activities.FollowMyListeningsActivity;
 import app.karacal.activities.LoginActivity;
 import app.karacal.activities.MainActivity;
 import app.karacal.activities.PasswordHasBeenResetActivity;
-import app.karacal.activities.PaymentActivity;
+import app.karacal.activities.PaymentMethodActivity;
 import app.karacal.activities.PrivacyPolicyActivity;
 import app.karacal.activities.ProfileActivity;
 import app.karacal.activities.ReferFriendActivity;
 import app.karacal.activities.RegistrationActivity;
 import app.karacal.activities.SearchFilterActivity;
 import app.karacal.activities.SettingsActivity;
+import app.karacal.activities.SubscriptionActivity;
 import app.karacal.service.PaymentsUpdateService;
 
 public class NavigationHelper {
@@ -128,6 +129,16 @@ public class NavigationHelper {
         context.startActivity(intent);
     }
 
+    public static void startPaymentMethodsActivity(Activity context) {
+        Intent intent = new Intent(context, PaymentMethodActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void startSubscriptionActivity(Activity context) {
+        Intent intent = new Intent(context, SubscriptionActivity.class);
+        context.startActivityForResult(intent, SubscriptionActivity.SUBSCRIPTION_REQUEST_CODE);
+    }
+
     public static void startAudioRecorderActivity(Activity context) {
         Intent intent = new Intent(context, AudioRecorderActivity.class);
         context.startActivityForResult(intent, AudioRecorderActivity.REQUEST_CODE);
@@ -138,10 +149,10 @@ public class NavigationHelper {
         context.startActivity(intent);
     }
 
-    public static void startPaymentActivity(Activity context, PaymentActivity.Args args) {
-        Intent intent = new Intent(context, PaymentActivity.class);
-        intent.putExtras(args.toBundle());
-        context.startActivityForResult(intent, PaymentActivity.REQUEST_CODE);
-    }
+//    public static void startPaymentActivity(Activity context, PaymentMethodActivity.Args args) {
+//        Intent intent = new Intent(context, PaymentMethodActivity.class);
+//        intent.putExtras(args.toBundle());
+//        context.startActivityForResult(intent, PaymentMethodActivity.REQUEST_CODE);
+//    }
 
 }

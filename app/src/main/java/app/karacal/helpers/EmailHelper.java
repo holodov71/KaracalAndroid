@@ -10,7 +10,7 @@ import app.karacal.R;
 
 public class EmailHelper {
 
-    private static final String EMAIL_CONTACT = "hello@karacal.fr";
+    private static final String EMAIL_CONTACT = "bonjour@karacal.fr";
     private static final String EMAIL_HELP = "help@karacal.fr";
     private static final String EMAIL_SUPPORT = "support@karacal.fr";
 

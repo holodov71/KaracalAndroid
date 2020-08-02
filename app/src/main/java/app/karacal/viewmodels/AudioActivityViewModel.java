@@ -9,6 +9,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.stripe.android.ApiResultCallback;
+import com.stripe.android.Stripe;
+import com.stripe.android.model.Card;
+import com.stripe.android.model.Token;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +31,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.data.DownloadedToursCache;
+import app.karacal.data.SavedPaymentMethods;
 import app.karacal.data.repository.AlbumRepository;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
@@ -33,11 +41,14 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.interfaces.ActionCallback;
 import app.karacal.models.Album;
+import app.karacal.models.CardDetails;
 import app.karacal.models.Comment;
 import app.karacal.models.Guide;
 import app.karacal.models.Player;
 import app.karacal.models.Tour;
 import app.karacal.models.Track;
+import app.karacal.network.models.request.CreateCustomerRequest;
+import app.karacal.network.models.request.PaymentRequest;
 import app.karacal.network.models.response.CommentsResponse;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -86,17 +97,25 @@ public class AudioActivityViewModel extends ViewModel {
 
     private final int tourId;
 
+    private String customerId;
+
+    private SavedPaymentMethods savedPaymentMethods;
+
     private MutableLiveData<Tour> tour = new MutableLiveData<>();
     private SingleLiveEvent<Integer> goToDonateAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> listenAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Long> paymentAction = new SingleLiveEvent<>();
+    public SingleLiveEvent<Long> needPaymentMethodAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> tourDownloadedAction = new SingleLiveEvent<>();
     private SingleLiveEvent<String> downloadingErrorAction = new SingleLiveEvent<>();
     private SingleLiveEvent<String> errorAction = new SingleLiveEvent<>();
     private MutableLiveData<List<Comment>> commentsLiveData = new MutableLiveData<>();
     private MutableLiveData<Guide> guideLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> tourDownloadingLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Integer> tourCountLiveData = new MutableLiveData<>();
+    public SingleLiveEvent<String> tourPayedAction = new SingleLiveEvent<>();
+
 
     public LiveData<Tour> getTour(){
         return tour;
@@ -120,6 +139,10 @@ public class AudioActivityViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getTourDownloading() {
         return tourDownloadingLiveData;
+    }
+
+    public MutableLiveData<Boolean> isLoading() {
+        return isLoading;
     }
 
     public SingleLiveEvent<String> getErrorAction() {
@@ -146,9 +169,12 @@ public class AudioActivityViewModel extends ViewModel {
 
     private final Player player;
 
+    private Stripe stripe;
+
     public AudioActivityViewModel(int tourId) {
         Log.v("AudioActivityViewModel", "tourId = "+tourId);
         App.getAppComponent().inject(this);
+        stripe = new Stripe(App.getInstance().getApplicationContext(), App.getResString(R.string.stripe_api_key));
         this.tourId = tourId;
         player = new Player(album);
         loadData();
@@ -207,8 +233,15 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     private void loadData(){
+        try {
+            savedPaymentMethods = SavedPaymentMethods.getInstance(App.getInstance());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         loadTour(tourId);
         loadComments();
+        createCustomer();
     }
 
     private void loadTour(int tourId){
@@ -361,5 +394,75 @@ public class AudioActivityViewModel extends ViewModel {
         disposable.dispose();
     }
 
+
+    // Payment region
+    private void createCustomer(){
+        String serverToken = PreferenceHelper.loadToken(App.getInstance());
+
+        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+        disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
+                .subscribe(response -> {
+                    Log.v("createCustomer", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        customerId = response.getId();
+                    } else {
+                        Log.e(App.TAG, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    Log.v(App.TAG, "Can not create customer");
+                }));
+    }
+
+    public void payTour() {
+        if (savedPaymentMethods.getPaymentMethodsList().isEmpty()){
+            needPaymentMethodAction.call();
+        } else {
+            obtainCardToken();
+        }
+    }
+
+    private void obtainCardToken(){
+        isLoading.setValue(true);
+
+        CardDetails paymentMethod = savedPaymentMethods.getDefaultPaymentMethod();
+
+        Card card = new Card.Builder(
+                paymentMethod.getNumber(),
+                paymentMethod.getExpMonth(),
+                paymentMethod.getExpYear(),
+                paymentMethod.getCvc())
+                .build();
+
+        stripe.createCardToken(card, new ApiResultCallback<Token>() {
+            @Override
+            public void onSuccess(Token token) {
+                payTour(token.getId());
+            }
+
+            @Override
+            public void onError(@NotNull Exception e) {
+                isLoading.setValue(false);
+                errorAction.setValue(App.getResString(R.string.common_error));
+            }
+        });
+    }
+
+    private void payTour(String token){
+        PaymentRequest request = new PaymentRequest(tour.getValue().getPrice(), "eur", token, "Paris tour description", tourId);
+        disposable.add(apiHelper.makePayment(PreferenceHelper.loadToken(App.getInstance()), request)
+                .subscribe(response -> {
+                    Log.v("makePayment", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        profileHolder.addTourPurchase(tourId);
+                        tourPayedAction.setValue(response.getReceiptUrl());
+                    } else {
+                        errorAction.setValue(response.getErrorMessage());
+                    }
+                    isLoading.setValue(false);
+                }, throwable -> {
+                    isLoading.setValue(false);
+                    errorAction.setValue(App.getResString(R.string.connection_problem));
+                }));
+    }
 
 }

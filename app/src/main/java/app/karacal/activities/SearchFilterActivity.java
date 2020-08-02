@@ -62,21 +62,21 @@ public class SearchFilterActivity extends LogActivity {
         Switch switchPaid = findViewById(R.id.switchPaid);
         switchPaid.setChecked(searchFilter.isPaid());
         switchPaid.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setPaid(isChecked));
-        Switch switchOfficial = findViewById(R.id.switchOfficial);
-        switchOfficial.setChecked(searchFilter.isOfficial());
-        switchOfficial.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setOfficial(isChecked));
-        Switch switchNonOfficial = findViewById(R.id.switchNonOfficial);
-        switchNonOfficial.setChecked(searchFilter.isNonOfficial());
-        switchNonOfficial.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setNonOfficial(isChecked));
-        Switch switchExpert = findViewById(R.id.switchExpert);
-        switchExpert.setChecked(searchFilter.isExpert());
-        switchExpert.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setExpert(isChecked));
-        Switch switchAverage = findViewById(R.id.switchAverage);
-        switchAverage.setChecked(searchFilter.isAverage());
-        switchAverage.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setAverage(isChecked));
-        Switch switchDiscovery = findViewById(R.id.switchDiscovery);
-        switchDiscovery.setChecked(searchFilter.isDiscovery());
-        switchDiscovery.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setDiscovery(isChecked));
+//        Switch switchOfficial = findViewById(R.id.switchOfficial);
+//        switchOfficial.setChecked(searchFilter.isOfficial());
+//        switchOfficial.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setOfficial(isChecked));
+//        Switch switchNonOfficial = findViewById(R.id.switchNonOfficial);
+//        switchNonOfficial.setChecked(searchFilter.isNonOfficial());
+//        switchNonOfficial.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setNonOfficial(isChecked));
+//        Switch switchExpert = findViewById(R.id.switchExpert);
+//        switchExpert.setChecked(searchFilter.isExpert());
+//        switchExpert.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setExpert(isChecked));
+//        Switch switchAverage = findViewById(R.id.switchAverage);
+//        switchAverage.setChecked(searchFilter.isAverage());
+//        switchAverage.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setAverage(isChecked));
+//        Switch switchDiscovery = findViewById(R.id.switchDiscovery);
+//        switchDiscovery.setChecked(searchFilter.isDiscovery());
+//        switchDiscovery.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setDiscovery(isChecked));
     }
 
     private void apply() {

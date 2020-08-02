@@ -29,6 +29,7 @@ import app.karacal.activities.CategoryActivity;
 import app.karacal.adapters.TourHorizontalListAdapter;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ProfileHolder;
+import app.karacal.models.CategoryViewMode;
 import app.karacal.models.Tour;
 import app.karacal.models.TourCategory;
 import app.karacal.navigation.NavigationHelper;
@@ -98,9 +99,7 @@ public class MainHomeFragment extends Fragment {
 
     private void observeNearTours(){
         viewModel.getNearTours().observe(getViewLifecycleOwner(), tours -> {
-            if (!tours.isEmpty()) {
-                setupCategory(categoryNear, TourCategory.CATEGORY_NEAR, getString(R.string.meters_from_you), tours);
-            }
+            setupCategory(categoryNear, TourCategory.CATEGORY_NEAR, getString(R.string.meters_from_you), tours);
         });
     }
 
@@ -110,17 +109,7 @@ public class MainHomeFragment extends Fragment {
                 setupCategory(categoryOriginal, TourCategory.CATEGORY_ORIGINAL, getString(R.string.originals), tours);
             }
         });
-
-//        TourHorizontalListPagerAdapter pagingAdapter = new TourHorizontalListPagerAdapter(new TourComparator());
-//        RecyclerView recyclerView = categoryOriginal.findViewById(R.id.recyclerView);
-//        recyclerView.setAdapter(pagingAdapter);
-//
-//        viewModel.flowable
-//                .autoDispose(this) // Using AutoDispose to handle subscription lifecycle.
-//                .subscribe(pagingData -> pagingAdapter.submitData(getLifecycle(), pagingData));
     }
-
-
 
     private void observeRecommendedTours(){
         viewModel.getTours().observe(getViewLifecycleOwner(), tours -> {
@@ -152,9 +141,22 @@ public class MainHomeFragment extends Fragment {
         if (textViewTitle != null) {
             textViewTitle.setText(title);
         }
-        TextView textViewViewAll = categoryView.findViewById(R.id.textViewViewAll);
-        textViewViewAll.setOnClickListener(v -> showCategory(category, title));
+
         RecyclerView recyclerView = categoryView.findViewById(R.id.recyclerView);
+        TextView textViewViewAll = categoryView.findViewById(R.id.textViewViewAll);
+        TextView textViewEmptyList = categoryView.findViewById(R.id.textViewEmptyList);
+        if (tours.isEmpty()){
+            textViewViewAll.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            textViewEmptyList.setVisibility(View.VISIBLE);
+
+            if (category == TourCategory.CATEGORY_NEAR){
+                textViewEmptyList.setText(R.string.no_near_tours);
+            }
+        } else {
+            textViewViewAll.setOnClickListener(v -> showCategory(category, title));
+        }
+
         TourHorizontalListAdapter adapter = new TourHorizontalListAdapter(getContext());
         recyclerView.setAdapter(adapter);
         adapter.setTours(tours);
@@ -162,7 +164,7 @@ public class MainHomeFragment extends Fragment {
     }
 
     private void showCategory(TourCategory category, String categoryName){
-        CategoryActivity.Args args = new CategoryActivity.Args(category, categoryName);
+        CategoryActivity.Args args = new CategoryActivity.Args(category, categoryName, CategoryViewMode.LIST);
         NavigationHelper.startCategoryActivity(getActivity(), args);
     }
 

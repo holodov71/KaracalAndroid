@@ -115,22 +115,7 @@ public class ApiHelper implements EphemeralKeyProvider {
 
     @Override
     public void createEphemeralKey(@NonNull @Size(min = 4) String apiVersion, @NotNull EphemeralKeyUpdateListener ephemeralKeyUpdateListener) {
-        ephemeralKeyUpdateListener.onKeyUpdate(App.getInstance().getString(R.string.stripe_publishable_api_key));
-
-//        final Map<String, String> apiParamMap = new HashMap<>();
-//        apiParamMap.put("api_version", apiVersion);
-
-//        compositeDisposable.add(stripeService.createEphemeralKey(apiParamMap)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(
-//                        response -> {
-//                            try {
-//                                final String rawKey = response.string();
-//                                ephemeralKeyUpdateListener.onKeyUpdate(rawKey);
-//                            } catch (IOException ignored) {
-//                            }
-//                        }));
+        ephemeralKeyUpdateListener.onKeyUpdate(App.getInstance().getString(R.string.stripe_api_key));
     }
 
     // Profile region

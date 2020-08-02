@@ -133,6 +133,14 @@ public class Tour implements Serializable {
         return price;
     }
 
+    public boolean isPaid(){
+        return price != 0;
+    }
+
+    public boolean isFree(){
+        return price == 0;
+    }
+
     public double getDoublePrice() {
         return ((double)price)/100;
     }

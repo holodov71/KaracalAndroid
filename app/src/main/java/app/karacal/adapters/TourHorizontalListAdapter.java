@@ -47,11 +47,6 @@ public class TourHorizontalListAdapter extends RecyclerView.Adapter<TourHorizont
 
         private void setupTitleImage(Tour tour){
             ImageHelper.setImage(imageViewTitle, tour.getImageUrl(), tour.getImage(), false);
-//            if (tour.getImage() == -1) {
-//                Glide.with(imageViewTitle.getContext()).load(tour.getImageUrl()).fitCenter().into(imageViewTitle);
-//            } else {
-//                Glide.with(imageViewTitle.getContext()).load(tour.getImage()).fitCenter().into(imageViewTitle);
-//            }
             imageViewTitle.setOnClickListener(v -> {
                 if (clickListener != null){
                     clickListener.onTourClick(tour.getId());

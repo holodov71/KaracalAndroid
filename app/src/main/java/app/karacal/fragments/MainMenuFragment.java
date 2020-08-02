@@ -42,6 +42,7 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.WebLinkHelper;
+import app.karacal.models.CategoryViewMode;
 import app.karacal.models.Tour;
 import app.karacal.models.TourCategory;
 import app.karacal.navigation.NavigationHelper;
@@ -125,49 +126,10 @@ public class MainMenuFragment extends Fragment {
             });
         }
 
-        setupCancelSubscription(view);
         LinearLayout buttonLogout = view.findViewById(R.id.buttonLogout);
         buttonLogout.setOnClickListener(v -> logout());
     }
 
-    private void setupCancelSubscription(View view){
-
-        LinearLayout buttonLogout = view.findViewById(R.id.buttonCancelSubscription);
-        if (profileHolder.isHasSubscription()){
-            buttonLogout.setVisibility(View.VISIBLE);
-            ProgressBar progressBar = view.findViewById(R.id.progressLoading);
-            TextView tvCancelSubscription = view.findViewById(R.id.tvCancelSubscription);
-            buttonLogout.setOnClickListener(v -> {
-                if (disposable != null){
-                    disposable.dispose();
-                }
-
-                progressBar.setVisibility(View.VISIBLE);
-                tvCancelSubscription.setVisibility(View.GONE);
-
-                disposable = apiHelper.cancelSubscription(PreferenceHelper.loadToken(), profileHolder.getSubscriptionId())
-                        .subscribe(response -> {
-                        Log.v("cancelSubscription", "Success response = " + response);
-                        if (response.isSuccess()) {
-                            ToastHelper.showToast(getContext(), getString(R.string.subscription_canceled));
-                            buttonLogout.setVisibility(View.GONE);
-                            profileHolder.setSubscription(null);
-                        } else {
-                            progressBar.setVisibility(View.GONE);
-                            tvCancelSubscription.setVisibility(View.VISIBLE);
-                            ToastHelper.showToast(getContext(), response.getErrorMessage());
-                        }
-                    }, throwable -> {
-                        progressBar.setVisibility(View.GONE);
-                        tvCancelSubscription.setVisibility(View.VISIBLE);
-                        ToastHelper.showToast(getContext(), getString(R.string.connection_problem));
-                    });
-            });
-        } else {
-            buttonLogout.setVisibility(View.GONE);
-        }
-
-    }
 
     private void setupCategories(View view) {
         View categoryRecommended = view.findViewById(R.id.categoryRecommended);
@@ -218,7 +180,7 @@ public class MainMenuFragment extends Fragment {
     }
 
     private void showCategory(TourCategory category, String categoryName) {
-        CategoryActivity.Args args = new CategoryActivity.Args(category, categoryName);
+        CategoryActivity.Args args = new CategoryActivity.Args(category, categoryName, CategoryViewMode.LIST);
         NavigationHelper.startCategoryActivity(getActivity(), args);
     }
 

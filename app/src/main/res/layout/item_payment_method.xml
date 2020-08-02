@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/layoutPaymentMethod"
+    >
+
+    <TextView
+        android:id="@+id/tvCardNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        style="@style/TextWhite.ItemTitle"
+        android:text="Mastercard (8999)"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tvCardExpiry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextWhite.ItemTitle"
+        android:text="Exp : 11/22"
+        app:layout_constraintTop_toBottomOf="@+id/tvCardNumber"
+        app:layout_constraintStart_toStartOf="@+id/tvCardNumber"
+        />
+
+    <TextView
+        android:id="@+id/tvCardOwner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextWhite.ItemTitle"
+        android:text="Owner"
+        app:layout_constraintTop_toBottomOf="@+id/tvCardExpiry"
+        app:layout_constraintStart_toStartOf="@+id/tvCardNumber"
+        />
+
+    <ImageView
+        android:id="@+id/imgDeletePaymentMethod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvCardNumber"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCardOwner"
+        android:layout_margin="16dp"
+        app:srcCompat="@drawable/ic_delete"
+        />
+
+    <TextView
+        android:id="@+id/tvMakeDefault"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        style="@style/TextWhite.ItemTitle"
+        android:text="@string/make_card_default"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCardOwner"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@android:color/white"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvMakeDefault"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

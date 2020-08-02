@@ -12,11 +12,12 @@ import app.karacal.activities.DonateActivity;
 import app.karacal.activities.EditAudioActivity;
 import app.karacal.activities.FollowMyListeningsActivity;
 import app.karacal.activities.LoginActivity;
-import app.karacal.activities.PaymentActivity;
+import app.karacal.activities.PaymentMethodActivity;
 import app.karacal.activities.PermissionActivity;
 import app.karacal.activities.ProfileActivity;
 import app.karacal.activities.ReferFriendActivity;
 import app.karacal.activities.SettingsActivity;
+import app.karacal.activities.SubscriptionActivity;
 import app.karacal.fragments.DashboardTourItemFragment;
 import app.karacal.fragments.EmailLoginFragment;
 import app.karacal.fragments.LoginTypeSelectFragment;
@@ -24,6 +25,8 @@ import app.karacal.fragments.MainHomeFragment;
 import app.karacal.fragments.MainLocationFragment;
 import app.karacal.fragments.MainMenuFragment;
 import app.karacal.fragments.MainSearchFragment;
+import app.karacal.fragments.PaymentMethodAddFragment;
+import app.karacal.fragments.PaymentMethodListFragment;
 import app.karacal.fragments.RegistrationContactsFragment;
 import app.karacal.fragments.RegistrationInterestsFragment;
 import app.karacal.viewmodels.AudioActivityViewModel;
@@ -33,7 +36,9 @@ import app.karacal.viewmodels.DashboardActivityViewModel;
 import app.karacal.viewmodels.AddEditTourActivityViewModel;
 import app.karacal.viewmodels.EditAudioViewModel;
 import app.karacal.viewmodels.MainActivityViewModel;
+import app.karacal.viewmodels.PaymentMethodViewModel;
 import app.karacal.viewmodels.ProfileActivityViewModel;
+import app.karacal.viewmodels.SubscriptionActivityViewModel;
 import dagger.BindsInstance;
 import dagger.Component;
 
@@ -65,9 +70,11 @@ public interface AppComponent {
 
     void inject(CommentsActivity activity);
 
-    void inject(PaymentActivity activity);
+    void inject(PaymentMethodActivity activity);
 
     void inject(DonateActivity activity);
+
+    void inject(SubscriptionActivity activity);
 
     void inject(LoginTypeSelectFragment fragment);
 
@@ -87,6 +94,10 @@ public interface AppComponent {
 
     void inject(DashboardTourItemFragment fragment);
 
+    void inject(PaymentMethodListFragment fragment);
+
+    void inject(PaymentMethodAddFragment fragment);
+
     void inject (MainActivityViewModel viewModel);
 
     void inject(CategoryActivityViewModel viewModel);
@@ -102,6 +113,10 @@ public interface AppComponent {
     void inject (ProfileActivityViewModel viewModel);
 
     void inject (EditAudioViewModel viewModel);
+
+    void inject (PaymentMethodViewModel viewModel);
+
+    void inject (SubscriptionActivityViewModel viewModel);
 
     @Component.Builder
     interface Builder {

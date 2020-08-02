@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.data.DownloadedToursCache;
 import app.karacal.data.repository.TourRepository;
+import app.karacal.models.CategoryViewMode;
 import app.karacal.models.Tour;
 import app.karacal.models.TourCategory;
 
@@ -22,24 +23,21 @@ public class CategoryActivityViewModel extends ViewModel {
     public static class CategoryActivityViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
         private final TourCategory category;
+        private final CategoryViewMode viewMode;
 
-        public CategoryActivityViewModelFactory(TourCategory category) {
+        public CategoryActivityViewModelFactory(TourCategory category, CategoryViewMode viewMode) {
             this.category = category;
+            this.viewMode = viewMode;
         }
 
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             if (modelClass == CategoryActivityViewModel.class) {
-                return (T) new CategoryActivityViewModel(category);
+                return (T) new CategoryActivityViewModel(category, viewMode);
             }
             return null;
         }
-    }
-
-    public enum CategoryViewMode{
-        LIST,
-        STACK
     }
 
     @Inject
@@ -47,10 +45,13 @@ public class CategoryActivityViewModel extends ViewModel {
 
     private LiveData<List<Tour>> tours;
 
-    private final MutableLiveData<CategoryViewMode> viewModeMutableLiveData = new MutableLiveData<>(CategoryViewMode.LIST);
+    private final MutableLiveData<CategoryViewMode> viewModeMutableLiveData = new MutableLiveData<>();
 
-    public CategoryActivityViewModel(TourCategory category) {
+    public CategoryActivityViewModel(TourCategory category, CategoryViewMode viewMode) {
         App.getAppComponent().inject(this);
+
+        viewModeMutableLiveData.setValue(viewMode);
+
         switch (category){
             case CATEGORY_RECOMMENDED:
                 tours = tourRepository.recommendedToursLiveData;

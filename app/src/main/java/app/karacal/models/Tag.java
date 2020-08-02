@@ -2,7 +2,9 @@ package app.karacal.models;
 
 import androidx.annotation.Nullable;
 
-public class Tag {
+import java.io.Serializable;
+
+public class Tag implements Serializable {
     private int id;
     private String name;
 

@@ -4,15 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.annotation.Nullable;
-import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.Serializable;
 
@@ -109,17 +104,18 @@ public class AudioActivity extends LogActivity {
         @Override
         public void onButtonSinglePriceClick(BasePopup popup) {
             onBackPressed();
-            Tour tour = viewModel.getTour().getValue();
-            if (tour != null) {
-                PaymentActivity.Args args = new PaymentActivity.Args(tour.getId(), null, tour.getPrice(), null);
-                NavigationHelper.startPaymentActivity(AudioActivity.this, args);
-            }
+            viewModel.payTour();
+//            Tour tour = viewModel.getTour().getValue();
+//            if (tour != null) {
+////                PaymentMethodActivity.Args args = new PaymentMethodActivity.Args(tour.getId(), null, tour.getPrice(), null);
+////                NavigationHelper.startPaymentActivity(AudioActivity.this, args);
+//            }
         }
 
         @Override
         public void onButtonRegularPriceClick(BasePopup popup) {
             onBackPressed();
-            orderSubscription(getString(R.string.monthly_subscription));
+            NavigationHelper.startSubscriptionActivity(AudioActivity.this);
         }
     };
 
@@ -180,53 +176,16 @@ public class AudioActivity extends LogActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(data != null && resultCode == RESULT_OK) {
-            if (requestCode == PaymentActivity.REQUEST_CODE) {
-                String url = data.getStringExtra(PaymentActivity.RESULT_URL);
+            if (requestCode == SubscriptionActivity.SUBSCRIPTION_REQUEST_CODE) {
+                String url = data.getStringExtra(SubscriptionActivity.RESULT_URL);
                 if (url != null){
                     WebLinkHelper.openWebLink(this, url);
                 }
-                Log.v("onActivityResult", "Payment completed");
+                Log.v("onActivityResult", "Subscription opened");
             }
         }
     }
 
-    private void orderSubscription(String subscriptionId){
-        Tour tour = viewModel.getTour().getValue();
-        if (tour != null) {
-            PaymentActivity.Args args = new PaymentActivity.Args(tour.getId(), null, tour.getPrice(), subscriptionId);
-            NavigationHelper.startPaymentActivity(AudioActivity.this, args);
-        }
-    }
-
-//    private void showSubscriptionListDialog() {
-//        BottomSheetDialog dialog = new BottomSheetDialog(this);
-//        View bottomSheet = getLayoutInflater().inflate(R.layout.layout_list_subscription, null);
-//
-//        Button buttonSubsMonthly = bottomSheet.findViewById(R.id.buttonSubsMonthly);
-//        buttonSubsMonthly.setOnClickListener(v -> {
-//            orderSubscription(getString(R.string.monthly_subscription));
-//            dialog.dismiss();
-//        });
-//
-//        Button buttonSubsSixMonth = bottomSheet.findViewById(R.id.buttonSubsSixMonth);
-//        buttonSubsSixMonth.setOnClickListener(v -> {
-//            orderSubscription(getString(R.string.six_monthly_subscription));
-//            dialog.dismiss();
-//        });
-//
-//        Button buttonSubsYearly = bottomSheet.findViewById(R.id.buttonSubsYearly);
-//        buttonSubsYearly.setOnClickListener(v -> {
-//            orderSubscription(getString(R.string.yearly_subscription));
-//            dialog.dismiss();
-//        });
-//
-//        Button buttonCancel = bottomSheet.findViewById(R.id.buttonCancel);
-//        buttonCancel.setOnClickListener(v -> dialog.dismiss());
-//
-//        dialog.setContentView(bottomSheet);
-//        dialog.show();
-//
-//    }
 
     private void observeViewModel(){
         viewModel.getGoToDonateAction().observe(this, guideId -> {

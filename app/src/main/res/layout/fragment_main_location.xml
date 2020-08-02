@@ -87,7 +87,7 @@
         <ImageView
             android:id="@+id/buttonToggle"
             android:layout_width="0dp"
-            android:layout_height="24dp"
+            android:layout_height="30dp"
             android:contentDescription="@null"
             android:scaleType="center"
             android:src="@drawable/ic_toggle"

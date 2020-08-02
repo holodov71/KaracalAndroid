@@ -9,11 +9,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.stripe.android.ApiResultCallback;
+import com.stripe.android.Stripe;
+import com.stripe.android.model.Card;
+import com.stripe.android.model.Token;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
@@ -21,13 +28,19 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.SavedPaymentMethods;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.PreferenceHelper;
+import app.karacal.helpers.ProfileHolder;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.WebLinkHelper;
+import app.karacal.models.CardDetails;
 import app.karacal.models.Guide;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
+import app.karacal.network.models.request.CreateCustomerRequest;
+import app.karacal.network.models.request.DonateAuthorRequest;
 import apps.in.android_logger.LogActivity;
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -55,6 +68,7 @@ public class DonateActivity extends LogActivity {
     private TextView textViewDonateAmountMedium;
     private TextView textViewDonateAmountBig;
     TextInputLayout inputLayoutAmount;
+    private ProgressBar progressLoading;
 
     private ImageView avatar;
     private TextView textViewName;
@@ -64,8 +78,15 @@ public class DonateActivity extends LogActivity {
 
     private Integer donation = -1;
 
+    private String customerId;
+    private SavedPaymentMethods savedPaymentMethods;
+    private Stripe stripe;
+
     @Inject
     ApiHelper apiHelper;
+
+    @Inject
+    ProfileHolder profileHolder;
 
     private CompositeDisposable disposable = new CompositeDisposable();
 
@@ -104,7 +125,10 @@ public class DonateActivity extends LogActivity {
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
         guideId = args.getGuideId();
 
+        stripe = new Stripe(App.getInstance().getApplicationContext(), App.getResString(R.string.stripe_api_key));
+
         setupBackButton();
+        setupProgressLoading();
         setupGuideInfo();
         setupAmountButtons();
         setupAmountInput();
@@ -112,11 +136,23 @@ public class DonateActivity extends LogActivity {
         validate();
 
         loadGuide();
+
+        try {
+            savedPaymentMethods = SavedPaymentMethods.getInstance(App.getInstance());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        createCustomer();
     }
 
     private void setupBackButton(){
         ImageView button = findViewById(R.id.buttonBack);
         button.setOnClickListener(v -> onBackPressed());
+    }
+
+    private void setupProgressLoading(){
+        progressLoading = findViewById(R.id.progressLoading);
     }
 
     private void setupGuideInfo(){
@@ -146,8 +182,11 @@ public class DonateActivity extends LogActivity {
     private void setupDonateButton(){
         buttonDonate = findViewById(R.id.buttonDonate);
         buttonDonate.setOnClickListener(v -> {
-            PaymentActivity.Args args = new PaymentActivity.Args(null, guideId, (long)(donation * 100), null);
-            NavigationHelper.startPaymentActivity(DonateActivity.this, args);
+            if (savedPaymentMethods.getPaymentMethodsList().isEmpty()){
+                NavigationHelper.startPaymentMethodsActivity(DonateActivity.this);
+            } else {
+                obtainCardToken();
+            }
         });
     }
 
@@ -184,18 +223,69 @@ public class DonateActivity extends LogActivity {
                 ));
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(data != null && resultCode == RESULT_OK) {
-            if (requestCode == PaymentActivity.REQUEST_CODE) {
-                String url = data.getStringExtra(PaymentActivity.RESULT_URL);
-                if (url != null){
-                    WebLinkHelper.openWebLink(this, url);
-                    new Handler().postDelayed(this::finish, 100);
-                }
-                Log.v("onActivityResult", "Payment completed");
+    // Payment region
+    private void createCustomer(){
+        String serverToken = PreferenceHelper.loadToken(App.getInstance());
+
+        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+        disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
+                .subscribe(response -> {
+                    Log.v("createCustomer", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        customerId = response.getId();
+                    } else {
+                        Log.e(App.TAG, response.getErrorMessage());
+                    }
+                }, throwable -> {
+                    Log.v(App.TAG, "Can not create customer");
+                }));
+    }
+
+    private void obtainCardToken(){
+        progressLoading.setVisibility(View.VISIBLE);
+        CardDetails paymentMethod = savedPaymentMethods.getDefaultPaymentMethod();
+
+        Card card = new Card.Builder(
+                paymentMethod.getNumber(),
+                paymentMethod.getExpMonth(),
+                paymentMethod.getExpYear(),
+                paymentMethod.getCvc())
+                .build();
+
+        stripe.createCardToken(card, new ApiResultCallback<Token>() {
+            @Override
+            public void onSuccess(Token token) {
+                donate(token.getId());
             }
-        }
+
+            @Override
+            public void onError(@NotNull Exception e) {
+                progressLoading.setVisibility(View.GONE);
+                ToastHelper.showToast(DonateActivity.this, getString(R.string.common_error));
+            }
+        });
+    }
+
+    public void donate(String cardToken) {
+        Log.v("donateAuthor", "customerId = " + customerId);
+
+        DonateAuthorRequest request = new DonateAuthorRequest(guideId, cardToken, (long)(donation * 100));
+        disposable.add(apiHelper.donateAuthor(PreferenceHelper.loadToken(this), request)
+                .subscribe(response -> {
+                    Log.v("donateAuthor", "Success response = " + response);
+                    if (response.isSuccess()) {
+                        ToastHelper.showToast(this, getString(R.string.payment_success));
+                        WebLinkHelper.openWebLink(this, response.getReceiptUrl());
+                        new Handler().postDelayed(this::finish, 150);
+                    } else {
+                        progressLoading.setVisibility(View.GONE);
+                        ToastHelper.showToast(this, response.getErrorMessage());
+                    }
+                    progressLoading.setVisibility(View.GONE);
+
+                }, throwable -> {
+                    progressLoading.setVisibility(View.GONE);
+                    ToastHelper.showToast(this, getString(R.string.connection_problem));
+                }));
     }
 }

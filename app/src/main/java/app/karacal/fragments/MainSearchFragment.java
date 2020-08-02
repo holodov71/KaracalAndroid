@@ -78,7 +78,6 @@ public class MainSearchFragment extends Fragment {
 
     private void setupFilterButton(View view){
         ImageView buttonFilter = view.findViewById(R.id.buttonFilter);
-        buttonFilter.setVisibility(View.GONE);
         buttonFilter.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), SearchFilterActivity.class);
             SearchFilterActivity.Args args = new SearchFilterActivity.Args(searchFilter);
@@ -141,13 +140,25 @@ public class MainSearchFragment extends Fragment {
 
     private void searchByText(String query){
         ArrayList<Tour> tours = new ArrayList<>();
+
         if (query.isEmpty()){
-            tours.addAll(allTours);
+            tours.addAll(filterTours(allTours));
         } else {
-            tours.addAll(tourRepository.searchToursByText(query));
+            tours.addAll(filterTours(tourRepository.searchToursByText(query)));
         }
         adapterResults.setTours(tours);
         recyclerViewResults.setVisibility(query.length() < 2 ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    private List<Tour> filterTours(List<Tour> tours){
+        ArrayList<Tour> result = new ArrayList<>();
+        for(Tour tour: tours){
+            if (tour.isPaid() == searchFilter.isPaid() ||
+                    tour.isFree() == searchFilter.isFree()){
+                result.add(tour);
+            }
+        }
+        return result;
     }
 
     private void showTour(int tourId){
@@ -160,6 +171,7 @@ public class MainSearchFragment extends Fragment {
         if (requestCode == SearchFilterActivity.REQUEST_CODE && resultCode == RESULT_OK){
             SearchFilterActivity.Args args = SearchFilterActivity.Args.fromBundle(SearchFilterActivity.Args.class, data.getExtras());
             searchFilter = args.getSearchFilter();
+            searchByText(editTextSearch.getText().toString());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

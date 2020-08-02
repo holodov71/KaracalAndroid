@@ -23,6 +23,7 @@ import app.karacal.activities.ProfileActivity;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.ShareHelper;
 import app.karacal.helpers.ToastHelper;
+import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.Guide;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
@@ -241,6 +242,24 @@ public class AudioDescriptionFragment extends LogFragment {
         });
 
         viewModel.getGuide().observe(getViewLifecycleOwner(), this::setAuthorData);
+
+        viewModel.tourPayedAction.observe(getViewLifecycleOwner(), receiptUrl ->{
+            hideLoading();
+            ToastHelper.showToast(getContext(), getString(R.string.payment_success));
+            if (receiptUrl != null){
+                WebLinkHelper.openWebLink(getContext(), receiptUrl);
+            }
+        });
+
+        viewModel.isLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading){
+                showLoading();
+            } else {
+                hideLoading();
+            }
+        });
+
+        viewModel.needPaymentMethodAction.observe(getViewLifecycleOwner(), v -> NavigationHelper.startPaymentMethodsActivity(getActivity()));
     }
 
     private void setData(Tour tour) {
