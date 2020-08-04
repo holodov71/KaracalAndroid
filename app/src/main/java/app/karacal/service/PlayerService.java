@@ -4,35 +4,25 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.session.MediaSession;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
-import androidx.transition.TransitionManager;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.AppWidgetTarget;
 import com.bumptech.glide.request.target.NotificationTarget;
-import com.bumptech.glide.request.transition.Transition;
+
+import org.jetbrains.annotations.NotNull;
 
 import app.karacal.R;
-import app.karacal.activities.AudioActivity;
 import app.karacal.activities.MainActivity;
 import app.karacal.models.Album;
 import app.karacal.models.Player;
-import app.karacal.models.Tour;
 import app.karacal.models.Track;
 
 public class PlayerService extends LifecycleService {
@@ -58,7 +48,6 @@ public class PlayerService extends LifecycleService {
     @Override
     public void onCreate() {
         super.onCreate();
-//        mediaSession = new MediaSessionCompat(getApplicationContext(), "AudioPlayer");
     }
 
 
@@ -67,10 +56,6 @@ public class PlayerService extends LifecycleService {
         super.onStartCommand(intent, flags, startId);
         Log.v(TAG, "onStartCommand");
 
-//        Tour tour = (Tour) intent.getSerializableExtra(ARG_TOUR);
-//        Log.v(TAG, "onStartCommand tour = "+tour);
-
-        //Handle Intent action from MediaSession.TransportControls
         handleIncomingActions(intent);
         return START_NOT_STICKY;
     }
@@ -84,7 +69,7 @@ public class PlayerService extends LifecycleService {
     private final IBinder iBinder = new LocalBinder();
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(@NotNull Intent intent) {
         super.onBind(intent);
         return iBinder;
     }
@@ -194,8 +179,6 @@ public class PlayerService extends LifecycleService {
                 .setPriority(Notification.PRIORITY_MAX)
                 .setWhen(0)
                 .setAutoCancel(true)
-//                .addAction(notificationAction, "pause", play_pauseAction)
-//                .addAction(R.drawable.ic_next_orange, "next", playbackAction(2))
                 .build();
 
         NotificationTarget notificationTarget = new NotificationTarget(
