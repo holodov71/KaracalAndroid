@@ -199,7 +199,7 @@ public class AudioDescriptionFragment extends LogFragment {
             ToastHelper.showToast(requireContext(), getString(R.string.tour_downloaded));
         });
 
-        viewModel.getDownloadingErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
+        viewModel.getMessageAction().observe(getViewLifecycleOwner(), errorMsg -> {
             ToastHelper.showToast(requireContext(), errorMsg);
         });
 
@@ -208,6 +208,14 @@ public class AudioDescriptionFragment extends LogFragment {
                 onDownloadingStarted();
             } else {
                 onDownloadingFinished();
+            }
+        });
+
+        viewModel.isTourDownloaded().observe(getViewLifecycleOwner(), isDownloaded -> {
+            if (isDownloaded){
+                buttonDownload.setImageResource(R.drawable.ic_delete);
+            } else {
+                buttonDownload.setImageResource(R.drawable.ic_download);
             }
         });
 

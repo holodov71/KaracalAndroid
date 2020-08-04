@@ -72,6 +72,8 @@ public class MainMenuFragment extends Fragment {
 
     private TourHorizontalListAdapter.TourClickListener tourClickListener = this::showTour;
 
+    private View categoryDownloaded;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +94,12 @@ public class MainMenuFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateDownloadedCategory();
     }
 
     @Override
@@ -138,24 +146,36 @@ public class MainMenuFragment extends Fragment {
         View categoryRecommendedGuide = view.findViewById(R.id.categoryRecommendedGuides);
         setupGuideCategory(categoryRecommendedGuide, getString(R.string.recommended_for_you));
 
-        View categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
+        categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
         if (getContext() != null) {
             setupTourCategory(categoryDownloaded, TourCategory.CATEGORY_DOWNLOADED, getString(R.string.already_downloaded), DownloadedToursCache.getInstance(getContext()).getToursList());
         }
     }
 
-    private void setupTourCategory(View categoryView, TourCategory category, String title, ArrayList<Tour> tours) {
-        TextView textViewTitle = categoryView.findViewById(R.id.textViewTitle);
-        if (textViewTitle != null) {
-            textViewTitle.setText(title);
+    private void updateDownloadedCategory(){
+        if (getContext() != null && categoryDownloaded != null) {
+            setupTourCategory(categoryDownloaded, TourCategory.CATEGORY_DOWNLOADED, getString(R.string.already_downloaded), DownloadedToursCache.getInstance(getContext()).getToursList());
         }
-        TextView textViewViewAll = categoryView.findViewById(R.id.textViewViewAll);
-        textViewViewAll.setOnClickListener(v -> showCategory(category, title));
-        RecyclerView recyclerView = categoryView.findViewById(R.id.recyclerView);
-        TourHorizontalListAdapter adapter = new TourHorizontalListAdapter(getContext());
-        recyclerView.setAdapter(adapter);
-        adapter.setTours(tours);
-        adapter.setClickListener(tourClickListener);
+    }
+
+    private void setupTourCategory(View categoryView, TourCategory category, String title, ArrayList<Tour> tours) {
+        if (tours.isEmpty()){
+            categoryView.setVisibility(View.GONE);
+        } else {
+            categoryView.setVisibility(View.VISIBLE);
+
+            TextView textViewTitle = categoryView.findViewById(R.id.textViewTitle);
+            if (textViewTitle != null) {
+                textViewTitle.setText(title);
+            }
+            TextView textViewViewAll = categoryView.findViewById(R.id.textViewViewAll);
+            textViewViewAll.setOnClickListener(v -> showCategory(category, title));
+            RecyclerView recyclerView = categoryView.findViewById(R.id.recyclerView);
+            TourHorizontalListAdapter adapter = new TourHorizontalListAdapter(getContext());
+            recyclerView.setAdapter(adapter);
+            adapter.setTours(tours);
+            adapter.setClickListener(tourClickListener);
+        }
     }
 
     private void setupGuideCategory(View categoryView, String title) {

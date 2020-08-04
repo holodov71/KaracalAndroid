@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionManager;
+import android.util.ArraySet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -28,14 +31,17 @@ import app.karacal.activities.AudioActivity;
 import app.karacal.activities.SearchFilterActivity;
 import app.karacal.adapters.SearchTagsAdapter;
 import app.karacal.adapters.TourVerticalListAdapter;
+import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.TextInputHelper;
+import app.karacal.models.Guide;
 import app.karacal.models.SearchFilter;
 import app.karacal.models.Tour;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.MainActivityViewModel;
 
 import static android.app.Activity.RESULT_OK;
+import static app.karacal.App.TAG;
 
 public class MainSearchFragment extends Fragment {
 
@@ -43,6 +49,9 @@ public class MainSearchFragment extends Fragment {
 
     @Inject
     TourRepository tourRepository;
+
+    @Inject
+    GuideRepository guideRepository;
 
     private EditText editTextSearch;
     private ImageView buttonClear;
@@ -72,6 +81,7 @@ public class MainSearchFragment extends Fragment {
 
         observeTags();
         viewModel.obtainTags();
+        guideRepository.loadGuides();
 
         return view;
     }
@@ -139,18 +149,22 @@ public class MainSearchFragment extends Fragment {
     }
 
     private void searchByText(String query){
-        ArrayList<Tour> tours = new ArrayList<>();
+        ArraySet<Tour> tours = new ArraySet<>();
+
+
 
         if (query.isEmpty()){
-            tours.addAll(filterTours(allTours));
+            tours.addAll(allTours);
         } else {
-            tours.addAll(filterTours(tourRepository.searchToursByText(query)));
+            tours.addAll(tourRepository.searchToursByText(query));
+            tours.addAll(searchToursByGuide(query));
         }
-        adapterResults.setTours(tours);
+
+        adapterResults.setTours(filterTours(tours));
         recyclerViewResults.setVisibility(query.length() < 2 ? View.INVISIBLE : View.VISIBLE);
     }
 
-    private List<Tour> filterTours(List<Tour> tours){
+    private List<Tour> filterTours(Set<Tour> tours){
         ArrayList<Tour> result = new ArrayList<>();
         for(Tour tour: tours){
             if (tour.isPaid() == searchFilter.isPaid() ||
@@ -158,6 +172,28 @@ public class MainSearchFragment extends Fragment {
                 result.add(tour);
             }
         }
+        return result;
+    }
+
+    private List<Tour> searchToursByGuide(String guideQuery){
+        ArrayList<Tour> result = new ArrayList<>();
+
+        Guide guide = guideRepository.searchGuide(guideQuery);
+
+        Log.v(TAG, "searchToursByGuide Guide = "+guide);
+
+        if (guide != null){
+            for (Tour tour : allTours) {
+                Log.v(TAG, "searchToursByGuide tour.getAuthorId() = "+tour.getAuthorId());
+                Log.v(TAG, "guide.getId() = "+guide.getId());
+
+                if (tour.getAuthorId() == guide.getId()) {
+                    result.add(tour);
+                }
+            }
+        }
+        Log.v(TAG, "searchToursByGuide result.size() = "+result.size());
+
         return result;
     }
 

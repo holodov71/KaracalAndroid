@@ -49,18 +49,7 @@ public class AlbumRepository {
             tracks.add(new Track("Abientt", R.raw.track_abientt));
         }
 
-        return new Album(tour.getTitle(), tracks);
-    }
-
-    public Album getAlbumByTourId(int tourId){
-        ArrayList<Track> tracks = new ArrayList<>();
-
-        tracks.add(new Track("Bienvenue", R.raw.track_bienvenue));
-
-
-        tracks.add(new Track("Abientt", R.raw.track_abientt));
-
-        return new Album("Title of the Audio Album", tracks);
+        return new Album(tour.getTitle(), tour.getImageUrl(), tracks);
     }
 
     @SuppressLint("CheckResult")
@@ -76,7 +65,7 @@ public class AlbumRepository {
                         tracks.add(0, new Track("Bienvenue", R.raw.track_bienvenue));
                         tracks.add(new Track("Abientt", R.raw.track_abientt));
                     }
-                    albumLiveData.setValue(new Album("", tracks));
+                    albumLiveData.setValue(new Album("", "", tracks));
                     // TODO: save to DB
 
                 }, throwable -> {

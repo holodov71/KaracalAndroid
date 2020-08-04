@@ -119,11 +119,13 @@ public class ContentResponse {
     }
 
     public long getPrice() {
-        if (price == null) return 0;
+        if (price == null || price.isEmpty()) return 0;
 
         double result = 0.0;
         try{
-            result = Double.parseDouble(price.replaceAll("€", ""));
+            String priceFormat = price.replaceAll("€", "");
+            priceFormat = priceFormat.replaceAll(",", ".");
+            result = Double.parseDouble(priceFormat);
         } catch (Exception ex){
             ex.printStackTrace();
         }

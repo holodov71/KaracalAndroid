@@ -20,6 +20,8 @@ import app.karacal.models.Guide;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import static app.karacal.App.TAG;
+
 @Singleton
 public class GuideRepository {
 
@@ -46,22 +48,38 @@ public class GuideRepository {
         return null;
     }
 
+    public Guide searchGuide(String query){
+        if (guidesLiveData.getValue() != null){
+            for(Guide guide: guidesLiveData.getValue()){
+                String name = guide.getName().toLowerCase();
+                if (name.contains(query.toLowerCase())){
+                    return guide;
+                }
+            }
+        }
+        return null;
+    }
+
     @SuppressLint("CheckResult")
     public void loadGuides() {
-        apiHelper.loadGuides(PreferenceHelper.loadToken(context))
-                .flatMapIterable(list -> list)
-                .map(Guide::new)
-                .toList()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(guides -> {
-                    guidesLiveData.setValue(guides);
-                    // TODO: save to DB
+        if (guidesLiveData.getValue() == null || guidesLiveData.getValue().isEmpty()) {
+            apiHelper.loadGuides(PreferenceHelper.loadToken(context))
+                    .flatMapIterable(list -> list)
+                    .map(Guide::new)
+                    .toList()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(guides -> {
+                        guidesLiveData.setValue(guides);
+                        // TODO: save to DB
 
-                }, throwable -> {
-                    // TODO: load list from DB
-                });
+                    }, throwable -> {
+                        // TODO: load list from DB
+                    });
+        }
     }
+
+
 
 
 }

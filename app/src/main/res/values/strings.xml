@@ -229,6 +229,7 @@
     <string name="payment_method_missing">Vous devez ajouter un mode de paiement pour pouvoir souscrire à un abonnement</string>
     <string name="manage_subscription">Gérer l\’abonement</string>
     <string name="subscription">Abonnement</string>
+    <string name="tour_deleted">Visite supprimée.</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

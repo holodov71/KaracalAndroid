@@ -23,6 +23,8 @@ import io.reactivex.Completable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static app.karacal.App.TAG;
+
 public class Player implements MediaPlayer.OnPreparedListener{
 
     private static final int POSITION_INFO_UPDATE_INTERVAL = 1;     //seconds
@@ -70,6 +72,7 @@ public class Player implements MediaPlayer.OnPreparedListener{
         PAUSE,
     }
 
+    private int tourId;
     private MediaPlayer mediaPlayer;
     private int currentPosition;
     private Disposable positionUpdater;
@@ -163,9 +166,14 @@ public class Player implements MediaPlayer.OnPreparedListener{
 
     public void pause() {
         if (mediaPlayer.isPlaying()) {
+            Log.v(TAG, "pause()");
             mediaPlayer.pause();
             setPlayerState(PlayerState.PAUSE);
         }
+    }
+
+    public boolean isPlaying(){
+        return mediaPlayer != null && mediaPlayer.isPlaying();
     }
 
     public void nextTrack() {
@@ -198,6 +206,10 @@ public class Player implements MediaPlayer.OnPreparedListener{
         mediaPlayer.start();
         setPlayerState(PlayerState.PLAY);
         currentTrackMutableLiveData.postValue(currentPosition);
+    }
+
+    public LiveData<Album> getAlbumLiveData() {
+        return album;
     }
 
     public LiveData<PlayerState> getPlayerStateLiveData() {
@@ -238,9 +250,23 @@ public class Player implements MediaPlayer.OnPreparedListener{
         }
     }
 
+    public int getTourId() {
+        return tourId;
+    }
+
+    public void setTourId(int tourId) {
+        this.tourId = tourId;
+    }
+
     public void dispose() {
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
+        try {
+            if (mediaPlayer != null) {
+                if (!mediaPlayer.isPlaying()) {
+                    mediaPlayer.release();
+                }
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 }

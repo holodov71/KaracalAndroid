@@ -23,6 +23,7 @@ import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.Tour;
 import app.karacal.network.models.request.NearToursRequest;
 import app.karacal.network.models.request.SaveTourRequest;
+import app.karacal.network.models.response.ContentResponse;
 import app.karacal.network.models.response.SaveTourResponse;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -85,6 +86,17 @@ public class TourRepository {
         }
 
         return downloadedTour;
+    }
+
+    public Observable<Tour> loadTourById(int tourId) {
+        Tour tmpTour = getTourById(tourId);
+
+        if(tmpTour != null){
+            return Observable.just(tmpTour);
+        } else {
+            return apiHelper.loadTourById(PreferenceHelper.loadToken(App.getInstance()), tourId)
+                    .map(Tour::new);
+        }
     }
 
     @SuppressLint("CheckResult")

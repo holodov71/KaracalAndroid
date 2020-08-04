@@ -47,4 +47,18 @@ public class TrackResponse {
             return filename.substring(index + 1).replace(".mp3", "");
         }
     }
+
+    @Override
+    public String toString() {
+        return "TrackResponse{" +
+                "id=" + id +
+                ", guideId=" + guideId +
+                ", tourId=" + tourId +
+                ", trackTitle='" + trackTitle + '\'' +
+                ", filename='" + filename + '\'' +
+                ", duration=" + duration +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
+                '}';
+    }
 }

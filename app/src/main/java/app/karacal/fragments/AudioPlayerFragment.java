@@ -1,5 +1,6 @@
 package app.karacal.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,15 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavDirections;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
 
 import app.karacal.R;
 import app.karacal.activities.CommentsActivity;
 import app.karacal.adapters.TrackListAdapter;
-import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Player;
@@ -35,6 +33,8 @@ public class AudioPlayerFragment extends LogFragment {
     private static final String TAG = "AudioPlayerFragment";
 
     private AudioActivityViewModel viewModel;
+
+    private OnPlayerScreenListener onPlayerScreenListener;
 
     private TrackListAdapter adapter;
 
@@ -53,7 +53,7 @@ public class AudioPlayerFragment extends LogFragment {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate");
         viewModel = new ViewModelProvider(getActivity()).get(AudioActivityViewModel.class);
-        viewModel.getPlayer().bindLifecycle(this);
+//        viewModel.getPlayer().bindLifecycle(this);
     }
 
     @Nullable
@@ -69,6 +69,7 @@ public class AudioPlayerFragment extends LogFragment {
         setupAudioButtons(view);
         setupPlayerControls(view);
 
+
         viewModel.loadTracks();
 
         observeTour();
@@ -77,6 +78,16 @@ public class AudioPlayerFragment extends LogFragment {
         observeComments();
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnPlayerScreenListener){
+            onPlayerScreenListener = (OnPlayerScreenListener) context;
+        } else {
+            throw new RuntimeException("Activity must implement OnPlayerScreenListener interface");
+        }
     }
 
     private void setupBackButton(View view) {
@@ -119,7 +130,10 @@ public class AudioPlayerFragment extends LogFragment {
     private void setupTracksList(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         adapter = new TrackListAdapter(getContext());
-        adapter.setClickListener(position -> viewModel.getPlayer().playTrack(position));
+        adapter.setClickListener(position -> {
+            onPlayerScreenListener.onPlayerPlayClicked(viewModel.getPlayer().getTourId());
+            viewModel.getPlayer().playTrack(position);
+        });
         viewModel.getPlayer().getPositionInfoLiveData().observe(getViewLifecycleOwner(), (positionInfo) -> adapter.updateProgress(viewModel.getPlayer().getCurrentTrack(), positionInfo));
         recyclerView.setAdapter(adapter);
     }
@@ -134,7 +148,10 @@ public class AudioPlayerFragment extends LogFragment {
         buttonPause = view.findViewById(R.id.buttonPause);
         buttonPause.setOnClickListener(v -> onPlayPauseClick());
         ImageView buttonNext = view.findViewById(R.id.buttonNext);
-        buttonNext.setOnClickListener(v -> viewModel.getPlayer().nextTrack());
+        buttonNext.setOnClickListener(v -> {
+            onPlayerScreenListener.onPlayerPlayClicked(viewModel.getPlayer().getTourId());
+            viewModel.getPlayer().nextTrack();
+        });
         ProgressBar progressBar = view.findViewById(R.id.progressBar);
         viewModel.getPlayer().getPlayerStateLiveData().observe(getViewLifecycleOwner(), playerState -> {
             TransitionManager.beginDelayedTransition(view.findViewById(R.id.layoutRoot));
@@ -169,6 +186,7 @@ public class AudioPlayerFragment extends LogFragment {
     }
 
     private void onPlayPauseClick(){
+        onPlayerScreenListener.onPlayerPlayClicked(viewModel.getPlayer().getTourId());
         if (viewModel.getPlayer().getPlayerState() == Player.PlayerState.PLAY){
             Log.v(TAG, "getPlayerState() == Player.PlayerState.PLAY");
             viewModel.getPlayer().pause();
@@ -226,8 +244,8 @@ public class AudioPlayerFragment extends LogFragment {
             ToastHelper.showToast(requireContext(), getString(R.string.tour_downloaded));
         });
 
-        viewModel.getDownloadingErrorAction().observe(getViewLifecycleOwner(), errorMsg -> {
-            ToastHelper.showToast(requireContext(), errorMsg);
+        viewModel.getMessageAction().observe(getViewLifecycleOwner(), msg -> {
+            ToastHelper.showToast(requireContext(), msg);
         });
 
         viewModel.getTourDownloading().observe(getViewLifecycleOwner(), isDownloading -> {
@@ -235,6 +253,14 @@ public class AudioPlayerFragment extends LogFragment {
                 onDownloadingStarted();
             } else {
                 onDownloadingFinished();
+            }
+        });
+
+        viewModel.isTourDownloaded().observe(getViewLifecycleOwner(), isDownloaded -> {
+            if (isDownloaded){
+                buttonDownload.setImageResource(R.drawable.ic_delete);
+            } else {
+                buttonDownload.setImageResource(R.drawable.ic_download);
             }
         });
     }
@@ -247,6 +273,10 @@ public class AudioPlayerFragment extends LogFragment {
     private void onDownloadingFinished(){
         progressDownloading.setVisibility(View.GONE);
         buttonDownload.setImageResource(R.drawable.ic_download);
+    }
+
+    public interface OnPlayerScreenListener{
+        void onPlayerPlayClicked(int tourId);
     }
 
 }

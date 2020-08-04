@@ -56,6 +56,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static app.karacal.App.TAG;
 import static app.karacal.helpers.NetworkStateHelper.DesiredInternet.WIFI_INTERNET;
 
 public class AudioActivityViewModel extends ViewModel {
@@ -107,11 +108,12 @@ public class AudioActivityViewModel extends ViewModel {
     private SingleLiveEvent<Long> paymentAction = new SingleLiveEvent<>();
     public SingleLiveEvent<Long> needPaymentMethodAction = new SingleLiveEvent<>();
     private SingleLiveEvent<Void> tourDownloadedAction = new SingleLiveEvent<>();
-    private SingleLiveEvent<String> downloadingErrorAction = new SingleLiveEvent<>();
+    private SingleLiveEvent<String> messageAction = new SingleLiveEvent<>();
     private SingleLiveEvent<String> errorAction = new SingleLiveEvent<>();
     private MutableLiveData<List<Comment>> commentsLiveData = new MutableLiveData<>();
     private MutableLiveData<Guide> guideLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> tourDownloadingLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isTourDownloaded = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Integer> tourCountLiveData = new MutableLiveData<>();
     public SingleLiveEvent<String> tourPayedAction = new SingleLiveEvent<>();
@@ -137,11 +139,15 @@ public class AudioActivityViewModel extends ViewModel {
         return tourDownloadedAction;
     }
 
-    public MutableLiveData<Boolean> getTourDownloading() {
+    public LiveData<Boolean> getTourDownloading() {
         return tourDownloadingLiveData;
     }
 
-    public MutableLiveData<Boolean> isLoading() {
+    public LiveData<Boolean> isTourDownloaded() {
+        return isTourDownloaded;
+    }
+
+    public LiveData<Boolean> isLoading() {
         return isLoading;
     }
 
@@ -149,8 +155,8 @@ public class AudioActivityViewModel extends ViewModel {
         return errorAction;
     }
 
-    public SingleLiveEvent<String> getDownloadingErrorAction() {
-        return downloadingErrorAction;
+    public SingleLiveEvent<String> getMessageAction() {
+        return messageAction;
     }
 
     public LiveData<List<Comment>> getComments(){
@@ -165,11 +171,13 @@ public class AudioActivityViewModel extends ViewModel {
         return tourCountLiveData;
     }
 
-    private final MutableLiveData<Album> album = new MutableLiveData<>();
+    private MutableLiveData<Album> album = new MutableLiveData<>();
 
-    private final Player player;
+    private Player player;
 
     private Stripe stripe;
+
+    private boolean isAlbumLoaded = false;
 
     public AudioActivityViewModel(int tourId) {
         Log.v("AudioActivityViewModel", "tourId = "+tourId);
@@ -177,11 +185,22 @@ public class AudioActivityViewModel extends ViewModel {
         stripe = new Stripe(App.getInstance().getApplicationContext(), App.getResString(R.string.stripe_api_key));
         this.tourId = tourId;
         player = new Player(album);
+        player.setTourId(tourId);
+        isTourDownloaded.setValue(DownloadedToursCache.getInstance(App.getInstance()).containsTour(tourId));
         loadData();
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void setPlayer(Player player) {
+        Log.v(TAG, "setPlayer(Player player)");
+        if(player.getTourId() == this.tourId) {
+            this.player = player;
+            this.album.postValue(player.getAlbumLiveData().getValue());
+            isAlbumLoaded = true;
+        }
     }
 
     public void onDonateClicked() {
@@ -191,10 +210,12 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public void loadTracks() {
-        if (tour.getValue() != null && tour.getValue().getAudio() != null){
-            album.setValue(tour.getValue().getAlbum());
-        } else {
-            albumRepository.loadTracksByTour(String.valueOf(tourId));
+        if (!isAlbumLoaded) {
+            if (tour.getValue() != null && tour.getValue().getAudio() != null) {
+                album.setValue(tour.getValue().getAlbum());
+            } else {
+                albumRepository.loadTracksByTour(String.valueOf(tourId));
+            }
         }
     }
 
@@ -245,10 +266,10 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     private void loadTour(int tourId){
-        disposable.add(apiHelper.loadTourById(PreferenceHelper.loadToken(App.getInstance()), tourId)
-                .subscribe(response -> {
-                    tour.setValue(new Tour(response));
-                    loadAuthor(response.getGuideId());
+        disposable.add(tourRepository.loadTourById(tourId)
+                .subscribe(loadedTour -> {
+                    tour.setValue(loadedTour);
+                    loadAuthor(loadedTour.getAuthorId());
                 }, throwable -> {
                     commentsLiveData.setValue(new ArrayList<>());
                 }));
@@ -281,37 +302,41 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public void downloadTour(Context context) {
-        tourDownloadingLiveData.setValue(true);
         if(DownloadedToursCache.getInstance(context).containsTour(tourId)) {
-            tourDownloadingLiveData.setValue(false);
-            downloadingErrorAction.setValue(App.getResString(R.string.tour_already_downloaded));
+            DownloadedToursCache.getInstance(context).deleteDownloadedTour(context, tourId);
+            messageAction.setValue(App.getResString(R.string.tour_deleted));
+            isTourDownloaded.setValue(false);
         } else {
             if (PreferenceHelper.isDownloadOnlyViaWifi(context) &&
                 !NetworkStateHelper.isNetworkAvailable(context, WIFI_INTERNET)){
                 tourDownloadingLiveData.setValue(false);
-                downloadingErrorAction.setValue(App.getResString(R.string.turn_on_wifi));
+                messageAction.setValue(App.getResString(R.string.turn_on_wifi));
             } else if(tour.getValue() != null){
-                checkAccess(() -> disposable.add(Single.just(tour.getValue().getAudio())
-                        .flattenAsObservable(items -> items)
-                        .flatMap(this::downloadTrack)
-                        .toList()
-                        .map(this::processDownloading)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(downloaded -> {
-                            tourDownloadingLiveData.setValue(false);
-                            if (downloaded) {
-                                tourDownloadedAction.call();
-                            } else {
-                                downloadingErrorAction.setValue(App.getResString(R.string.error_download_tour));
-                            }
-                        }, throwable -> {
-                            tourDownloadingLiveData.setValue(false);
-                            downloadingErrorAction.setValue(App.getResString(R.string.connection_problem));
-                        })));
+                checkAccess(() -> {
+                    tourDownloadingLiveData.setValue(true);
+                    disposable.add(Single.just(tour.getValue().getAudio())
+                            .flattenAsObservable(items -> items)
+                            .flatMap(this::downloadTrack)
+                            .toList()
+                            .map(this::processDownloading)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(downloaded -> {
+                                tourDownloadingLiveData.setValue(false);
+                                if (downloaded) {
+                                    tourDownloadedAction.call();
+                                    isTourDownloaded.setValue(true);
+                                } else {
+                                    messageAction.setValue(App.getResString(R.string.error_download_tour));
+                                }
+                            }, throwable -> {
+                                tourDownloadingLiveData.setValue(false);
+                                messageAction.setValue(App.getResString(R.string.connection_problem));
+                            }));
+                });
             } else {
                 tourDownloadingLiveData.setValue(false);
-                downloadingErrorAction.setValue(App.getResString(R.string.error_download_tour));
+                messageAction.setValue(App.getResString(R.string.error_download_tour));
             }
         }
     }
@@ -406,10 +431,10 @@ public class AudioActivityViewModel extends ViewModel {
                     if (response.isSuccess()) {
                         customerId = response.getId();
                     } else {
-                        Log.e(App.TAG, response.getErrorMessage());
+                        Log.e(TAG, response.getErrorMessage());
                     }
                 }, throwable -> {
-                    Log.v(App.TAG, "Can not create customer");
+                    Log.v(TAG, "Can not create customer");
                 }));
     }
 

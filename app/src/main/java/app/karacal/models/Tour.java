@@ -207,7 +207,7 @@ public class Tour implements Serializable {
             tracks.addAll(audio);
             tracks.add(new Track("Abientt", R.raw.track_abientt));
         }
-        return new Album(title, tracks);
+        return new Album(title, imageUrl, tracks);
     }
 
     public String getAddress() {
