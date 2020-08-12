@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.LocationHelper;
@@ -265,7 +266,7 @@ public class AddEditTourActivityViewModel extends ViewModel {
 
         SaveTourRequest request = new SaveTourRequest(
                 title,
-                profileHolder.getProfile().getName(),
+                ProfileCache.getInstance(App.getInstance()).getProfile().getName(),
                 dateStr,
                 locationCoordinates!= null ? String.valueOf(locationCoordinates.getValue().getLatitude()) : "",
                 locationCoordinates!= null ? String.valueOf(locationCoordinates.getValue().getLongitude()) : "",
@@ -274,7 +275,7 @@ public class AddEditTourActivityViewModel extends ViewModel {
                 address,
                 "0",
                 "0",
-                profileHolder.getGuideId());
+                ProfileCache.getInstance(App.getInstance()).getGuideId());
 
         disposable.add(tourRepository.saveTour(request, imagePath)
                 .subscribe(response -> {
@@ -304,7 +305,7 @@ public class AddEditTourActivityViewModel extends ViewModel {
 
             SaveTourRequest request = new SaveTourRequest(
                     title,
-                    profileHolder.getProfile().getName(),
+                    ProfileCache.getInstance(App.getInstance()).getProfile().getName(),
                     dateStr,
                     locationCoordinates != null ? String.valueOf(locationCoordinates.getValue().getLatitude()) : "",
                     locationCoordinates != null ? String.valueOf(locationCoordinates.getValue().getLongitude()) : "",
@@ -313,7 +314,7 @@ public class AddEditTourActivityViewModel extends ViewModel {
                     address,
                     "0",
                     "0",
-                    profileHolder.getGuideId());
+                    ProfileCache.getInstance(App.getInstance()).getGuideId());
 
             disposable.add(tourRepository.updateTour(currentTour.getId(), request, imagePath)
                     .subscribe(response -> {

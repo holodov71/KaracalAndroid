@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.FileHelper;
 import app.karacal.helpers.PreferenceHelper;
@@ -53,8 +54,8 @@ public class DashboardActivityViewModel extends ViewModel {
         App.getAppComponent().inject(this);
     }
 
-    public Profile getProfile(){
-        return profileHolder.getProfile();
+    public Profile getProfile(Context context){
+        return ProfileCache.getInstance(context).getProfile();
     }
 
 
@@ -66,7 +67,9 @@ public class DashboardActivityViewModel extends ViewModel {
                             avatarUploadingLiveData.setValue(false);
                             if (response.isSuccess()){
                                 avatarUploadedAction.setValue(response.getUrl());
-                                profileHolder.getProfile().setAvatar(response.getUrl());
+                                Profile profile = ProfileCache.getInstance(context).getProfile();
+                                profile.setAvatar(response.getUrl());
+                                ProfileCache.getInstance(context).setProfile(context, profile);
                             } else {
                                 avatarUploadingErrorAction.setValue(response.getErrorMessage());
                             }

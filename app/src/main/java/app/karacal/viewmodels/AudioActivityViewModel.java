@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.data.DownloadedToursCache;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.SavedPaymentMethods;
 import app.karacal.data.repository.AlbumRepository;
 import app.karacal.data.repository.GuideRepository;
@@ -243,7 +244,7 @@ public class AudioActivityViewModel extends ViewModel {
             if (tour.getValue().getPrice() == 0) {
                 successCallback.invoke();
             } else {
-                if (profileHolder.isHasSubscription() || profileHolder.isPurchasesContainsTour(tour.getValue().getId())) {
+                if (ProfileCache.getInstance(App.getInstance()).isHasSubscription() || ProfileCache.getInstance(App.getInstance()).isPurchasesContainsTour(tour.getValue().getId())) {
                     Log.v("checkAccess", "has Subscription");
                     successCallback.invoke();
                 } else {
@@ -424,7 +425,9 @@ public class AudioActivityViewModel extends ViewModel {
     private void createCustomer(){
         String serverToken = PreferenceHelper.loadToken(App.getInstance());
 
-        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+        String mail = ProfileCache.getInstance(App.getInstance()).getProfile().getEmail();
+
+        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(mail);
         disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
                 .subscribe(response -> {
                     Log.v("createCustomer", "Success response = " + response);
@@ -478,7 +481,7 @@ public class AudioActivityViewModel extends ViewModel {
                 .subscribe(response -> {
                     Log.v("makePayment", "Success response = " + response);
                     if (response.isSuccess()) {
-                        profileHolder.addTourPurchase(tourId);
+                        ProfileCache.getInstance(App.getInstance()).addTourPurchase(App.getInstance(), tourId);
                         tourPayedAction.setValue(response.getReceiptUrl());
                     } else {
                         errorAction.setValue(response.getErrorMessage());

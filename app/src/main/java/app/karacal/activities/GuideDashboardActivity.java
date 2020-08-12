@@ -16,13 +16,11 @@ import com.google.android.material.tabs.TabLayout;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import javax.inject.Inject;
-
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.DashboardTourPagerAdapter;
+import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ImageHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Profile;
 import app.karacal.navigation.NavigationHelper;
@@ -36,8 +34,8 @@ public class GuideDashboardActivity extends LogActivity {
     private ProgressBar progressLoading;
     private DashboardActivityViewModel viewModel;
 
-    @Inject
-    ProfileHolder profileHolder;
+//    @Inject
+//    ProfileHolder profileHolder;
 
 
     @Override
@@ -48,7 +46,7 @@ public class GuideDashboardActivity extends LogActivity {
 
         setContentView(R.layout.activity_dashboard);
         setupButtons();
-        Profile profile = viewModel.getProfile();
+        Profile profile = viewModel.getProfile(this);
         setupAuthor(profile);
         setupViewPager(profile);
         setupProgressLoading();
@@ -91,7 +89,7 @@ public class GuideDashboardActivity extends LogActivity {
 
     private void setupViewPager(Profile profile){
         ViewPager viewPager = findViewById(R.id.viewPager);
-        DashboardTourPagerAdapter adapter = new DashboardTourPagerAdapter(this, getSupportFragmentManager(), profileHolder.getGuideId());
+        DashboardTourPagerAdapter adapter = new DashboardTourPagerAdapter(this, getSupportFragmentManager(), ProfileCache.getInstance(this).getGuideId());
         viewPager.setAdapter(adapter);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(viewPager);

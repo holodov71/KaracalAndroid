@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import app.karacal.App;
 import app.karacal.data.DownloadedToursCache;
 import app.karacal.data.NotificationsCache;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.SavedPaymentMethods;
 import app.karacal.models.Tour;
 
@@ -23,6 +24,7 @@ public class PreferenceHelper {
     private static final String PRIVACY_POLICY_APPLIED_KEY = "PRIVACY_POLICY_APPLIED";
     private static final String AUTH_TOKEN_KEY = "AUTH_TOKEN";
     private static final String DOWNLOADED_TOURS_KEY = "DOWNLOADED_TOURS";
+    private static final String PREF_PROFILE_KEY = "PREF_PROFILE_KEY";
     private static final String NOTIFICATIONS_KEY = "NOTIFICATIONS_KEY";
     private static final String PAYMENT_METHODS_KEY = "PAYMENT_METHODS_KEY";
     private static final String DOWNLOAD_ONLY_VIA_WIFI_KEY = "DOWNLOAD_ONLY_VIA_WIFI";
@@ -60,6 +62,15 @@ public class PreferenceHelper {
 
     public static void deleteToken(Context context){
         getSharedPreferences(context).edit().remove(AUTH_TOKEN_KEY).apply();
+    }
+
+    public static String getProfileCache(Context context) {
+        String defValue = ProfileCache.getEmptyInstance().retrieveStringFormat();
+        return getSharedPreferences(context).getString(PREF_PROFILE_KEY, defValue);
+    }
+
+    public static void setProfileCache(Context context, String cache) {
+        getSharedPreferences(context).edit().putString(PREF_PROFILE_KEY, cache).apply();
     }
 
     public static String getDownloadedToursCache(Context context) {

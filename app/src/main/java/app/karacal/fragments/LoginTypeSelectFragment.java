@@ -37,6 +37,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
@@ -153,13 +154,14 @@ public class LoginTypeSelectFragment extends LogFragment {
     }
 
     private void setupTextViews(View view) {
-        View.OnClickListener linkClickListener = v -> {
-            NavigationHelper.startPrivacyPolicyActivity(getActivity());
-        };
         TextView textViewPrivacyPolicy = view.findViewById(R.id.textViewPrivacyPolicy);
-        setupLink(textViewPrivacyPolicy, linkClickListener);
+        setupLink(textViewPrivacyPolicy, v -> {
+            NavigationHelper.startPolitiqueProtectionActivity(getActivity());
+        });
         TextView textViewTermsOfService = view.findViewById(R.id.textViewTermsOfService);
-        setupLink(textViewTermsOfService, linkClickListener);
+        setupLink(textViewTermsOfService, v -> {
+            NavigationHelper.startPrivacyPolicyActivity(getActivity());
+        });
     }
 
     private void setupLink(TextView textView, View.OnClickListener listener) {
@@ -222,7 +224,7 @@ public class LoginTypeSelectFragment extends LogFragment {
 
                         makeServerLogin(id, firstName, lastName, email);
 
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         ToastHelper.showToast(getContext(), getString(R.string.facebook_sign_in_error));
                         e.printStackTrace();
                     }
@@ -242,10 +244,11 @@ public class LoginTypeSelectFragment extends LogFragment {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(profile -> {
-                        profileHolder.setProfile(profile);
-                        NavigationHelper.startMainActivity(getActivity());
                         FragmentActivity activity = getActivity();
                         if (activity != null) {
+//                            profileHolder.setProfile(profile);
+                            ProfileCache.getInstance(activity).setProfile(activity, profile);
+                            NavigationHelper.startMainActivity(getActivity());
                             activity.finish();
                         }
                         loginDisposable = null;

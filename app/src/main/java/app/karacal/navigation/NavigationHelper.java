@@ -18,6 +18,7 @@ import app.karacal.activities.LoginActivity;
 import app.karacal.activities.MainActivity;
 import app.karacal.activities.PasswordHasBeenResetActivity;
 import app.karacal.activities.PaymentMethodActivity;
+import app.karacal.activities.PolitiqueProtectionActivity;
 import app.karacal.activities.PrivacyPolicyActivity;
 import app.karacal.activities.ProfileActivity;
 import app.karacal.activities.ReferFriendActivity;
@@ -66,6 +67,11 @@ public class NavigationHelper {
 
     public static void startPrivacyPolicyActivity(Activity context) {
         Intent intent = new Intent(context, PrivacyPolicyActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void startPolitiqueProtectionActivity(Activity context) {
+        Intent intent = new Intent(context, PolitiqueProtectionActivity.class);
         context.startActivity(intent);
     }
 

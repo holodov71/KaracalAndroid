@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.helpers.KeyboardHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.CardDetails;
@@ -82,16 +83,20 @@ public class PaymentMethodAddFragment extends Fragment {
 
                     showLoading();
 
-                    CardDetails cardDetails = new CardDetails(
-                            card.getNumber(),
-                            card.getCvc(),
-                            expiryMonth,
-                            expiryYear,
-                            card.getBrand().getDisplayName(),
-                            profileHolder.getProfile().getSecondName());
-                    viewModel.addPaymentMethod(getContext(), cardDetails);
-                    hideLoading();
-                    if (getActivity() != null) getActivity().onBackPressed();
+                    if (getActivity() != null) {
+                        String secondName = ProfileCache.getInstance(getActivity()).getProfile().getSecondName();
+
+                        CardDetails cardDetails = new CardDetails(
+                                card.getNumber(),
+                                card.getCvc(),
+                                expiryMonth,
+                                expiryYear,
+                                card.getBrand().getDisplayName(),
+                                secondName);
+                        viewModel.addPaymentMethod(getContext(), cardDetails);
+                        hideLoading();
+                        getActivity().onBackPressed();
+                    }
                 }
 
 //                Card newCard = new Card.Builder(

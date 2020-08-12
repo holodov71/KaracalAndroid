@@ -257,7 +257,7 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
 //    }
 
     private void showTours(int tourId){
-        CategoryActivity.Args args = new CategoryActivity.Args(TourCategory.CATEGORY_ORIGINAL, getString(R.string.originals), CategoryViewMode.STACK);
+        CategoryActivity.Args args = new CategoryActivity.Args(TourCategory.CATEGORY_ORIGINAL, getString(R.string.originals), CategoryViewMode.STACK, tourId);
         NavigationHelper.startCategoryActivity(getActivity(), args);
     }
 

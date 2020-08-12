@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.dialogs.ForgotPasswordDialog;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.KeyboardHelper;
@@ -112,10 +113,12 @@ public class EmailLoginFragment extends LogFragment {
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(profile -> {
-                                profileHolder.setProfile(profile);
-                                NavigationHelper.startMainActivity(getActivity());
+//                                profileHolder.setProfile(profile);
+
                                 FragmentActivity activity = getActivity();
                                 if (activity != null) {
+                                    ProfileCache.getInstance(activity).setProfile(activity, profile);
+                                    NavigationHelper.startMainActivity(activity);
                                     activity.finish();
                                 }
                             }, throwable -> {

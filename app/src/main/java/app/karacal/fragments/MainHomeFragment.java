@@ -27,6 +27,7 @@ import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CategoryActivity;
 import app.karacal.adapters.TourHorizontalListAdapter;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.CategoryViewMode;
@@ -82,14 +83,17 @@ public class MainHomeFragment extends Fragment {
         ImageView imageView = view.findViewById(R.id.imageTitle);
 
         Glide.with(this)
-                .load(R.mipmap.main_logo)
+                .load(R.mipmap.karacal_main_logo_new)
                 .centerCrop()
                 .into(imageView);
     }
 
     private void setupGreetings(View view) {
         TextView textView = view.findViewById(R.id.textViewGreetings);
-        textView.setText(getString(R.string.greetings, profileHolder.getProfile().getFirstName()));
+        if (getContext() != null) {
+            String firstName = ProfileCache.getInstance(getContext()).getProfile().getFirstName();
+            textView.setText(getString(R.string.greetings, firstName));
+        }
     }
 
     private void setupSeeAroundMeButton(View view) {

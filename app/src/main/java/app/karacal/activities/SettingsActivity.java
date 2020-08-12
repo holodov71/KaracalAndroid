@@ -36,6 +36,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.dialogs.DeleteAccountDialog;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
@@ -122,7 +123,7 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
     }
 
     private void initProfile(){
-        Profile profile = profileHolder.getProfile();
+        Profile profile = ProfileCache.getInstance(this).getProfile();
         firstName = profile.getFirstName();
         secondName = profile.getSecondName();
         birthDate = profile.getBirthDate();
@@ -147,7 +148,7 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
     private void setupChangePasswordButton() {
         LinearLayout buttonChangePassword = findViewById(R.id.buttonChangePassword);
-        if(profileHolder.getProfile().getSocialId() != null){
+        if(ProfileCache.getInstance(this).getProfile().getSocialId() != null){
             buttonChangePassword.setVisibility(View.GONE);
         }else {
 //            buttonChangePassword.setOnClickListener(v -> NavigationHelper.startChangePasswordActivity(this));
@@ -167,18 +168,12 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
     private void setupTermsButton() {
         LinearLayout buttonTerms = findViewById(R.id.buttonTerms);
-        buttonTerms.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PrivacyPolicyActivity.class);
-            startActivity(intent);
-        });
+        buttonTerms.setOnClickListener(v -> NavigationHelper.startPrivacyPolicyActivity(this));
     }
 
     private void setupPrivacyPolicyButton() {
         LinearLayout buttonPrivacyPolicy = findViewById(R.id.buttonPersonalDataProtectionPolicy);
-        buttonPrivacyPolicy.setOnClickListener(v -> {
-            Intent intent = new Intent(this, PrivacyPolicyActivity.class);
-            startActivity(intent);
-        });
+        buttonPrivacyPolicy.setOnClickListener(v -> NavigationHelper.startPolitiqueProtectionActivity(this));
     }
 
     private void setupDeleteAccountButton() {
@@ -360,7 +355,8 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(profile -> {
-                    profileHolder.setProfile(profile);
+//                    profileHolder.setProfile(profile);
+                    ProfileCache.getInstance(this).setProfile(this, profile);
                     onBackPressed();
                 }, throwable -> {
                     progressLoading.setVisibility(View.GONE);
@@ -373,7 +369,9 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
         progressLoading.setVisibility(View.VISIBLE);
 
-        disposable.add(apiHelper.resetPassword(new ResetPasswordRequest(profileHolder.getProfile().getEmail()))
+        String mail = ProfileCache.getInstance(this).getProfile().getEmail();
+
+        disposable.add(apiHelper.resetPassword(new ResetPasswordRequest(mail))
                 .subscribe(response -> {
                     progressLoading.setVisibility(View.GONE);
                     if (response.isSuccess()){
@@ -420,8 +418,9 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         try {
             LoginManager.getInstance().logOut();
             mGoogleApiClient.signOut();
-
-            profileHolder.removeProfile(this);
+            ProfileCache.getInstance(this).removeProfile(this);
+//            profileHolder.removeProfile(this);
+            PreferenceHelper.deleteToken(this);
             PaymentsUpdateService.stopTimer();
         } catch (Exception ex){
             ex.printStackTrace();

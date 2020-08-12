@@ -271,6 +271,7 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
             }
 
             unbindService(serviceConnection);
+            serviceBound = false;
             //service is active
             if (!playerService.isPlaying()){
                 playerService.stopSelf();

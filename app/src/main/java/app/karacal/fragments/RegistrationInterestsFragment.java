@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.igalata.bubblepicker.BubblePickerListener;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.InterestsBubblePickerAdapter;
+import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
@@ -183,9 +185,14 @@ public class RegistrationInterestsFragment extends LogFragment {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(profile -> {
-                            profileHolder.setProfile(profile);
-                            NavigationHelper.startMainActivity(getActivity());
-                            getActivity().finishAffinity();
+                            FragmentActivity activity = getActivity();
+
+                            if (activity != null) {
+//                                profileHolder.setProfile(profile);
+                                ProfileCache.getInstance(activity).setProfile(activity, profile);
+                                NavigationHelper.startMainActivity(activity);
+                                activity.finishAffinity();
+                            }
                         },
                         throwable -> {
                             hideLoading();

@@ -22,7 +22,7 @@ android {
 
     def versionMajor = 1
     def versionMinor = 1
-    def versionPatch = 1
+    def versionPatch = 2
 
     def code = versionMajor * 100 + versionMinor * 10 + versionPatch
 
@@ -54,7 +54,7 @@ android {
     }
     buildTypes {
         release {
-            debuggable false
+            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config

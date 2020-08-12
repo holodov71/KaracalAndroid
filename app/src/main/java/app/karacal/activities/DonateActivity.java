@@ -1,6 +1,5 @@
 package app.karacal.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -11,8 +10,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.stripe.android.ApiResultCallback;
@@ -28,11 +25,11 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.SavedPaymentMethods;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.CardDetails;
@@ -85,8 +82,8 @@ public class DonateActivity extends LogActivity {
     @Inject
     ApiHelper apiHelper;
 
-    @Inject
-    ProfileHolder profileHolder;
+//    @Inject
+//    ProfileHolder profileHolder;
 
     private CompositeDisposable disposable = new CompositeDisposable();
 
@@ -226,8 +223,9 @@ public class DonateActivity extends LogActivity {
     // Payment region
     private void createCustomer(){
         String serverToken = PreferenceHelper.loadToken(App.getInstance());
+        String mail = ProfileCache.getInstance(this).getProfile().getEmail();
 
-        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(mail);
         disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
                 .subscribe(response -> {
                     Log.v("createCustomer", "Success response = " + response);

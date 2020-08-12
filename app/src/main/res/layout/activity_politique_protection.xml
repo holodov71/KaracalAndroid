@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.PrivacyPolicyActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/buttonBack"
+            style="@style/SmallButton"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_arrow_back"
+            android:tint="@drawable/selector_orange_text_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewCategoryTitle"
+            style="@style/TextWhite.AppBarTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/politique_protection"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/buttonBack"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="1- Objet"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="La présente politique de protection des données personnelles («Politique ») s\’applique à l\’application KARACAL telle que décrite dans nos Conditions générales d\’utilisation.
+                    \nLa présente Politique a pour objet de définir quelles sont les données personnelles des Utilisateurs que nous traitons dans le cadre de l\’utilisation de nos Services, et d\’expliquer les raisons pour lesquelles nous les traitons.
+                    \nNous nous engageons à respecter la législation en vigueur relative à la protection de la vie privée eu égard au traitement automatisé des Données, notamment de la Loi n° 78-17 du 6 janvier 1978 relative à l\’informatique, aux fichiers et aux libertés modifiée et du Règlement(UE) 2016/679 du Parlement européen et du Conseil du 27 avril 2016 relatif à la protection des personnes physiques à l\’égard du traitement des Données."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="2- Responsable du traitement de vos données personnelles"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="KARACAL est une application proposée par la société KARACAL, S.A.S. au capital de 1000€ et dont le siège social est situé 12 rue Daubigny 95430 Auvers-sur-Oise, immatriculée RCS Pontoise B 880 076 716.
+
+                    \n\nTéléphone : 06 25 71 08 69
+
+                    \n\nEmail : help@karacal.fr"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="3- Données personnelles que nous traitons"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Les informations nécessaires à la création d\’un compte par un Utilisateur sont les suivantes :
+                    \n◯ Des identifiants de connexion : adresse e-mail et mot de passe
+                    \n◯ Le nom et le prénom
+                    \n◯ La date de naissance
+                    \n◯ La ville de résidence
+                    \nLe cas échéant ces informations peuvent être obtenues via des services tiers (Facebook, Google+) et nous traitons donc les informations liées à ces services.
+
+                    \n\nVous êtes informés du caractère obligatoire ou facultatif de la collecte de ladite Donnée. En cas de non fourniture de ces données obligatoires, KARACAL ne pourra prendre en compte l\’inscription.
+                    \nD\’autres données sont susceptibles d\’être communiquées par l\’Utilisateur pour permettre le fonctionnement de nos services.
+                    \nDans le cas d\’une candidature pour le statut de créateur de contenu (voir CGU) :
+                    \nDes coordonnées telles que nom, prénom, civilité, date de naissance, numéro de téléphone, adresse postale, expériences professionnelles et autres.
+
+                    \n\nLorsque l\’Utilisateur utilise nos services :
+                    \n◯ Informations sur l\’appareil et les données de connexion telles adresse IP, système d\’exploitation, dates et heures de connexions
+                    \n◯ Les données de navigations
+                    \n◯ Les données relatives à la consultation de contenu
+                    \n◯ Les données de géolocalisation
+                    \nNous collectons ces informations notamment grâce aux cookies ou technologies similaires.
+                    \nDans le cadre du suivi de notre relation commerciale, nous sommes amenés à traiter notamment les informations relatives au type d\’achat effectué (à l\’unité, abonnement mensuel, abonnement annuel, autre), les informations relatives à votre méthode de paiement et aux détails de la transaction effectuée."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="4- Finalités des traitements de données personnelles"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Nous sommes susceptibles de traiter vos données personnelles recueillies lors de la création d\’un de votre compte et/ou de l\’utilisation de nos services, pour les finalités suivantes :
+
+                    \n\n◯ Gérer l\’identité de l\’Utilisateur et d'authentifier (base légale : exécution d\’un contrat, respect d\’une obligation légale)
+                    \n◯ Gérer les abonnements aux services (base légale : exécution d\’un contrat)
+                    \n◯ Gérer les opérations de facturation et de paiement (base légale : exécution d\’un contrat, respect d\’une obligation légale)
+                    \n◯ Traiter les réclamations et les résiliations (base légale : exécution d\’un contrat, respect d\’une obligation légale)
+                    \n◯ Assurer le support client (base légale : exécution d\’un contrat)
+                    \n◯ Gérer les caractéristiques et droits du contrat en fonction de l\’offre commerciale (base légale : exécution d\’un contrat, respect d\’une obligation légale)
+                    \n◯ Mesurer l\’audience de fréquentation des Services (base légale : intérêts légitimes)
+                    \n◯ Améliorer les Services pour optimiser ou offrir de nouvelles fonctionnalités (base légale : intérêts légitimes)
+                    \n◯ Informer l\’Utilisateur des offres et actualités de KARACAL (base légale : consentement)
+                    \n◯ Réaliser des enquêtes de satisfaction (base légale : consentement)
+                    \n◯ Permettre à l\’Utilisateur d\’exercer ses droits décrits à l\’article 9 ci-après (base légale : intérêts légitimes, exercice d\’une obligation légale)
+                    \n◯ Lutter contre la fraude et les impayés (base légale : exercice d\’une obligation légale)"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="5- Destinataires de vos données personnelles"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Les Données traitées à l\’occasion de l\’utilisation de KARACAL par l\’Utilisateur sont destinées à KARACAL, aux personnes habilitées et autorisées par KARACAL ayant par leurs fonctions, besoin d\’en avoir connaissances pour les finalités du traitement ainsi que :
+                    \nLes prestataires de KARACAL afin de s\’assurer de la parfaite fourniture du service.
+                    \nLes sous-traitants techniques choisis par KARACAL peuvent, pour le compte et sur instructions de KARACAL, intervenir pour notamment héberger et stocker sur leurs serveurs des Données des Utilisateurs, assurer la sécurité de l\’infrastructure technique de KARACAL.
+                    \nLes entreprises et administrations clientes du service KARACAL ont accès aux informations anonymisées concernant l\’utilisation par les Utilisateurs des contenus qui leur sont liés.
+                    \nLes applications tierces accessibles depuis l\’Application, dans le cas où l\’Utilisateur a donné son accord exprès lors de l\’utilisation de chaque application.
+                    \nLes autorités administratives ou judiciaires. KARACAL peut être amenée à communiquer des informations relatives à ses Utilisateurs, en ce incluses des Données, auprès d\’autorités administratives ou judiciaires notamment dans le cadre de réquisitions judiciaires."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="6- Stockage de vos données personnelles"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Les données personnelles collectées sont stockées et hébergées par la société OVH située au 2 rue Kellermann, 59100 Roubaix, France."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="7- Durée de conservation de vos données personnelles"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Vos données personnelles sont conservées pendant une durée nécessaire aux finalités pour lesquelles elles ont été collectées, et conforme à la législation en vigueur. En effet, tant que vous restez l\’un de nos Utilisateurs, nous avons besoin de conserver vos informations afin de pouvoir satisfaire à nos exigences tant contractuelles que légales.
+                    \nA l\’issue de notre relation contractuelle, nous conservons les données nécessaires à la gestion de votre compte à titre d\’archive pour une durée de un (1) an suivant la fin de ladite relation contractuelle, lorsqu\’elles présentent notamment un intérêt administratif.
+                    \nPar ailleurs, les données des clients utilisées à des fins de prospection commerciale peuvent être conservées pendant un délai de trois ans à compter de la fin de la relation commerciale."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="8- Sécurité de vos données personnelles"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Nous disposons de mesures adéquates et appropriées afin de protéger vos données personnelles contre toute destruction, perte, altération,divulgation ou accès non autorisé, conformément au droit en vigueur.
+                    \nNéanmoins, nous ne pouvons vous garantir que les données que vous nous communiquez et que nous collectons ne seront pas divulguées ou détruite par une violation de nos mesures techniques de protection.
+                    \nVous êtes également responsable de la protection et de l\’accès à vos informations et nous vous conseillons d\’avoir un mot de passe fort que vous n\’utilisez pas pour sécuriser plusieurs accès ou comptes."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="9- Exercice de vos droits et contact"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="À tout moment, et conformément au droit en vigueur dans l\’Union européenne, vous disposez d\’un droit d\’accès, de rectification, de limitation, de suppression, d\’opposition, de portabilité et d\’effacement de vos données.
+                    \nVous pouvez également porter réclamation devant l\’autorité de contrôle compétente.
+                    \nPour exercer vos droits, veuillez adresser votre demande (en indiquant votre adresse électronique, nom, prénom, adresse et copie de votre pièce d\’identité) en contactant la société KARACAL à l\’adresse : 13 rue Mademoiselle, 75015 Paris, immatriculée au RCS Pontoise B 880 076 716.
+
+                    \n\nTéléphone : 06 25 71 08 69
+
+                    \n\nEmail : help@karacal.fr"/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="10- Politique en matière de cookies"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Nous (ou par l\’intermédiaire de nos fournisseurs de services), pouvons collecter, stocker des informations sur votre appareil grâce aux Cookies ou technologies similaires.
+
+                    \nLes Clients sont informés de l\’installation de cookies lors de l\’utilisation de nos Services.
+                    \nPour en savoir plus sur ce qu\’est un cookie, nous vous invitons à consulter le lien suivant : https://www.cnil.fr/fr/cookies-traceurs-que-dit-la-loi
+                    \nLes Cookies que nous émettons sur notre site nous permettent :
+                    \nD\’établir des statistiques de fréquentation et d\’utilisation de nos services
+                    \nD\’améliorer et personnaliser votre navigation sur le site
+                    \nD\’améliorer la performance globale
+
+                    \n\nEn utilisant notre services, les utilisateurs reconnaissent être informés de cette pratique et autorisent KARACAL à y recourir.
+                    \nLes utilisateurs pourront désactiver ces cookies par le biais des réglages de leurs appareils ou de leurs navigateurs, mais KARACAL ne pourra garantir que les Services fonctionneront comme attendu, et ne pourra être tenu responsable en cas de dysfonctionnement des Services.
+                    \nPour de plus amples informations sur la gestion et la suppression des« cookies », nous vous invitons à consulter le lien suivant : https://www.cnil.fr/fr/cookies-les-outils-pour-les-maitriser"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

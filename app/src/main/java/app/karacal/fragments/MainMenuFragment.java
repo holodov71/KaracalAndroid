@@ -32,6 +32,7 @@ import app.karacal.activities.ProfileActivity;
 import app.karacal.adapters.GuideHorizontalListAdapter;
 import app.karacal.adapters.TourHorizontalListAdapter;
 import app.karacal.data.DownloadedToursCache;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.dialogs.MessageDialog;
@@ -118,7 +119,7 @@ public class MainMenuFragment extends Fragment {
         LinearLayout buttonSettings = view.findViewById(R.id.buttonSettings);
         buttonSettings.setOnClickListener(v -> NavigationHelper.startSettingsActivity(getActivity()));
         LinearLayout buttonDashboard = view.findViewById(R.id.buttonDashboardGuide);
-        if (profileHolder.isGuide()) {
+        if (ProfileCache.getInstance(App.getInstance()).isGuide()) {
             buttonDashboard.setOnClickListener(v -> NavigationHelper.startDashboardActivity(getActivity()));
         } else {
             buttonDashboard.setOnClickListener(v -> {
@@ -224,7 +225,9 @@ public class MainMenuFragment extends Fragment {
             mGoogleApiClient.signOut();
 
             if (getActivity() != null){
-                profileHolder.removeProfile(getActivity());
+//                profileHolder.removeProfile(getActivity());
+                ProfileCache.getInstance(getActivity()).removeProfile(getActivity());
+                PreferenceHelper.deleteToken(getActivity());
                 PaymentsUpdateService.stopTimer();
                 NavigationHelper.startLoginActivity(getActivity());
                 getActivity().finish();

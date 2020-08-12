@@ -17,10 +17,11 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.TokenHelper;
+import app.karacal.models.Profile;
 import app.karacal.navigation.NavigationHelper;
 import apps.in.android_logger.LogActivity;
 import apps.in.android_logger.Logger;
@@ -31,9 +32,6 @@ public class LoginActivity extends LogActivity {
 
     @Inject
     TokenHelper tokenHelper;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Inject
     ApiHelper apiHelper;
@@ -63,17 +61,24 @@ public class LoginActivity extends LogActivity {
         if (token != null){
             Log.v("this", "tryToAuthorize token = "+token);
 
-            apiHelper.getProfile(token)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(profile -> {
-                        profileHolder.setProfile(profile);
-                        NavigationHelper.startMainActivity(this);
-                        finish();
-                    }, throwable -> {
-                        tokenHelper.updateToken(null);
-                        proceedToLogin();
-                    });
+            Profile mProfile = ProfileCache.getInstance(this).getProfile();
+            if (mProfile != null){
+                NavigationHelper.startMainActivity(this);
+                finish();
+            } else {
+
+                apiHelper.getProfile(token)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(profile -> {
+                            ProfileCache.getInstance(this).setProfile(this, profile);
+                            NavigationHelper.startMainActivity(this);
+                            finish();
+                        }, throwable -> {
+                            PreferenceHelper.saveToken(null);
+                            proceedToLogin();
+                        });
+            }
 
         } else {
             proceedToLogin();

@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="16dp"
-            android:text="@string/privacy_policy"
+            android:text="@string/terms"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/buttonBack"
@@ -58,29 +58,268 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="@string/personal_data_protection_policy"/>
+                android:text="Conditions générales d\’utilisation de KARACAL"/>
 
             <TextView
                 style="@style/TextWhite.ItemDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="@string/personal_data_protection_policy_description"/>
+                android:text="En vigueur à compter du 01/08/2019
+                    \n\nKARACAL est une application proposée par la société KARACAL, S.A.S. au capital de 1000€ et dont le siège social est situé 12 rue Daubigny 95430 Auvers-sur-Oise, immatriculée RCS Pontoise B 880 076 716.
+                    \n\nCes conditions générales d\’utilisation définissent :
+                    \nLes droits des Utilisateurs de l\’application et ceux de KARACAL y compris les droits relatifs à la protection des données personnelles
+                    \nLes règles d\’utilisation de KARACAL
+                    \nLes conditions d\’accès au contenu de KARACAL y compris les conditions générales de vente"/>
 
             <TextView
                 style="@style/TextWhite.ItemTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="@string/these_terms_of_service"/>
+                android:text="Introduction"/>
 
             <TextView
                 style="@style/TextWhite.ItemDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="@string/these_terms_of_service_description"/>
+                android:text="La société KARACAL (“KARACAL”, “nous”, “notre”) fournit des services relatifs à l\’enregistrement, la diffusion et l\’écoute de podcasts de visite à l\’attention de ses Utilisateurs. Certains Utilisateurs bénéficient d\’un statut particulier de “créateurs de contenu” dont l\’accès, les droits et les devoirs sont définis ci-après.
+                    \n\nEn créant un compte permettant d\’accéder à l\’Application KARACAL, l\’Utilisateur déclare avoir lu les Conditions Générales d\’Utilisation et être âgé d\’au moins 16 ans s\’il réside sur le territoire de l\’Union Européenne et d\’au moins 13 ans s\’il réside dans un pays hors de l\’Union Européenne."/>
 
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="1 - Le compte KARACAL"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="L\’utilisation des services proposés nécessite l\’inscription de l\’Utilisateur par la création d\’un compte.
+                        \nLa création du compte peut se faire par la saisie volontaire initiale des informations requises ou par le biais d\’un compte Facebook® ou d\’un compte Google® existant puis de la soumission du complément d\’informations demandé.
+                        \nL\’Application KARACAL est gratuite et propose des contenus gratuits et payants.
+
+                        \n\nLe compte de l\’Utilisateur lui permettra de rechercher des contenus par la localisation ou par mots-clés, de gérer ses favoris, d\’échanger avec d\’autres Utilisateurs et d\’écouter les contenus.
+
+                        \n\nDes fonctionnalités supplémentaires sont accessibles aux créateurs de contenu dont le statut est défini ci-après.
+                        Pour permettre l\’interaction avec les autres Utilisateurs, l\’Utilisateur devra choisir un nom d\’Utilisateur qui sera rendu public dans ses commentaires. Ce nom d\’Utilisateur ne doit pas être de nature à heurter les sensibilités ou à aller à l\’encontre de la loi française.
+                        Afin de l\’aider à naviguer et à découvrir le contenu de l\’Application, l\’Utilisateur recevra également, en tant qu'Utilisateur enregistré, des recommandations personnalisées concernant d'autres contenus qui pourraient l\’intéresser, selon différents critères, comme ses habitudes de navigation et de consultation.
+
+                        \n\nLorsque l\’Utilisateur s\’inscrit il doit fournir une adresse de messagerie ainsi qu\’un nom d\’Utilisateur et un mot de passe pour son compte. L\’Utilisateur doit avoir accès à cette adresse de messagerie et s\’assurer qu\’elle est valide. Toutes les informations personnelles que l\’Utilisateur nous communique seront traitées conformément à notre politique de protection des données personnelles.
+                        \nIl appartient à l\’Utilisateur de garder son mot de passe confidentiel et en sécurité et il sera tenu responsable de toute activité sur son compte Utilisateur, que cette activité ait été ou non autorisée par lui. Si son nom d'Utilisateur ou son mot de passe est perdu ou volé ou si l\’Utilisateur pense qu'une personne a eu accès à son compte sans son autorisation, il est conseillé d'en informer KARACAL par écrit et de modifier son mot de passe dès que possible.
+
+                        \n\nNous nous réservons le droit de suspendre ou résilier le compte de l\’Utilisateur, avec ou sans préavis, si interviennent certaines activités qui, à notre pleine et entière discrétion, semblent constituer, ou pourraient constituer une violation des présentes Conditions d'utilisation ou encore une atteinte aux droits de tout tiers ou une violation de ces droits ou de toute législation ou réglementation en vigueur.
+                        \nSous réserves d\’un abonnement en cours, l\’Utilisateur peut supprimer son compte à tout moment via la fonctionnalité prévue."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="2 - Statut de créateur de contenu"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Le statut de créateur de contenu KARACAL est un statut privilégié qui s\’obtient au terme d\’une sélection menée par la société. Cette sélection est laissée à la pleine et entière discrétion de KARACAL, qui n\’a pas à motiver sa décision d\’accepter ou de refuser la candidature d\’un créateur de contenu potentiel. Cette candidature peut se faire depuis l\’Application ou depuis le Site web.
+
+                    \n\nLes créateurs de contenu accèdent sur l\’Application à une partie qui leur est réservée, ainsi qu\’à des fonctionnalités d\’enregistrement et de suivi des écoutes de leurs contenus. Ils bénéficient d\’un accompagnement particulier de KARACAL dans l\’objectif de créer des contenus de la meilleure qualité possible. Les contenus consistent en des podcasts de visite. Les contenus doivent être soumis à KARACAL par les créateurs de contenus pour être validés avant d\’être disponibles sur l\’Application. KARACAL peut refuser un contenu et demander à un créateur de contenu de le retravailler en motivant sa décision, notamment par la qualité du contenu ou son non-respect de la loi française.
+                    \nLes créateurs de contenus cédent un droit d\’exploitation à KARACAL mais restent propriétaire de leurs contenus. Ils peuvent demander à ce qu\’ils soient retirés de l\’Application à tout moment. KARACAL dispose du droit d\’utiliser les contenus hébergés sur l\’application pour les présenter à des institutions culturelles dans le cadre de la promotion d\’offres qui leurs sont destinées.
+
+                    \n\nLes créateurs de contenus s\’engagent à créer des contenus fiables, dont les informations sont vérifiées et qui respectent les droits d\’auteur éventuels, notamment pour les images d\’illustrations qui accompagnent les contenus ou les musiques. Ils sont en outre tenus d\’effectuer les modifications idoines si une erreur est signalée sur leur contenu, dans une période de 15 jours à compter de la date à laquelle l\’information leur est transmise. Le contenu sera suspendu de l\’Application tant que les modifications n\’auront pas été réalisées.
+
+                    \n\nLes créateurs de contenus sont rémunérés à hauteur d\’une certaine somme à chaque écoute de leurs contenus, sauf cas particuliers (Ecoute d\’un Utilisateur abonné ayant dépassé un certain seuil, opérations promotionnelles spéciales ou autre cas). Dans le cas de l\’achat à l\’unité une écoute est définie par l\’achat lui même, tandis que dans le cas de l\’abonnement une écoute correspond à l\’écoute de plus de 40% d\’un contenu. Les créateurs de contenus ont accès au nombre d\’écoutes payantes et gratuites reçues par leurs contenus. La rémunération fixée par chaque écoute est disponible sur le Site web et sur l\’Application. KARACAL se réserve le droit de modifier cette rémunération, en en informant les créateurs de contenus 30 (trente) jours avant l\’entrée en application de la nouvelle rémunération. Les créateurs de contenus ne peuvent être rémunérés par une entité autre que Karacal pour les contenus qu\’ils créent. Plus particulièrement, un créateur de contenu ne peut pas réaliser des contenus pour un établissement culturel qui l'emploie.
+
+                    \n\nKARACAL peut imposer une somme minimum à atteindre pour déclencher le versement de la rémunération due au créateur de contenu.
+                    \nKARACAL peut en outre décider de manière unilatérale de mettre fin à la collaboration avec un créateur de contenu si celle-ci n\’est pas satisfaisante, notamment en raison de la qualité du contenu réalisés, de la rémunération du créateur de contenu par une autre entité que KARACAL pour ses créations sur l\’application ou du comportement du créateur de contenu. De même, un créateur de contenu peut décider d\’abandonner son statut. Dans cette situation les contenus qu\’il aura créé auparavant deviendront accessibles gratuitement sur l\’Application, sauf si le créateur de contenu demande à ce qu\’ils soient retirés. "/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="3 - Contenus payants
+                    \n\n3 - 1 Mode de paiement et prix"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="L\’accès aux contenus payants sur l\’Application peut se faire à l\’unité ou bien de manière illimité sur un abonnement. Les prix de ces deux modes de paiement sont disponibles sur le Site web et l\’Application en euros toutes taxes comprises.
+                    \nKARACAL se réserve le droit de modifier les prix de l\’achat à l\’unité et de l\’abonnement. Chaque Utilisateur abonné sera informé d\’un changement de tarif par courrier électronique à l\’adresse renseignée par l\’Utilisateur abonné lors de son inscription ou modifiée par la suite au minimum 15 (quinze) jours avant sa prise d\’effet. Dans une telle hypothèse, l\’Utilisateur abonné n\’acceptant pas cette hausse de tarif pourra résilier son abonnement dans les conditions indiquées ci-dessous. A défaut de résiliation par l\’Utilisateur abonné, la nouvelle tarification prendra effet à compter de l\’échéance d\’abonnement suivante.
+
+                    \n\nToute augmentation de la TVA (Taxe sur la Valeur Ajoutée) sera répercutée automatiquement et immédiatement sur le prix. De même en cas de création de toute nouvelle taxe qui aurait pour assiette le prix de l\’achat à l\’unité ou de l\’abonnement. Les conditions de résiliations décrites ci-dessous continuent de s\’appliquer à ces situations.
+
+                    \n\nLe paiement sur l\’Application doit se faire par carte bancaire. Le format abonnement est payable mensuellement. D\’autres modes de paiement non récurrent tel que les cartes cadeaux peuvent être disponibles.
+                    \nLe paiement s\’effectuera, à terme à échoir (paiement par avance), lors de la validation de l\’achat à l\’unité ou de l\’abonnement. Dans le cas de l\’abonnement le paiement sera ensuite réalisé par prélèvement automatique sur une base mensuelle ou annuelle, jusqu\’à la résiliation de l\’abonnement, que la résiliation soit à l\’initiative de l\’Utilisateur abonné ou de KARACAL.
+
+                    \n\nAfin d\’optimiser la sécurité des transactions, KARACAL a choisi un système de paiement. Les garanties accordées par KARACAL au titre de la sécurité des transactions sont identiques à celles obtenues par KARACAL de cet éditeur de système de paiement précité.
+                    \nA défaut d\’éléments contraires apportés par l\’Utilisateur abonné, les registres informatisés, conservés dans les systèmes informatiques de KARACAL et de ses partenaires dans des conditions raisonnables de sécurité, seront considérés comme les preuves des communications, des commandes, des validations et des paiements intervenus entre l\’Utilisateur abonné et KARACAL. Ces informations feront foi sauf à en apporter la preuve écrite et contraire par l\’Utilisateur abonné. L\’archivage de ces éléments est effectué sur un support fiable et durable de manière à correspondre à une copie fiable conformément à l\’article 1379 du code civil."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="3 - 2 Codes promotionnels"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="L\’accès au service payant pourra par ailleurs se faire par la saisie d\’un code promotionnel, offert par KARACAL ou par un service tiers partenaire. La durée de l\’abonnement sera alors différente et propre à chaque code. A l\’expiration de la période d\’abonnement promotionnel, l\’Utilisateur abonné pourra souscrire un abonnement payant ou continuer en version gratuite.
+                    \nDans ce dernier cas, l\’accès illimité offert par l\’abonnement payant sera alors perdu. "/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="3 - 3 Essais"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="De temps à autre, KARACAL ou des tiers en notre nom pouvons offrir des essais d'abonnements payants pendant une période spécifiée, sans paiement, ou à un prix réduit (un « Essai »).
+                    \nKARACAL se réserve le droit de déterminer votre éligibilité à un Essai, et de retirer ou de modifier un Essai à tout moment, sans préavis ni aucune responsabilité, dans la limite autorisée par la loi en vigueur.
+                    \nSauf indication contraire, ces offres d\’essai ou de découverte seront soumises aux présentes CGU et seront limitées à une seule inscription (même adresse IP (Internet Protocol) et/ou même adresse de courrier électronique) quel que soit l\’offre d\’essai ou de découverte."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="3 - 4 Absence de droit de rétractation - durée - reconduction - résiliation"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Conformément aux dispositions de l\’article L. 121-21-8 du Code de la consommation, l\’Utilisateur reconnaît et accepte expressément (I) que la fourniture du service de KARACAL commence immédiatement après la validation de son achat à l\’unité ou de son abonnement soit avant la fin du délai de quatorze jours francs prévu par le Code de la Consommation et (II) reconnaît et accepte en conséquence de ne pas bénéficier du droit de rétractation lié à la vente en ligne ou à distance. En conséquence, aucune demande de rétractation, d\’annulation ou de remboursement ne sera recevable.
+
+                    \n\nSauf résiliation par l\’Utilisateur abonné dans les conditions de prévues ci-dessous et sauf en cas d\’utilisation d\’un moyen de paiement non récurrent (notamment cartes cadeau), l\’abonnement à KARACAL est reconduit tacitement pour une durée identique à celle souscrite initialement. Ainsi, si l\’Utilisateur abonné souscrit à l\’abonnement mensuel, celui-ci sera automatiquement reconduit pour une nouvelle durée d\’un mois.
+
+                    \n\nConformément aux articles L.136-1 et L.136-2 du Code de la consommation, dans le cas où l\’Utilisateur abonné souscrit à un abonnement annuel, l\’Utilisateur abonné recevra un e-mail de la part de KARACAL trois (3) mois avant la fin de celui-ci, lui notifiant sa faculté de résilier le dit abonnement au terme de sa durée, la résiliation étant dès lors possible jusqu\’à la date indiquée dans l\’e-mail de notification. Si l\’Utilisateur abonné ne résilie pas son abonnement annuel dans le délai indiqué, celui-ci sera reconduit pour une nouvelle durée d\’un an.
+                    \nDans le cas d\’un achat à l\’unité l\’Utilisateur peut consulter le contenu acheté sur l\’Application sans limite, sous réserve des modalités de retrait imposées par les ayants-droits.
+
+                    \n\nL\’Utilisateur abonné peut résilier son abonnement selon les modalités prévus par l\’Appstore ou Google Play pour les achats via ces plateformes. La prise en compte de la résiliation sera effective au terme de la période d\’abonnement en cours sous réserve que sa demande ait été envoyée au moins 48 (quarante-huit) heures avant son terme, et jusqu\’à la date et heure de fin telle qu\’indiquée sur le compte de l\’Utilisateur abonné pour une offre d\’essai ou de découverte, sauf indication contraire."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="4 - Les contenus de KARACAL"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Les contenus proposés sur KARACAL sont soit propriété exclusive des créateurs de contenus selon les dispositions définies ci-dessus, soit propriété exclusive des entreprises et institutions clientes de KARACAL, soit propriété exclusive de KARACAL.
+
+                    \n\nL\’accès et l\’utilisation du contenu seront donc limités au cadre prévu par les présentes Conditions Générales d\’Utilisation.
+                    \nLes enregistrements phonographiques présents sur KARACAL sont des fichiers numériques protégés par des dispositions nationales et internationales en matière de droit d\’auteur et de droits voisins du droit d\’auteur. A ce titre et conformément aux dispositions du Code de la propriété intellectuelle, seule leur écoute dans un cadre exclusivement privé est autorisée. Toute utilisation à des fins autres que privées expose l\’Utilisateur à des poursuites judiciaires civiles et/ou pénales. Toute autre utilisation de ces fichiers numériques est strictement interdite et en particulier toute revente, échange ou louage de ces fichiers numériques. La mise à disposition sur d'autres services de partage de contenu sans l'accord du propriétaire des fichiers est strictement interdite et donnera lieu à des poursuites.
+
+                    \n\nLa mise à disposition de ce contenu est donc subordonnée au strict respect des présentes Conditions d'utilisation à tout moment lors de l'utilisation de KARACAL."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="5 - Violation et signalement de Contenu Utilisateur"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="KARACAL a à cœur de respecter les droits des titulaires de propriété intellectuelle. Si vous pensez qu'un contenu viole vos droits de propriété intellectuelle ou tout autre droit, nous vous invitons à nous le signaler via la rubrique “Mon espace” “Contacter Karacal” dans l\’Application.
+                    \nResponsabilité
+
+                    \n\nLa responsabilité de KARACAL ne pourra être retenue en cas d\’inexécution ou de manquement par l\’Utilisateur à ces CGU, de fait imprévisible et insurmontable d\’un tiers ou en cas de force majeure tel que défini par l\’article 1218 du Code Civil.
+                    \nEn tant que simple éditeur du Service, KARACAL ne peut garantir la qualité du réseau Internet, ni son accès et ne peut garantir l\’absence d\’interruption du Service propre au réseau Internet.
+
+                    \n\nEn conséquence, KARACAL ne pourra en aucun cas être tenue responsable des vitesses d\’ouverture et de consultation des pages du service, des vitesses d\’écoute des enregistrements phonographiques, de l\’inaccessibilité temporaire au service, dès lors que ces problèmes sont liés aux réseaux internet et internet mobile sur lesquels KARACAL n\’a aucun contrôle, ainsi que de l\’utilisation frauduleuse par des tiers des informations mises à disposition sur l\’Application. En conséquence également, il incombe à l\’Utilisateur de protéger son matériel informatique ou autre notamment contre toute forme d\’intrusion et/ou de contamination par des virus. KARACAL ne saurait en aucun cas être tenue pour responsable d\’une interruption et/ou contamination par des virus de son matériel résultant d\’une faute, maladresse ou négligence de l\’Utilisateur.
+
+                    \n\nPlus généralement, KARACAL dégage toute responsabilité si un manquement à une quelconque obligation était le fait d\’un cas de force majeure ou fortuite, y compris, mais sans y être limitées,catastrophes, incendies, grève interne ou externe, défaillance ou pannes internes ou externes, et d\’une manière générale tout évènement irrésistible et imprévisible ne permettant pas la bonne exécution des commandes.
+                    \nEn aucun cas KARACAL ne saurait être tenue responsable dans l\’hypothèse où le service proposé s\’avèrerait incompatible avec certains équipements et/ou fonctionnalités du matériel informatique de l\’Utilisateur.
+
+                    \n\nEnfin, KARACAL ne peut être tenue responsable de l\’utilisation fautive commise par l\’Utilisateur, ni de l\’utilisation du compte de l\’Utilisateur faite par un tiers à qui l\’Utilisateur aurait transmis ses identifiants ou qui aurait eu accès au compte suite à une faute, maladresse ou négligence de la part de l\’Utilisateur. L\’Utilisateur s\’engage dans ces cas à faire son affaire personnelle de toute réclamation, revendication, ou opposition et plus généralement de toute procédure formée contre KARACAL émanant d\’un tiers.
+                    \nIl est expressément convenu que KARACAL ne saurait être tenue responsable des éventuelles exploitations frauduleuses des enregistrements qui pourraient avoir lieu à son insu ou en contravention des présentes CGU et notamment de tout téléchargement illégal des enregistrements."/>
+
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="6 - Protection des données, confidentialité et cookies"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Toutes les données personnelles que vous nous transmettez dans le cadre de votre utilisation de KARACAL sont recueillies, stockées, utilisées, divulguées et traitées par KARACAL conformément à notre Politique de confidentialité. En outre, à l'instar de la plupart des services en ligne, nous utilisons des cookies pour nous aider à comprendre et connaître vos habitudes de consultation et d\’écoute, ce qui nous permet d'améliorer en permanence le service et le contenu que nous proposons. La manière dont nous utilisons les cookies et la méthode pour les désactiver sont expliquées dans notre Politique de confidentialité."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="7 - Intégralité de l\’accord"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Les présentes Conditions d'utilisation accompagnée de notre politique de protection des données personnelles constituent l'intégralité de l'accord entre vous et KARACAL."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="8 - Nullité d\’une clause"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Dans l\’hypothèse où l\’une des dispositions des présentes CGU-CGV serait déclarée invalide ou inopposable pour quelque cause que ce soit, les autres dispositions demeureront applicables sans changement,sauf dans les cas où le contrat ne pourrait subsister sans elle."/>
+
+            <TextView
+                style="@style/TextWhite.ItemTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="9 - Loi applicable – Réclamations et litiges"/>
+
+            <TextView
+                style="@style/TextWhite.ItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Les présentes CGU sont soumises à la loi française. Toute réclamation relative à l\’application des présentes CGU devra être adressée à notre Service Client à l\’adresse email : help@karacal.fr
+                    \nConformément à l\’article 14 du règlement (UE) n°524/2013 du 21 mai 2013, l\’Utilisateur abonné dispose d\’un accès à la plateforme européenne de règlement en ligne des litiges de consommation accessible à l\’adresse suivante : https://webgate.ec.europa.eu/odr/main/index.cfm?event=main.home.show.
+
+                    \n\nEn cas de litige, les parties chercheront une solution amiable avant toute action judiciaire. En cas d\’échec de ces tentatives, toutes contestations à la validité, l\’interprétation et/ou l\’exécution des présentes conditions générales d\’utilisation et de vente devront être portées même en cas de pluralité des défendeurs ou d\’appel en garantie, devant les tribunaux compétents."/>
         </LinearLayout>
 
     </ScrollView>

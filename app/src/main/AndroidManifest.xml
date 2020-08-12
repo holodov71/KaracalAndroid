@@ -87,6 +87,9 @@
             android:name=".activities.PrivacyPolicyActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activities.PolitiqueProtectionActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activities.ReferFriendActivity"
             android:screenOrientation="portrait" />
         <activity

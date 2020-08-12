@@ -8,11 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import javax.inject.Inject;
-
 import app.karacal.App;
 import app.karacal.R;
-import app.karacal.helpers.ProfileHolder;
+import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ShareHelper;
 import app.karacal.views.ReferralCodeEditText;
 import apps.in.android_logger.LogActivity;
@@ -20,9 +18,6 @@ import apps.in.android_logger.LogActivity;
 public class ReferFriendActivity extends LogActivity {
 
     private String referralCode;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +32,7 @@ public class ReferFriendActivity extends LogActivity {
     }
 
     private void initReferralCode() {
-        String referralCode = profileHolder.getProfile().getReferralCode();
+        String referralCode = ProfileCache.getInstance(this).getProfile().getReferralCode();
         this.referralCode = referralCode != null ? referralCode : "";
     }
 

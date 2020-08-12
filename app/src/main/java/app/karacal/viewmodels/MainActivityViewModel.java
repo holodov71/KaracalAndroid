@@ -16,6 +16,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import app.karacal.App;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
@@ -131,13 +132,13 @@ public class MainActivityViewModel extends BaseLocationViewModel {
                     if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
                         for (SubscriptionWrapper subs: response.getSubscriptions()){
                             if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
-                                profileHolder.setSubscription(subs.getId());
+                                ProfileCache.getInstance(App.getInstance()).setSubscriptionId(App.getInstance(), subs.getId());
                                 break;
                             }
                         }
                     }
                     if (response.getIdTours() != null && !response.getIdTours().isEmpty()){
-                        profileHolder.setTourPurchases(response.getIdTours());
+                        ProfileCache.getInstance(App.getInstance()).setTourPurchases(App.getInstance(), response.getIdTours());
                     }
                 }, throwable -> {
                     Log.v("loadSubscriptions", "Error loading");
@@ -145,11 +146,14 @@ public class MainActivityViewModel extends BaseLocationViewModel {
     }
 
     private void checkIsGuide(String serverToken){
-        GuideByEmailRequest request = new GuideByEmailRequest(profileHolder.getProfile().getEmail());
+        String email = ProfileCache.getInstance(App.getInstance()).getProfile().getEmail();
+
+        GuideByEmailRequest request = new GuideByEmailRequest(email);
 
         disposable.add(apiHelper.getGuide(serverToken, request)
                 .subscribe(response -> {
-                    profileHolder.setGuide(response.isGuide(), response.getId());
+                    ProfileCache.getInstance(App.getInstance()).setGuide(App.getInstance(), response.isGuide(), response.getId());
+//                    profileHolder.setGuide(response.isGuide(), response.getId());
                 }, throwable -> {
                     Log.v("checkIsGuide", "Error loading");
                 }));

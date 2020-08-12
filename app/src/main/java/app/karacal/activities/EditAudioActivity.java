@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.adapters.TrackEditListAdapter;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.repository.AlbumRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.dialogs.AudioTitleDialog;
@@ -32,9 +33,7 @@ import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.FileHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
-import app.karacal.models.Player;
 import app.karacal.models.Tour;
 import app.karacal.models.Track;
 import app.karacal.navigation.ActivityArgs;
@@ -72,8 +71,8 @@ public class EditAudioActivity extends PermissionActivity {
     @Inject
     TourRepository tourRepository;
 
-    @Inject
-    ProfileHolder profileHolder;
+//    @Inject
+//    ProfileHolder profileHolder;
 
     @Inject
     ApiHelper apiHelper;
@@ -293,7 +292,7 @@ public class EditAudioActivity extends PermissionActivity {
         if (tourId != null) {
             progressLoading.setVisibility(View.VISIBLE);
 
-            int guideId = profileHolder.getGuideId();
+            int guideId = ProfileCache.getInstance(this).getGuideId();
 
             List<Track> tracksToUpload = new ArrayList<>();
 

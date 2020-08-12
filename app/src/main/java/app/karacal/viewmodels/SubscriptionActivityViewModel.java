@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.ProfileCache;
 import app.karacal.data.SavedPaymentMethods;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
@@ -76,7 +77,7 @@ public class SubscriptionActivityViewModel extends ViewModel {
             e.printStackTrace();
         }
 
-        hasSubscription.postValue(profileHolder.isHasSubscription());
+        hasSubscription.postValue(ProfileCache.getInstance(App.getInstance()).isHasSubscription());
 
         subscriptionId = context.getString(R.string.monthly_subscription);
         createCustomer(context);
@@ -85,8 +86,10 @@ public class SubscriptionActivityViewModel extends ViewModel {
     private void createCustomer(Context context){
 
         String serverToken = PreferenceHelper.loadToken(context);
+        String email = ProfileCache.getInstance(App.getInstance()).getProfile().getEmail();
 
-        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(profileHolder.getProfile().getEmail());
+
+        CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(email);
         disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
                 .subscribe(response -> {
                     Log.v("createCustomer", "Success response = " + response);
@@ -104,7 +107,7 @@ public class SubscriptionActivityViewModel extends ViewModel {
     }
 
     public void toggleSubscription() {
-        if(profileHolder.isHasSubscription()){
+        if(ProfileCache.getInstance(App.getInstance()).isHasSubscription()){
             cancelSubscription();
         } else {
             obtainCardToken();
@@ -114,11 +117,11 @@ public class SubscriptionActivityViewModel extends ViewModel {
     private void cancelSubscription(){
         isLoading.setValue(true);
 
-        disposable.add(apiHelper.cancelSubscription(PreferenceHelper.loadToken(), profileHolder.getSubscriptionId())
+        disposable.add(apiHelper.cancelSubscription(PreferenceHelper.loadToken(), ProfileCache.getInstance(App.getInstance()).getSubscriptionId())
                 .subscribe(response -> {
                     Log.v("cancelSubscription", "Success response = " + response);
                     if (response.isSuccess()) {
-                        profileHolder.setSubscription(null);
+                        ProfileCache.getInstance(App.getInstance()).setSubscriptionId(App.getInstance(), null);
                         subscriptionCanceledEvent.call();
                     } else {
                         errorEvent.setValue(response.getErrorMessage());
@@ -181,7 +184,7 @@ public class SubscriptionActivityViewModel extends ViewModel {
                 .subscribe(response -> {
                     Log.v("createCustomer", "Success response = " + response);
                     if (response.isSuccess()) {
-                        profileHolder.setSubscription(response.getSubscriptionId());
+                        ProfileCache.getInstance(App.getInstance()).setSubscriptionId(App.getInstance(), response.getSubscriptionId());
                         subscriptionOpenedEvent.setValue(response.getSubscription());
                     } else {
                         errorEvent.setValue(response.getErrorMessage());

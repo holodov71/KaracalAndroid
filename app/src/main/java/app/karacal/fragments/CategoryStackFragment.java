@@ -1,6 +1,7 @@
 package app.karacal.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.util.List;
 
+import app.karacal.App;
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.adapters.TourStackPagerAdapter;
@@ -26,6 +28,8 @@ import app.karacal.views.StarsView;
 
 public class CategoryStackFragment extends Fragment {
 
+    public static final String ARG_DESIRED_TOUR_ID = "desired_tour_id";
+
     private CategoryActivityViewModel viewModel;
 
     private TextView textViewTitle;
@@ -33,6 +37,8 @@ public class CategoryStackFragment extends Fragment {
     private TextView textViewDuration;
     private StarsView starsView;
     private Button buttonDetails;
+
+    private int desiredTourId = -1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +49,7 @@ public class CategoryStackFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        parseArguments();
         View view = inflater.inflate(R.layout.fragment_category_stack, container, false);
         setupTitleTextView(view);
         setupDescriptionTextView(view);
@@ -51,6 +58,12 @@ public class CategoryStackFragment extends Fragment {
         setupDetailsButton(view);
         observeTours(view);
         return view;
+    }
+
+    private void parseArguments(){
+        if (getArguments() != null) {
+            desiredTourId = getArguments().getInt(ARG_DESIRED_TOUR_ID, -1);
+        }
     }
 
     private void observeTours(View view){
@@ -84,6 +97,17 @@ public class CategoryStackFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
         viewPager.setPageTransformer(true, new StackPageTransformer());
+        Log.v(App.TAG, "setupViewPager desiredTourId = "+desiredTourId);
+        if (desiredTourId != -1) {
+            int index = 0;
+            for (Tour tour: tours){
+                if (tour.getId() == desiredTourId){
+                    viewPager.setCurrentItem(index, false);
+                    break;
+                }
+                index ++;
+            }
+        }
         setContent(adapter.getTour(viewPager.getCurrentItem()));
     }
 

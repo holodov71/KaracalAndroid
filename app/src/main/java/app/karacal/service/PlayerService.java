@@ -20,6 +20,7 @@ import com.bumptech.glide.request.target.NotificationTarget;
 import org.jetbrains.annotations.NotNull;
 
 import app.karacal.R;
+import app.karacal.activities.AudioActivity;
 import app.karacal.activities.MainActivity;
 import app.karacal.models.Album;
 import app.karacal.models.Player;
@@ -165,7 +166,18 @@ public class PlayerService extends LifecycleService {
         contentView.setOnClickPendingIntent(R.id.closePlayer, playbackAction(3));
 
         createNotificationChannel();
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+        Intent notificationIntent;
+
+        if (player != null && player.getTourId() != 0){
+            notificationIntent = new Intent(this, AudioActivity.class);
+            AudioActivity.Args args = new AudioActivity.Args(player.getTourId());
+            notificationIntent.putExtras(args.toBundle());
+            notificationIntent.setAction("played_tour");
+        } else {
+            notificationIntent = new Intent(this, MainActivity.class);
+        }
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
 
