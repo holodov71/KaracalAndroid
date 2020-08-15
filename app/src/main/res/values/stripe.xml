@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="stripe_api_key" translatable="false">pk_test_uUIYpX9gob7isjYc2SKI68zY00jLoFVjJN</string>
-<!--    <string name="stripe_publishable_api_key" translatable="false">pk_test_51GsCWaG3u2PgYWyjQQ9fE1XuJnkMCb7kh51pct5yMsuBHabMBL30B7k4gb76F7m5togCyuM3Cdtk7SG8dAHa8emr0057q3BCxO</string>-->
-
-<!--    Subscriptions -->
+    <string name="stripe_api_key_test" translatable="false">pk_test_uUIYpX9gob7isjYc2SKI68zY00jLoFVjJN</string>
+    <string name="stripe_api_key" translatable="false">pk_live_aeocX1A9WbIKOJrjRUXIkFu900TQdTTDs2</string>
     <string name="monthly_subscription" translatable="false">price_1H4M3AI6YnXqv66ftiNZ3eBA</string>
 </resources>

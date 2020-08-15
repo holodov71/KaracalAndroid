@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import java.io.Serializable;
 
@@ -127,6 +129,7 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
 
     private boolean serviceBound;
     private PlayerService playerService;
+    private int tourId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,8 +144,7 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
         Log.v(App.TAG, "Link to Activity = "+data);
 
         Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
-
-            int tourId = args.getTourId();
+        tourId = args.getTourId();
         viewModel = new ViewModelProvider(this, new AudioActivityViewModel.AudioActivityViewModelFactory(tourId)).get(AudioActivityViewModel.class);
         layoutRoot = findViewById(R.id.layoutRoot);
         observeViewModel();
@@ -240,6 +242,9 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
             playerService.background();
             if (playerService.isPlaying()) {
                 viewModel.setPlayer(playerService.getPlayer());
+                if(playerService.getPlayer().getTourId() == tourId){
+                    Navigation.findNavController(AudioActivity.this, R.id.fragmentHostView).navigate(R.id.audioPlayerFragment);
+                }
             }
             serviceBound = true;
         }

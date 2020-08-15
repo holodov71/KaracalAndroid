@@ -33,7 +33,7 @@ public class ReferFriendActivity extends LogActivity {
 
     private void initReferralCode() {
         String referralCode = ProfileCache.getInstance(this).getProfile().getReferralCode();
-        this.referralCode = referralCode != null ? referralCode : "";
+        this.referralCode = referralCode != null ? referralCode : "AH45GQ";
     }
 
     private void setupBackButton(){

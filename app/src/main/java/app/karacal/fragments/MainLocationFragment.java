@@ -81,6 +81,9 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     private ClusterManager<TourMarker> clusterManager;
     TourVerticalListAdapter adapter;
 
+    LatLng parisLocation = new LatLng(48.864716, 2.349014);
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,11 +153,12 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        map.moveCamera(CameraUpdateFactory.zoomTo(MAP_ZOOM_LEVEL));
+        map.moveCamera(CameraUpdateFactory.newLatLng(parisLocation));
         applyMapStyle();
         setupLocation();
         setupClusterManager();
         observeTours();
-        map.moveCamera(CameraUpdateFactory.zoomTo(MAP_ZOOM_LEVEL));
     }
 
     private void observeTours(){
@@ -203,7 +207,6 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
                 () -> {
                     map.setMyLocationEnabled(false);
                     map.getUiSettings().setMyLocationButtonEnabled(false);
-                    LatLng parisLocation = new LatLng(48.864716, 2.349014);
                     map.moveCamera(CameraUpdateFactory.newLatLng(parisLocation));
                 });
     }
