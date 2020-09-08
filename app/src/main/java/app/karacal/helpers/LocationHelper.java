@@ -15,6 +15,7 @@ public class LocationHelper {
                 .addOnSuccessListener(location -> {
                     if (!emitter.isDisposed()) {
                         if (location != null) {
+                            App.getInstance().setLastLocation(location);
                             emitter.onSuccess(location);
                         } else {
                             emitter.onError(new Exception("Location provider returned NULL"));

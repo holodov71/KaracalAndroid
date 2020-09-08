@@ -1,6 +1,7 @@
 package app.karacal;
 
 import android.app.Application;
+import android.location.Location;
 
 import app.karacal.dagger.AppComponent;
 import app.karacal.dagger.DaggerAppComponent;
@@ -17,6 +18,17 @@ public class App extends Application {
     private static App instance;
 
     private AppComponent appComponent;
+
+    private Location lastLocation = null;
+
+    public Location getLastLocation() {
+        return lastLocation;
+    }
+
+    public void setLastLocation(Location lastLocation) {
+        this.lastLocation = lastLocation;
+
+    }
 
     @Override
     public void onCreate() {

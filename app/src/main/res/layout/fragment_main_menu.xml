@@ -30,6 +30,7 @@
                 android:id="@+id/buttonReferFriend"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:background="?attr/selectableItemBackground"
                 android:orientation="horizontal">
 

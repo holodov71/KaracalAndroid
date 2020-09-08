@@ -3,12 +3,15 @@ package app.karacal.data.repository;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Location;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,10 +19,12 @@ import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.data.DownloadedToursCache;
+import app.karacal.data.NotificationsSchedule;
 import app.karacal.data.dao.ToursDao;
 import app.karacal.data.entity.TourEntity;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
+import app.karacal.models.NotificationScheduleModel;
 import app.karacal.models.Tour;
 import app.karacal.network.models.request.NearToursRequest;
 import app.karacal.network.models.request.SaveTourRequest;
@@ -205,12 +210,49 @@ public class TourRepository {
 //                        }
 //                    }
                     originalToursLiveData.setValue(tours);
+                    new Handler().postDelayed(() -> scheduleNotifications(tours), 1000);
                     // TODO: save to DB
 
                 }, throwable -> {
                     Log.v("loadTours", "throwable "+throwable.getMessage());
                     // TODO: load list from DB
                 });
+    }
+
+    private void scheduleNotifications(List<Tour> tours){
+        List<Tour> mTours = new ArrayList<>(tours);
+        Location lastLocation = App.getInstance().getLastLocation();
+
+        if (!NotificationsSchedule.getInstance(App.getInstance()).getNotificationsList().isEmpty() &&
+                (NotificationsSchedule.getInstance(App.getInstance()).isHasLocation() || lastLocation == null)){
+            return;
+        }
+
+        if (lastLocation != null){
+
+            Collections.sort(mTours, (obj1, obj2) -> {
+                // ## Ascending order
+                Float dist1 = obj1.getTourLocation().distanceTo(lastLocation);
+                Float dist2 = obj2.getTourLocation().distanceTo(lastLocation);
+
+                return dist1.compareTo(dist2); // To compare string values
+            });
+
+        }
+
+        List<NotificationScheduleModel> notifList = new ArrayList<>();
+
+        int lastIndex = 32;
+        if (mTours.size() < 32){
+            lastIndex = mTours.size();
+        }
+
+        for (int i = 0; i < 32; i++){
+            notifList.add(new NotificationScheduleModel(i, mTours.get(i)));
+        }
+
+        NotificationsSchedule.getInstance(App.getInstance()).setNotificationsList(App.getInstance(), notifList);
+        NotificationsSchedule.getInstance(App.getInstance()).setHasLocation(App.getInstance(), lastLocation != null);
     }
 
     @SuppressLint("CheckResult")

@@ -141,7 +141,9 @@
         <service
             android:name=".service.PlayerService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"/>
+
+        <receiver android:name= ".helpers.MyNotificationPublisher" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
