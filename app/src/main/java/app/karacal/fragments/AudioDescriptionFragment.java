@@ -284,9 +284,8 @@ public class AudioDescriptionFragment extends LogFragment {
 
         buttonShare.setOnClickListener(v -> ShareHelper.share(getActivity(), "Share tour", tour.getTitle(), tour.getDescription()));
 
-        int rating = tour.getRating();
-        starsViewTop.setRating(rating);
-        starsViewDescription.setRating(rating);
+        starsViewTop.setRating(tour.getRating());
+        starsViewDescription.setRating(tour.getRating());
 
         textViewTitle.setText(tour.getTitle());
         textViewDescription.setText(tour.getDescription());

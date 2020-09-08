@@ -84,7 +84,7 @@
             android:layout_marginStart="16dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:tint="@drawable/selector_white_text_color"
+            app:tint="@drawable/selector_white_text_color"
             android:contentDescription="@null"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

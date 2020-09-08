@@ -351,7 +351,7 @@
                         android:scaleType="center"
                         android:layout_marginEnd="16dp"
                         android:src="@drawable/ic_alert"
-                        android:tint="@drawable/selector_white_text_color"
+                        app:tint="@drawable/selector_white_text_color"
                         app:layout_constraintBottom_toBottomOf="@id/cardView"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/cardView" />
@@ -407,7 +407,7 @@
                 android:layout_marginStart="16dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="@drawable/selector_orange_text_color"
+                app:tint="@drawable/selector_orange_text_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -419,7 +419,7 @@
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_download"
-                android:tint="@drawable/selector_orange_text_color"
+                app:tint="@drawable/selector_orange_text_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

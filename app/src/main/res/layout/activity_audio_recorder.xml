@@ -20,7 +20,7 @@
             android:layout_marginStart="16dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_arrow_back"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +43,7 @@
             android:layout_marginEnd="16dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_check"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -121,7 +121,7 @@
             android:layout_marginEnd="32dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_clear"
-            android:tint="@drawable/selector_button_enabled_tint"
+            app:tint="@drawable/selector_button_enabled_tint"
             app:layout_constraintBottom_toBottomOf="@id/buttonRecord"
             app:layout_constraintEnd_toStartOf="@id/buttonRecord"
             app:layout_constraintTop_toTopOf="@id/buttonRecord" />
@@ -133,7 +133,7 @@
             android:layout_marginBottom="32dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_microphone"
-            android:tint="@drawable/selector_button_selected_tint"
+            app:tint="@drawable/selector_button_selected_tint"
             android:tintMode="src_in"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -146,7 +146,7 @@
             android:layout_marginStart="32dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_check"
-            android:tint="@drawable/selector_button_enabled_tint"
+            app:tint="@drawable/selector_button_enabled_tint"
             app:layout_constraintBottom_toBottomOf="@id/buttonRecord"
             app:layout_constraintStart_toEndOf="@id/buttonRecord"
             app:layout_constraintTop_toTopOf="@id/buttonRecord" />

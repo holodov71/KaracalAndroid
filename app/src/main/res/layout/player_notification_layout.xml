@@ -74,7 +74,7 @@
             android:layout_marginEnd="16dp"
             android:layout_gravity="end"
             android:src="@drawable/ic_clear"
-            android:tint="@color/colorTextOrange"
+            app:tint="@color/colorTextOrange"
             />
 
         <LinearLayout
@@ -89,7 +89,7 @@
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_pause"
-                android:tint="@drawable/selector_orange_text_color"
+                app:tint="@drawable/selector_orange_text_color"
                 />
 
             <ImageView
@@ -98,20 +98,11 @@
                 android:layout_marginEnd="16dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_next"
-                android:tint="@drawable/selector_orange_text_color"
+                app:tint="@drawable/selector_orange_text_color"
                 />
 
         </LinearLayout>
 
     </LinearLayout>
-
-<!--    <ProgressBar-->
-<!--        android:id="@+id/progressBar"-->
-<!--        style="@style/ProgressBar"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="2dp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent" />-->
 
 </LinearLayout>

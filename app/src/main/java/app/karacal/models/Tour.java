@@ -26,7 +26,7 @@ public class Tour implements Serializable {
     private String title;
     private String description;
     private long price;
-    private int rating;
+    private double rating;
     private int duration;
     private int authorId;
     private String author;
@@ -149,7 +149,11 @@ public class Tour implements Serializable {
         this.price = price;
     }
 
-    public int getRating() {
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public double getRating() {
         return rating;
     }
 
@@ -203,9 +207,9 @@ public class Tour implements Serializable {
     public Album getAlbum() {
         List<Track> tracks = new ArrayList<>();
         if (!audio.isEmpty()) {
-            tracks.add(new Track("Bienvenue", R.raw.track_bienvenue));
+//            tracks.add(new Track("Bienvenue", R.raw.track_bienvenue));
             tracks.addAll(audio);
-            tracks.add(new Track("Abientt", R.raw.track_abientt));
+//            tracks.add(new Track("Abientt", R.raw.track_abientt));
         }
         return new Album(title, imageUrl, tracks);
     }

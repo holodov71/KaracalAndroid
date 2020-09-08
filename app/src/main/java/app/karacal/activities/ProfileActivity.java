@@ -19,6 +19,7 @@ import app.karacal.adapters.TourVerticalListAdapter;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.ShareHelper;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.models.Guide;
 import app.karacal.navigation.ActivityArgs;
 import app.karacal.navigation.NavigationHelper;
@@ -84,8 +85,8 @@ public class ProfileActivity extends LogActivity {
         }
 
         @Override
-        public void onButtonSubmitClick(BasePopup popup) {
-            DummyHelper.dummyAction(ProfileActivity.this);
+        public void onButtonSubmitRatingClick(BasePopup popup, int rating) {
+            viewModel.setRating(rating);
             onBackPressed();
         }
     };
@@ -101,6 +102,7 @@ public class ProfileActivity extends LogActivity {
     private TextView textViewLocation;
     private TextView textViewDescription;
     private ImageView buttonShare;
+    private View progressLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +119,7 @@ public class ProfileActivity extends LogActivity {
         setupButtons();
         setupAuthor();
         setupRecyclerView();
+        setupLoading();
 
         observeViewModel();
         viewModel.loadData();
@@ -127,6 +130,10 @@ public class ProfileActivity extends LogActivity {
         buttonBack.setOnClickListener(v -> onBackPressed());
         ImageView buttonAlert = findViewById(R.id.buttonAuthorAlert);
         buttonAlert.setOnClickListener(v -> showShareImpressionPopup());
+    }
+
+    private void setupLoading(){
+        progressLoading = findViewById(R.id.progressLoading);
     }
 
     private void setupAuthor(){
@@ -153,12 +160,36 @@ public class ProfileActivity extends LogActivity {
 
     }
 
+    private void showLoading(){
+        progressLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading(){
+        progressLoading.setVisibility(View.GONE);
+    }
+
     private void observeViewModel(){
         viewModel.getGuide().observe(this, this::setAuthorData);
 
         viewModel.getTours().observe(this, tours -> {
             if (adapter != null && tours != null) {
                 adapter.setTours(tours);
+            }
+        });
+
+        viewModel.ratingSavedAction.observe(this, action -> {
+            ToastHelper.showToast(this, getString(R.string.rating_saved));
+        });
+
+        viewModel.onErrorAction.observe(this, msg -> {
+            ToastHelper.showToast(this, msg);
+        });
+
+        viewModel.isLoading().observe(this, isLoading -> {
+            if(isLoading){
+                showLoading();
+            } else {
+                hideLoading();
             }
         });
     }

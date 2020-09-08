@@ -18,7 +18,7 @@ import app.karacal.R;
 
 public class StarsView extends AppCompatImageView {
 
-    private static final int MAX_RATING = 10;
+    private static final int MAX_RATING = 5;
     private static final int MIN_RATING = 0;
     private Paint normalPaint;
     private Paint overlayPaint;
@@ -26,7 +26,7 @@ public class StarsView extends AppCompatImageView {
     private Bitmap bitmap;
     private Canvas bitmapCanvas;
 
-    private int rating;
+    private double rating;
 
     public StarsView(Context context) {
         super(context);
@@ -85,7 +85,7 @@ public class StarsView extends AppCompatImageView {
         }
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = Math.max(Math.min(rating, MAX_RATING), MIN_RATING);
         invalidate();
     }

@@ -41,7 +41,7 @@
         android:layout_marginTop="128dp"
         android:contentDescription="@null"
         android:src="@drawable/ic_play"
-        android:tint="@drawable/selector_orange_text_color"
+        app:tint="@drawable/selector_orange_text_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/imageViewTitle" />
@@ -160,7 +160,7 @@
             android:layout_marginEnd="16dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_pause"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/buttonNext"
             app:layout_constraintTop_toTopOf="parent" />
@@ -171,7 +171,7 @@
             android:layout_marginEnd="16dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_next"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -201,7 +201,7 @@
             android:layout_marginStart="16dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_arrow_back"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -212,7 +212,7 @@
             style="@style/SmallButton.DarkBackground"
             android:layout_marginEnd="16dp"
             android:contentDescription="@null"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             android:src="@drawable/ic_download"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

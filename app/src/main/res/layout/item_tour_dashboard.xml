@@ -34,7 +34,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="16dp"
         android:src="@drawable/ic_edit"
-        android:tint="@drawable/selector_orange_text_color"
+        app:tint="@drawable/selector_orange_text_color"
         android:contentDescription="@null"/>
 
     <TextView

@@ -88,8 +88,11 @@ public class TourRepository {
         return downloadedTour;
     }
 
-    public Observable<Tour> loadTourById(int tourId) {
-        Tour tmpTour = getTourById(tourId);
+    public Observable<Tour> loadTourById(int tourId, boolean forceLoad) {
+        Tour tmpTour = null;
+        if (!forceLoad){
+            tmpTour = getTourById(tourId);
+        }
 
         if(tmpTour != null){
             return Observable.just(tmpTour);

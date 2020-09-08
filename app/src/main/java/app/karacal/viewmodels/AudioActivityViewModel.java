@@ -58,6 +58,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 import static app.karacal.App.TAG;
+import static app.karacal.App.getResString;
 import static app.karacal.helpers.NetworkStateHelper.DesiredInternet.WIFI_INTERNET;
 
 public class AudioActivityViewModel extends ViewModel {
@@ -118,6 +119,7 @@ public class AudioActivityViewModel extends ViewModel {
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Integer> tourCountLiveData = new MutableLiveData<>();
     public SingleLiveEvent<String> tourPayedAction = new SingleLiveEvent<>();
+    public SingleLiveEvent<Void> ratingSavedAction = new SingleLiveEvent<>();
 
 
     public LiveData<Tour> getTour(){
@@ -261,16 +263,24 @@ public class AudioActivityViewModel extends ViewModel {
             e.printStackTrace();
         }
 
-        loadTour(tourId);
+        loadTour(tourId, false);
         loadComments();
         createCustomer();
     }
 
-    private void loadTour(int tourId){
-        disposable.add(tourRepository.loadTourById(tourId)
+    private void loadTour(int tourId, boolean updateRating){
+        disposable.add(tourRepository.loadTourById(tourId, updateRating)
                 .subscribe(loadedTour -> {
-                    tour.setValue(loadedTour);
-                    loadAuthor(loadedTour.getAuthorId());
+                    if (updateRating){
+                        Tour t = tour.getValue();
+                        if (t != null){
+                            t.setRating(loadedTour.getRating());
+                        }
+                        tour.setValue(t);
+                    } else {
+                        tour.setValue(loadedTour);
+                        loadAuthor(loadedTour.getAuthorId());
+                    }
                 }, throwable -> {
                     commentsLiveData.setValue(new ArrayList<>());
                 }));
@@ -411,6 +421,24 @@ public class AudioActivityViewModel extends ViewModel {
                             , throwable ->
                                     guideLiveData.setValue(null)
                     ));
+    }
+
+    public void setRating(int rating) {
+        isLoading.setValue(true);
+        disposable.add(apiHelper.setRatingForTour(tourId, rating)
+                .subscribe(response -> {
+                    if (response.isSuccess()){
+                        ratingSavedAction.call();
+                        loadTour(tourId, true);
+                    } else {
+                        errorAction.setValue(getResString(R.string.common_error));
+                    }
+                    isLoading.setValue(false);
+                },
+                throwable -> {
+                    errorAction.setValue(getResString(R.string.common_error));
+                    isLoading.setValue(false);
+                }));
     }
 
     @Override

@@ -18,7 +18,7 @@
             android:layout_marginStart="16dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_arrow_back"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

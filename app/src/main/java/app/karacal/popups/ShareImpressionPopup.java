@@ -15,7 +15,7 @@ public class ShareImpressionPopup extends BasePopup {
         void onButtonDonateClick(BasePopup popup);
         void onButtonPutGuideInFavorClick(BasePopup popup);
         void onButtonWriteCommentClick(BasePopup popup);
-        void onButtonSubmitClick(BasePopup popup);
+        void onButtonSubmitRatingClick(BasePopup popup, int rating);
     }
 
     private final ShareImpressionPopup.ShareImpressionPopupCallbacks callbacks;
@@ -45,9 +45,9 @@ public class ShareImpressionPopup extends BasePopup {
             buttonWriteComment.setVisibility(View.GONE);
         }
         Button buttonSubmit = view.findViewById(R.id.buttonSubmit);
-        buttonSubmit.setOnClickListener(v -> callbacks.onButtonSubmitClick(this));
         RatingView ratingView = view.findViewById(R.id.ratingView);
         ratingView.setRatingChangeListener(rating -> buttonSubmit.setEnabled(rating > 0));
+        buttonSubmit.setOnClickListener(v -> callbacks.onButtonSubmitRatingClick(this, ratingView.getRating()));
 
 
     }

@@ -6,7 +6,10 @@ import java.util.Map;
 import app.karacal.models.Tag;
 import app.karacal.network.models.request.NearToursRequest;
 import app.karacal.network.models.request.SaveTourRequest;
+import app.karacal.network.models.request.SerGuideRatingRequest;
+import app.karacal.network.models.request.SerTourRatingRequest;
 import app.karacal.network.models.response.ContentResponse;
+import app.karacal.network.models.response.RatingResponse;
 import app.karacal.network.models.response.SaveTourResponse;
 import app.karacal.network.models.response.TourDetailsResponse;
 import app.karacal.network.models.response.TourResponse;
@@ -60,6 +63,12 @@ public interface TourService {
 
     @GET("tags")
     Observable<List<Tag>> getTags(@Header("Authorization") String token);
+
+    @POST("ratings")
+    Observable<RatingResponse> setRatingForTour(@Header("Authorization") String token, @Body SerTourRatingRequest request);
+
+    @POST("ratings/create-guide")
+    Observable<RatingResponse> setRatingForGuide(@Header("Authorization") String token, @Body SerGuideRatingRequest request);
 
 
 }

@@ -19,7 +19,7 @@
             android:layout_marginStart="16dp"
             android:contentDescription="@null"
             android:src="@drawable/ic_arrow_back"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -41,7 +41,7 @@
             style="@style/SmallButton"
             android:layout_marginEnd="16dp"
             android:contentDescription="@null"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             android:src="@drawable/ic_list"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/buttonStack"
@@ -52,7 +52,7 @@
             style="@style/SmallButton"
             android:layout_marginEnd="16dp"
             android:contentDescription="@null"
-            android:tint="@drawable/selector_orange_text_color"
+            app:tint="@drawable/selector_orange_text_color"
             android:src="@drawable/ic_stack"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"            app:layout_constraintTop_toTopOf="parent" />

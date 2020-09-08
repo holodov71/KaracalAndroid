@@ -25,6 +25,7 @@ import app.karacal.R;
 import app.karacal.fragments.AudioPlayerFragment;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
+import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.Player;
 import app.karacal.models.Tour;
@@ -99,8 +100,8 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
         }
 
         @Override
-        public void onButtonSubmitClick(BasePopup popup) {
-            DummyHelper.dummyAction(AudioActivity.this);
+        public void onButtonSubmitRatingClick(BasePopup popup, int rating) {
+            viewModel.setRating(rating);
             onBackPressed();
         }
     };
@@ -217,6 +218,9 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
             }
         });
 
+        viewModel.ratingSavedAction.observe(this, guideId -> {
+            ToastHelper.showToast(this, getString(R.string.rating_saved));
+        });
     }
 
     @Override

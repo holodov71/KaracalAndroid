@@ -14,6 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import app.karacal.App;
+import app.karacal.R;
 import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
@@ -22,6 +23,8 @@ import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Guide;
 import app.karacal.models.Tour;
 import io.reactivex.disposables.CompositeDisposable;
+
+import static app.karacal.App.getResString;
 
 public class ProfileActivityViewModel extends ViewModel {
 
@@ -57,6 +60,9 @@ public class ProfileActivityViewModel extends ViewModel {
     private final int guideId;
     private MutableLiveData<Guide> guideLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Tour>> toursLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    public SingleLiveEvent<Void> ratingSavedAction = new SingleLiveEvent<>();
+    public SingleLiveEvent<String> onErrorAction = new SingleLiveEvent<>();
 
 
     public ProfileActivityViewModel(int guideId) {
@@ -76,6 +82,11 @@ public class ProfileActivityViewModel extends ViewModel {
     public LiveData<List<Tour>> getTours(){
         return toursLiveData;
     }
+
+    public LiveData<Boolean> isLoading() {
+        return isLoading;
+    }
+
 
     public void loadData(){
         loadGuide();
@@ -97,6 +108,23 @@ public class ProfileActivityViewModel extends ViewModel {
                 ));
 
 //        toursLiveData.setValue(tourRepository.getToursByAuthor(guideId));
+    }
+
+    public void setRating(int rating) {
+        isLoading.setValue(true);
+        disposable.add(apiHelper.setRatingForGuide(guideId, rating)
+                .subscribe(response -> {
+                            if (response.isSuccess()){
+                                ratingSavedAction.call();
+                            } else {
+                                onErrorAction.setValue(getResString(R.string.common_error));
+                            }
+                            isLoading.setValue(false);
+                        },
+                        throwable -> {
+                            onErrorAction.setValue(getResString(R.string.common_error));
+                            isLoading.setValue(false);
+                        }));
     }
 
     @Override

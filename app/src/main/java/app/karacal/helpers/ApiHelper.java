@@ -46,6 +46,8 @@ import app.karacal.network.models.request.ProfileRequest;
 import app.karacal.network.models.request.RenameTrackRequest;
 import app.karacal.network.models.request.ResetPasswordRequest;
 import app.karacal.network.models.request.SaveTourRequest;
+import app.karacal.network.models.request.SerGuideRatingRequest;
+import app.karacal.network.models.request.SerTourRatingRequest;
 import app.karacal.network.models.request.UploadTrackRequest;
 import app.karacal.network.models.response.BaseResponse;
 import app.karacal.network.models.response.ChangeAvatarResponse;
@@ -63,6 +65,7 @@ import app.karacal.network.models.request.RegisterRequest;
 import app.karacal.network.models.request.SocialLoginRequest;
 import app.karacal.network.models.response.PaymentResponse;
 import app.karacal.network.models.response.PurchasesResponse;
+import app.karacal.network.models.response.RatingResponse;
 import app.karacal.network.models.response.ResetPasswordResponse;
 import app.karacal.network.models.response.SaveTourResponse;
 import app.karacal.network.models.response.SubscriptionsListResponse;
@@ -248,6 +251,13 @@ public class ApiHelper implements EphemeralKeyProvider {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<RatingResponse> setRatingForGuide(int guideId, int rating) {
+        SerGuideRatingRequest request = new SerGuideRatingRequest(guideId, String.valueOf(rating));
+        return tourService.setRatingForGuide("Bearer " + PreferenceHelper.loadToken(App.getInstance()), request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     // Tours region
 
     public Observable<List<TourResponse>> loadTours(String token) {
@@ -319,6 +329,13 @@ public class ApiHelper implements EphemeralKeyProvider {
 
     public Observable<ContentResponse> loadTourById(String token, int tourId) {
         return tourService.getTourById("Bearer " + token, String.valueOf(tourId))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<RatingResponse> setRatingForTour(int tourId, int rating) {
+        SerTourRatingRequest request = new SerTourRatingRequest(tourId, String.valueOf(rating));
+        return tourService.setRatingForTour("Bearer " + PreferenceHelper.loadToken(App.getInstance()), request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -108,7 +108,7 @@
                 android:layout_marginBottom="15sp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_arrow_right"
-                android:tint="@drawable/selector_white_text_color"
+                app:tint="@drawable/selector_white_text_color"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/textInputLayoutReferralCode"
                 app:layout_constraintEnd_toEndOf="@+id/textInputLayoutReferralCodeLayout" />
@@ -121,7 +121,7 @@
                 android:contentDescription="@null"
                 android:focusable="false"
                 android:src="@drawable/ic_check"
-                android:tint="@color/colorSuccess"
+                app:tint="@color/colorSuccess"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/textInputLayoutReferralCode"
                 app:layout_constraintEnd_toEndOf="@+id/textInputLayoutReferralCodeLayout" />

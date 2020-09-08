@@ -19,7 +19,7 @@ public class ContentResponse {
     private String latitude;
     private String longitude;
     private List<TrackResponse> audio;
-    private int rating;
+    private double rating;
     private String type;
     private int status;
     private Date createdAt;
@@ -70,7 +70,7 @@ public class ContentResponse {
         return audio;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
