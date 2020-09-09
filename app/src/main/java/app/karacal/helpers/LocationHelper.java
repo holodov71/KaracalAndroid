@@ -5,6 +5,7 @@ import android.location.Location;
 import com.google.android.gms.location.LocationServices;
 
 import app.karacal.App;
+import app.karacal.data.NotificationsSchedule;
 import io.reactivex.Single;
 
 public class LocationHelper {

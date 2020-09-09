@@ -18,6 +18,12 @@
         <item name="colorControlHighlight">@color/colorHint</item>
     </style>
 
+    <style name="TextNotification">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">@font/montserrat_regular</item>
+    </style>
+
     <style name="TextWhite">
         <item name="android:textColor">@color/colorTextWhite</item>
     </style>

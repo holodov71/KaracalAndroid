@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:name=".App"
@@ -143,7 +144,7 @@
             android:enabled="true"
             android:exported="true"/>
 
-        <receiver android:name= ".helpers.MyNotificationPublisher" />
+        <receiver android:name= ".receivers.MyNotificationPublisher" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

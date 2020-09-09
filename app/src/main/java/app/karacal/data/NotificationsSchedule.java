@@ -70,6 +70,12 @@ public class NotificationsSchedule {
         PreferenceHelper.setNotificationsSchedule(context, getEmptyInstance().retrieveStringFormat());
     }
 
+    public NotificationScheduleModel getNotificationByDay(int dayOfMonth) {
+        if (!notificationsList.isEmpty() && notificationsList.size() > dayOfMonth) {
+            return notificationsList.remove(dayOfMonth);
+        } else return null;
+    }
+
     public List<NotificationScheduleModel> getNotificationsList() {
         return notificationsList;
     }

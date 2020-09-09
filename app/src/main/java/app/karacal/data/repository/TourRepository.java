@@ -23,6 +23,7 @@ import app.karacal.data.NotificationsSchedule;
 import app.karacal.data.dao.ToursDao;
 import app.karacal.data.entity.TourEntity;
 import app.karacal.helpers.ApiHelper;
+import app.karacal.helpers.NotificationHelper;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.NotificationScheduleModel;
 import app.karacal.models.Tour;
@@ -253,6 +254,7 @@ public class TourRepository {
 
         NotificationsSchedule.getInstance(App.getInstance()).setNotificationsList(App.getInstance(), notifList);
         NotificationsSchedule.getInstance(App.getInstance()).setHasLocation(App.getInstance(), lastLocation != null);
+        NotificationHelper.scheduleNotification(App.getInstance(), System.currentTimeMillis() + 10000);
     }
 
     @SuppressLint("CheckResult")

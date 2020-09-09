@@ -1,4 +1,4 @@
-package app.karacal.helpers;
+package app.karacal.receivers;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -16,43 +16,40 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
 
 import java.util.Calendar;
-import java.util.List;
 
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.activities.AudioActivity;
-import app.karacal.activities.MainActivity;
 import app.karacal.data.NotificationsCache;
 import app.karacal.data.NotificationsSchedule;
+import app.karacal.helpers.NotificationHelper;
 import app.karacal.models.NotificationInfo;
 import app.karacal.models.NotificationScheduleModel;
-import app.karacal.models.Player;
 
 public class MyNotificationPublisher extends BroadcastReceiver {
 
     public static String NOTIFICATION_CHANNEL_ID = "notification-chanel-id-karacal";
-    public static String NOTIFICATION_ID = "notification-id";
-    public static String NOTIFICATION = "notification";
-    private final static String default_notification_channel_id = "default" ;
+    public static int NOTIFICATION_ID = 3851;
+    private static final long INTERVAL = 24 * 60 * 60 * 1000;
+
 
     public void onReceive (Context context , Intent intent) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context. NOTIFICATION_SERVICE );
-//        Notification notification = intent.getParcelableExtra( NOTIFICATION );
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationScheduleModel model = getNotificationModel();
         if (model == null ){
-            Log.v("MyNotificationPublisher", "NotificationScheduleModel NULLLLLLLLLLLLLLL");
             return;
         }
 
-        if (android.os.Build.VERSION. SDK_INT >= android.os.Build.VERSION_CODES. O ) {
-            int importance = NotificationManager. IMPORTANCE_HIGH ;
-            NotificationChannel notificationChannel = new NotificationChannel( NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
+            int importance = NotificationManager.IMPORTANCE_HIGH ;
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "NOTIFICATION_CHANNEL_NAME", importance);
             assert notificationManager != null;
             notificationManager.createNotificationChannel(notificationChannel);
         }
-        int id = intent.getIntExtra( NOTIFICATION_ID , 0);
         assert notificationManager != null;
-        notificationManager.notify(id , getNotification(model));
+        notificationManager.notify(NOTIFICATION_ID , getNotification(model));
+        NotificationHelper.scheduleNotification(App.getInstance(), System.currentTimeMillis() + INTERVAL);
+
     }
 
     private Notification getNotification (NotificationScheduleModel model) {
@@ -61,21 +58,15 @@ public class MyNotificationPublisher extends BroadcastReceiver {
         contentView.setTextViewText(R.id.textViewTourTitle, model.getTitle());
         contentView.setTextViewText(R.id.textViewTourDescription, model.getMessage());
 
-        Intent notificationIntent;
-
-//        if (player != null && player.getTourId() != 0){
-            notificationIntent = new Intent(App.getInstance(), AudioActivity.class);
-            AudioActivity.Args args = new AudioActivity.Args(model.getTourId());
-            notificationIntent.putExtras(args.toBundle());
-            notificationIntent.setAction("played_tour");
-//        } else {
-//            notificationIntent = new Intent(App.getInstance(), MainActivity.class);
-//        }
+        Intent notificationIntent = new Intent(App.getInstance(), AudioActivity.class);
+        AudioActivity.Args args = new AudioActivity.Args(model.getTourId());
+        notificationIntent.putExtras(args.toBundle());
+        notificationIntent.setAction("played_tour");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(App.getInstance(),
                 0, notificationIntent, 0);
 
-        Notification notification = new NotificationCompat.Builder(App.getInstance(), default_notification_channel_id)
+        Notification notification = new NotificationCompat.Builder(App.getInstance(), NOTIFICATION_CHANNEL_ID)
                 .setShowWhen(false)
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                 .setContent(contentView)
@@ -92,7 +83,7 @@ public class MyNotificationPublisher extends BroadcastReceiver {
                 R.id.imageViewTour,
                 contentView,
                 notification,
-                35);
+                NOTIFICATION_ID);
 
         Glide.with(App.getInstance())
                 .asBitmap()
@@ -106,11 +97,7 @@ public class MyNotificationPublisher extends BroadcastReceiver {
     }
 
     private NotificationScheduleModel getNotificationModel(){
-        List<NotificationScheduleModel> notifList = NotificationsSchedule.getInstance(App.getInstance()).getNotificationsList();
-        int currentDay = getCurrentDay();
-        if (!notifList.isEmpty() && notifList.size() > currentDay) {
-            return notifList.get(currentDay);
-        } else return null;
+        return NotificationsSchedule.getInstance(App.getInstance()).getNotificationByDay(getCurrentDay());
     }
 
     private int getCurrentDay(){
@@ -131,7 +118,7 @@ public class MyNotificationPublisher extends BroadcastReceiver {
                 calendar.getTime()
         );
 
-        Log.d("OneSignalExample", "Notification received: " + notificationInfo);//message
+        Log.d("MyNotificationPublisher", "Notification received: " + notificationInfo);//message
 
         notificationsCache.addNotification(App.getInstance(), notificationInfo);
     }
