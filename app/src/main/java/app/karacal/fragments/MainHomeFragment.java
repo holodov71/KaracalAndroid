@@ -41,6 +41,7 @@ public class MainHomeFragment extends Fragment {
     private View categoryRecommended;
     private View categoryNear;
     private View categoryOriginal;
+    private View progressLoading;
 
     private MainActivityViewModel viewModel;
 
@@ -68,6 +69,7 @@ public class MainHomeFragment extends Fragment {
         setupGreetings(view);
         setupSeeAroundMeButton(view);
         setupCategories(view);
+        setupLoading(view);
 
         viewModel.loadTours();
         viewModel.loadOriginalTours();
@@ -99,6 +101,18 @@ public class MainHomeFragment extends Fragment {
     private void setupSeeAroundMeButton(View view) {
         Button button = view.findViewById(R.id.buttonSeeAroundMe);
         button.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.mainLocationFragment));
+    }
+
+    private void setupLoading(View view){
+        progressLoading = view.findViewById(R.id.progressLoading);
+    }
+
+    private void showLoading(){
+        progressLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading(){
+        progressLoading.setVisibility(View.GONE);
     }
 
     private void observeNearTours(){
@@ -159,6 +173,10 @@ public class MainHomeFragment extends Fragment {
             }
         } else {
             textViewViewAll.setOnClickListener(v -> showCategory(category, title));
+        }
+
+        if (category == TourCategory.CATEGORY_ORIGINAL){
+            hideLoading();
         }
 
         TourHorizontalListAdapter adapter = new TourHorizontalListAdapter(getContext());
