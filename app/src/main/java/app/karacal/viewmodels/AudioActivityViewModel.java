@@ -312,6 +312,10 @@ public class AudioActivityViewModel extends ViewModel {
                 ));
     }
 
+    public boolean isTourDownloaded(Context context){
+        return DownloadedToursCache.getInstance(context).containsTour(tourId);
+    }
+
     public void downloadTour(Context context) {
         if(DownloadedToursCache.getInstance(context).containsTour(tourId)) {
             DownloadedToursCache.getInstance(context).deleteDownloadedTour(context, tourId);

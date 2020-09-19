@@ -11,7 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import app.karacal.R;
+import app.karacal.activities.AudioActivity;
 import app.karacal.adapters.NotificationListAdapter;
+import app.karacal.navigation.NavigationHelper;
 
 public class MainNotificationFragment extends Fragment {
 
@@ -25,7 +27,13 @@ public class MainNotificationFragment extends Fragment {
 
     private void  setupRecyclerView(View view){
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
-        NotificationListAdapter adapter = new NotificationListAdapter(getContext());
+        NotificationListAdapter adapter = new NotificationListAdapter(getContext(),
+                tourId -> {
+                    if (getActivity() != null && tourId != 0) {
+                        AudioActivity.Args args = new AudioActivity.Args(tourId);
+                        NavigationHelper.startAudioActivity(getActivity(), args);
+                    }
+                });
         recyclerView.setAdapter(adapter);
     }
 }

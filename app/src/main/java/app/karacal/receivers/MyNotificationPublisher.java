@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
 
 import java.util.Calendar;
+import java.util.Random;
 
 import app.karacal.App;
 import app.karacal.R;
@@ -35,7 +36,13 @@ public class MyNotificationPublisher extends BroadcastReceiver {
 
     public void onReceive (Context context , Intent intent) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        int sizeBefore = NotificationsSchedule.getInstance(App.getInstance()).getNotificationsList().size();
+        Log.v("TAG", "sizeBefore = "+sizeBefore);
         NotificationScheduleModel model = getNotificationModel();
+        int sizeAfter = NotificationsSchedule.getInstance(App.getInstance()).getNotificationsList().size();
+
+        Log.v("TAG", "sizeAfter = "+sizeAfter);
+
         if (model == null ){
             return;
         }
@@ -112,14 +119,22 @@ public class MyNotificationPublisher extends BroadcastReceiver {
 
         NotificationsCache notificationsCache = NotificationsCache.getInstance(App.getInstance());
         NotificationInfo notificationInfo = new NotificationInfo(
-                model.getDay()*model.getDay(),
+                generateId(model),
                 model.getTitle(),
                 model.getMessage(),
-                calendar.getTime()
+                calendar.getTime(),
+                model.getTourId()
         );
 
         Log.d("MyNotificationPublisher", "Notification received: " + notificationInfo);//message
 
         notificationsCache.addNotification(App.getInstance(), notificationInfo);
+    }
+
+    private int generateId(NotificationScheduleModel model){
+        long n = System.currentTimeMillis() / (model.getDay() * 100);
+        Random r = new Random();
+
+        return (int)(n + r.nextInt(10000));
     }
 }

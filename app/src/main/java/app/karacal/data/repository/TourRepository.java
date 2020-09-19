@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -255,6 +254,7 @@ public class TourRepository {
         NotificationsSchedule.getInstance(App.getInstance()).setNotificationsList(App.getInstance(), notifList);
         NotificationsSchedule.getInstance(App.getInstance()).setHasLocation(App.getInstance(), lastLocation != null);
         NotificationHelper.scheduleNotification(App.getInstance(), System.currentTimeMillis() + 10000);
+
     }
 
     @SuppressLint("CheckResult")

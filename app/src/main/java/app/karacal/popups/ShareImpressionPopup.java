@@ -35,7 +35,9 @@ public class ShareImpressionPopup extends BasePopup {
 
     private void setup(View view){
         LinearLayout buttonDonateGuide = view.findViewById(R.id.buttonDonateToTheGuide);
+        buttonDonateGuide.setVisibility(View.GONE);
         buttonDonateGuide.setOnClickListener(v -> callbacks.onButtonDonateClick(this));
+
         LinearLayout buttonPutGuideInFavor = view.findViewById(R.id.buttonPutGuideInFavor);
         buttonPutGuideInFavor.setOnClickListener(v -> callbacks.onButtonPutGuideInFavorClick(this));
         LinearLayout buttonWriteComment = view.findViewById(R.id.buttonWriteComment);

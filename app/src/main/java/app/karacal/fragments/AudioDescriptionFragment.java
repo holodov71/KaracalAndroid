@@ -40,8 +40,6 @@ public class AudioDescriptionFragment extends LogFragment {
     private TextView textViewPrice;
     private ConstraintLayout constraintLayoutPrice;
     private ImageView buttonShare;
-    private ProgressBar progressDownloading;
-    private ImageView buttonDownload;
     private ImageView imageViewAuthor;
     private TextView textViewAuthor;
     private TextView textViewGuidesCount;
@@ -97,10 +95,9 @@ public class AudioDescriptionFragment extends LogFragment {
     }
 
     private void setupDownloadButton(View view) {
-        buttonDownload = view.findViewById(R.id.buttonDownload);
-        progressDownloading = view.findViewById(R.id.progressDownloading);
-        buttonDownload.setOnClickListener(v -> {
-            viewModel.downloadTour(requireContext());
+        ImageView buttonOptions = view.findViewById(R.id.buttonOptions);
+        buttonOptions.setOnClickListener(v -> {
+            ((AudioActivity) getActivity()).showSelectActionPopup(viewModel.isTourDownloaded(requireContext()));
         });
     }
 
@@ -158,7 +155,8 @@ public class AudioDescriptionFragment extends LogFragment {
 
         textViewGuidesCount = view.findViewById(R.id.textViewGuidesCount);
         ImageView imageViewAlert = view.findViewById(R.id.imageViewAuthorAlert);
-        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
+        imageViewAlert.setVisibility(View.GONE);
+//        imageViewAlert.setOnClickListener(v -> ((AudioActivity) getActivity()).showSelectActionPopup());
     }
 
     private void setAuthorData(Guide guide){
@@ -212,11 +210,7 @@ public class AudioDescriptionFragment extends LogFragment {
         });
 
         viewModel.isTourDownloaded().observe(getViewLifecycleOwner(), isDownloaded -> {
-            if (isDownloaded){
-                buttonDownload.setImageResource(R.drawable.ic_delete);
-            } else {
-                buttonDownload.setImageResource(R.drawable.ic_download);
-            }
+            hideLoading();
         });
 
         viewModel.getToursCount().observe(getViewLifecycleOwner(), count -> {
@@ -282,7 +276,7 @@ public class AudioDescriptionFragment extends LogFragment {
             constraintLayoutPrice.setVisibility(View.INVISIBLE);
         }
 
-        buttonShare.setOnClickListener(v -> ShareHelper.share(getActivity(), "Share tour", tour.getTitle(), tour.getDescription()));
+        buttonShare.setOnClickListener(v -> ShareHelper.share(getActivity(), "Share tour", tour));
 
         starsViewTop.setRating(tour.getRating());
         starsViewDescription.setRating(tour.getRating());
@@ -306,13 +300,11 @@ public class AudioDescriptionFragment extends LogFragment {
     }
 
     private void onDownloadingStarted(){
-        progressDownloading.setVisibility(View.VISIBLE);
-        buttonDownload.setImageDrawable(null);
+        showLoading();
     }
 
     private void onDownloadingFinished(){
-        progressDownloading.setVisibility(View.GONE);
-        buttonDownload.setImageResource(R.drawable.ic_download);
+        hideLoading();
     }
 
 }

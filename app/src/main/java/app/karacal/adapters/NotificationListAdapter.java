@@ -36,8 +36,8 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
             textViewTime = itemView.findViewById(R.id.textViewTime);
         }
 
-        public void bind(NotificationInfo notificationInfo){
-            itemView.setOnClickListener(v -> DummyHelper.dummyAction(v.getContext()));
+        public void bind(NotificationInfo notificationInfo, NotificationClickCallback clickCallback){
+            itemView.setOnClickListener(v -> clickCallback.onNotificationClick(notificationInfo.getTourId()));
             imageViewTitle.setImageResource(R.drawable.karacal_logo);
             textViewTitle.setText(notificationInfo.getTitle());
             textViewTime.setText(getTimeText(notificationInfo.getDate()));
@@ -63,9 +63,11 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
     private final LayoutInflater inflater;
 
     private List<NotificationInfo> notifications;
+    private NotificationClickCallback clickCallback;
 
-    public NotificationListAdapter(Context context) {
+    public NotificationListAdapter(Context context, NotificationClickCallback clickCallback) {
         this.context = context;
+        this.clickCallback = clickCallback;
         inflater = LayoutInflater.from(context);
         notifications = NotificationsCache.getInstance(context).getNotificationsList();
         Collections.sort(notifications, (d1, d2) -> d2.getDate().compareTo(d1.getDate()));
@@ -80,11 +82,15 @@ public class NotificationListAdapter extends RecyclerView.Adapter<NotificationLi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(notifications.get(position));
+        holder.bind(notifications.get(position), clickCallback);
     }
 
     @Override
     public int getItemCount() {
         return notifications.size();
+    }
+
+    public interface NotificationClickCallback{
+        void onNotificationClick(int tourId);
     }
 }

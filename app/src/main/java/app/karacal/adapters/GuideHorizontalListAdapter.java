@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import app.karacal.R;
 import app.karacal.helpers.DummyHelper;
@@ -73,8 +74,33 @@ public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizo
 
     public void setGuidesList(List<Guide> guides){
         this.guides.clear();
-        this.guides.addAll(guides);
+        this.guides.addAll(getRandomGuides(guides));
         notifyDataSetChanged();
+    }
+
+    // Function select an element base on index and return
+    // an element
+    public List<Guide> getRandomGuides(List<Guide> source) {
+        List<Guide> list = new ArrayList<>(source);
+
+        Random rand = new Random();
+
+        // create a temporary list for storing
+        // selected element
+        List<Guide> newList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+
+            // take a raundom index between 0 to size
+            // of given List
+            int randomIndex = rand.nextInt(list.size());
+
+            // add element in temporary list
+            newList.add(list.get(randomIndex));
+
+            // Remove selected element from orginal list
+            list.remove(randomIndex);
+        }
+        return newList;
     }
 
     @Override

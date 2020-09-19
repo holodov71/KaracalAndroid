@@ -42,6 +42,8 @@ import apps.in.android_logger.LogActivity;
 
 public class AudioActivity extends LogActivity implements AudioPlayerFragment.OnPlayerScreenListener {
 
+    private static final String TAG = "AudioActivity";
+
     public static class Args extends ActivityArgs implements Serializable {
 
         private final int tourId;
@@ -138,17 +140,37 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
         App.getAppComponent().inject(this);
         setContentView(R.layout.activity_audio);
 
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        Uri data = intent.getData();
+        if (!handleIntent(getIntent())){
+            Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
+            tourId = args.getTourId();
+        }
 
-        Log.v(App.TAG, "Link to Activity = "+data);
+        Log.v(TAG, "tourId =  "+ tourId);
 
-        Args args = ActivityArgs.fromBundle(Args.class, getIntent().getExtras());
-        tourId = args.getTourId();
+
         viewModel = new ViewModelProvider(this, new AudioActivityViewModel.AudioActivityViewModelFactory(tourId)).get(AudioActivityViewModel.class);
         layoutRoot = findViewById(R.id.layoutRoot);
         observeViewModel();
+
+
+    }
+
+    private Boolean handleIntent(Intent intent) {
+        try {
+            String appLinkAction = intent.getAction();
+            Uri appLinkData = intent.getData();
+            Log.v(TAG, "appLinkData = "+ (appLinkData != null ? appLinkData.toString() : null));
+
+            if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null){
+                tourId = Integer.parseInt(appLinkData.getLastPathSegment());
+                Log.v(TAG, "appLinkData.getLastPathSegment() = tourId = "+tourId);
+                return true;
+            }
+
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return false;
 
 
     }
@@ -166,8 +188,8 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
         }
     }
 
-    public void showSelectActionPopup() {
-        SelectActionPopup popup = new SelectActionPopup(layoutRoot, selectActionPopupCallbacks);
+    public void showSelectActionPopup(boolean isTourDownloaded) {
+        SelectActionPopup popup = new SelectActionPopup(layoutRoot, selectActionPopupCallbacks, isTourDownloaded);
         popup.show();
     }
 

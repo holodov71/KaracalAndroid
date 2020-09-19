@@ -8,12 +8,14 @@ public class NotificationInfo {
     private final String title;
     private final String message;
     private final Date date;
+    private final int tourId;
 
-    public NotificationInfo(int id, String title, String message, Date date) {
+    public NotificationInfo(int id, String title, String message, Date date, int tourId) {
         this.id = id;
         this.title = title;
         this.message = message;
         this.date = date;
+        this.tourId = tourId;
     }
 
     public int getId() {
@@ -32,6 +34,10 @@ public class NotificationInfo {
         return date;
     }
 
+    public int getTourId() {
+        return tourId;
+    }
+
     @Override
     public String toString() {
         return "NotificationInfo{" +
@@ -39,6 +45,7 @@ public class NotificationInfo {
                 ", title='" + title + '\'' +
                 ", message='" + message + '\'' +
                 ", date=" + date +
+                ", tourId=" + tourId +
                 '}';
     }
 }

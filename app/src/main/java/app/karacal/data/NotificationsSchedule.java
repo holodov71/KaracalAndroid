@@ -1,9 +1,13 @@
 package app.karacal.data;
 
 import android.content.Context;
+import android.util.Log;
+
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
+
+import app.karacal.App;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.NotificationScheduleModel;
 
@@ -14,6 +18,7 @@ public class NotificationsSchedule {
 
     private NotificationsSchedule(List<NotificationScheduleModel> notificationsList, boolean hasLocation) {
         this.notificationsList = notificationsList;
+        this.hasLocation = hasLocation;
     }
 
     public static NotificationsSchedule getInstance(String toursCache){
@@ -72,7 +77,9 @@ public class NotificationsSchedule {
 
     public NotificationScheduleModel getNotificationByDay(int dayOfMonth) {
         if (!notificationsList.isEmpty() && notificationsList.size() > dayOfMonth) {
-            return notificationsList.remove(dayOfMonth);
+            NotificationScheduleModel model = notificationsList.remove(dayOfMonth);
+            saveChanges(App.getInstance());
+            return model;
         } else return null;
     }
 

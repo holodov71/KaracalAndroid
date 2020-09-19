@@ -65,7 +65,7 @@ public class DonateActivity extends LogActivity {
     private TextView textViewDonateAmountMedium;
     private TextView textViewDonateAmountBig;
     TextInputLayout inputLayoutAmount;
-    private ProgressBar progressLoading;
+    private View progressLoading;
 
     private ImageView avatar;
     private TextView textViewName;

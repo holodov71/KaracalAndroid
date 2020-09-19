@@ -79,7 +79,7 @@
     <string name="track">morceau</string>
     <string name="tracks">morceaux</string>
     <string name="tracks_count_format">%d %s</string>
-    <string name="this_audio_is_paid">Cet audio est payant :\n écoutez gratuitement 2 min aléatoires</string>
+    <string name="this_audio_is_paid">Cet audio est payant</string>
     <string name="donate_to_the_guide">Faire un don au guide</string>
     <string name="donate">Faire un don</string>
     <string name="enter_amount">Entrez le montant</string>
@@ -232,6 +232,7 @@
     <string name="tour_deleted">Visite supprimée.</string>
     <string name="politique_protection">Politique de Protection des Données Personnelles</string>
     <string name="rating_saved">Votre note sera prise en compte</string>
+    <string name="delete_album">Supprimer tous les albums</string>
 
 
     <!--    <string name="app_name">Karacal</string>-->

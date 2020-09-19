@@ -129,6 +129,7 @@ public class ProfileActivity extends LogActivity {
         ImageView buttonBack = findViewById(R.id.buttonBack);
         buttonBack.setOnClickListener(v -> onBackPressed());
         ImageView buttonAlert = findViewById(R.id.buttonAuthorAlert);
+        buttonAlert.setVisibility(View.GONE);
         buttonAlert.setOnClickListener(v -> showShareImpressionPopup());
     }
 

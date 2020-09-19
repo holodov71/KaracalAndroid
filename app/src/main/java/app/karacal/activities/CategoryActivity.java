@@ -94,7 +94,7 @@ public class CategoryActivity extends LogActivity {
                     break;
                 case STACK:
                     Bundle bundle = new Bundle();
-                    bundle.putInt(ARG_DESIRED_TOUR_ID, desiredTourId);
+                    bundle.putInt(ARG_DESIRED_TOUR_ID, desiredTourId != null ? desiredTourId : -1);
                     navController.navigate(R.id.categoryStackFragment, bundle);
                     break;
                 default:

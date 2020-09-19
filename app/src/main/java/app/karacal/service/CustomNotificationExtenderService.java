@@ -41,7 +41,8 @@ public class CustomNotificationExtenderService extends NotificationExtenderServi
                 displayedResult.androidNotificationId,
                 receivedResult.payload.title,
                 receivedResult.payload.body,
-                calendar.getTime()
+                calendar.getTime(),
+                0
         );
 
         Log.d("OneSignalExample", "Notification received: " + notificationInfo);//message

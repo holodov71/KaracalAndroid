@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.TransitionManager;
 
 import app.karacal.R;
+import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CommentsActivity;
 import app.karacal.adapters.TrackListAdapter;
 import app.karacal.helpers.ImageHelper;
@@ -38,9 +39,10 @@ public class AudioPlayerFragment extends LogFragment {
 
     private TrackListAdapter adapter;
 
-    private ProgressBar progressDownloading;
+//    private ProgressBar progressDownloading;
+    private View progressLoading;
     private ImageView imageViewTour;
-    private ImageView buttonDownload;
+    private ImageView buttonOptions;
     private ImageView playButton;
     private ImageView buttonPause;
     private TextView tracksTextView;
@@ -60,6 +62,7 @@ public class AudioPlayerFragment extends LogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_audio_player, container, false);
+        setupProgressLoading(view);
         setupBackButton(view);
         setupDownloadButton(view);
         setupBackground(view);
@@ -68,7 +71,6 @@ public class AudioPlayerFragment extends LogFragment {
         setupTracksList(view);
         setupAudioButtons(view);
         setupPlayerControls(view);
-
 
         viewModel.loadTracks();
 
@@ -96,11 +98,26 @@ public class AudioPlayerFragment extends LogFragment {
     }
 
     private void setupDownloadButton(View view) {
-        buttonDownload = view.findViewById(R.id.buttonDownload);
-        progressDownloading = view.findViewById(R.id.progressDownloading);
-        buttonDownload.setOnClickListener(v -> {
-            viewModel.downloadTour(requireContext());
+        buttonOptions = view.findViewById(R.id.buttonOptions);
+//        progressDownloading = view.findViewById(R.id.progressDownloading);
+        buttonOptions.setOnClickListener(v -> {
+            ((AudioActivity) getActivity()).showSelectActionPopup(viewModel.isTourDownloaded(requireContext()));
+
+//            viewModel.downloadTour(requireContext());
         });
+    }
+
+    private void setupProgressLoading(View view){
+        progressLoading = view.findViewById(R.id.progressLoading);
+    }
+
+    private void showLoading(){
+        progressLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading(){
+        Log.v("hideLoading", "hideLoading");
+        progressLoading.setVisibility(View.GONE);
     }
 
 
@@ -256,23 +273,22 @@ public class AudioPlayerFragment extends LogFragment {
             }
         });
 
-        viewModel.isTourDownloaded().observe(getViewLifecycleOwner(), isDownloaded -> {
-            if (isDownloaded){
-                buttonDownload.setImageResource(R.drawable.ic_delete);
-            } else {
-                buttonDownload.setImageResource(R.drawable.ic_download);
-            }
-        });
+//        viewModel.isTourDownloaded().observe(getViewLifecycleOwner(), isDownloaded -> {
+//
+//            if (isDownloaded){
+//                buttonDownload.setImageResource(R.drawable.ic_delete);
+//            } else {
+//                buttonDownload.setImageResource(R.drawable.ic_download);
+//            }
+//        });
     }
 
     private void onDownloadingStarted(){
-        progressDownloading.setVisibility(View.VISIBLE);
-        buttonDownload.setImageDrawable(null);
+        showLoading();
     }
 
     private void onDownloadingFinished(){
-        progressDownloading.setVisibility(View.GONE);
-        buttonDownload.setImageResource(R.drawable.ic_download);
+        hideLoading();
     }
 
     public interface OnPlayerScreenListener{
