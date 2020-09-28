@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -210,7 +211,7 @@ public class TourRepository {
 //                        }
 //                    }
                     originalToursLiveData.setValue(tours);
-                    new Handler().postDelayed(() -> scheduleNotifications(tours), 1000);
+                    new Handler().postDelayed(this::scheduleNotifications, 1000);
                     // TODO: save to DB
 
                 }, throwable -> {
@@ -219,41 +220,18 @@ public class TourRepository {
                 });
     }
 
-    private void scheduleNotifications(List<Tour> tours){
-        List<Tour> mTours = new ArrayList<>(tours);
-        Location lastLocation = App.getInstance().getLastLocation();
+    private void scheduleNotifications(){
+        long lastTime = PreferenceHelper.getLastNotificationWasShownTime(App.getInstance());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(lastTime);
 
-        if (!NotificationsSchedule.getInstance(App.getInstance()).getNotificationsList().isEmpty() &&
-                (NotificationsSchedule.getInstance(App.getInstance()).isHasLocation() || lastLocation == null)){
-            return;
+        int lastDay = calendar.get(Calendar.DAY_OF_YEAR);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        int newDay = calendar.get(Calendar.DAY_OF_YEAR);
+
+        if (lastDay != newDay) {
+            NotificationHelper.scheduleNotification(App.getInstance(), System.currentTimeMillis() + 10000);
         }
-
-        if (lastLocation != null){
-
-            Collections.sort(mTours, (obj1, obj2) -> {
-                // ## Ascending order
-                Float dist1 = obj1.getTourLocation().distanceTo(lastLocation);
-                Float dist2 = obj2.getTourLocation().distanceTo(lastLocation);
-
-                return dist1.compareTo(dist2); // To compare string values
-            });
-
-        }
-
-        List<NotificationScheduleModel> notifList = new ArrayList<>();
-
-        int lastIndex = 32;
-        if (mTours.size() < 32){
-            lastIndex = mTours.size();
-        }
-
-        for (int i = 0; i < 32; i++){
-            notifList.add(new NotificationScheduleModel(i, mTours.get(i)));
-        }
-
-        NotificationsSchedule.getInstance(App.getInstance()).setNotificationsList(App.getInstance(), notifList);
-        NotificationsSchedule.getInstance(App.getInstance()).setHasLocation(App.getInstance(), lastLocation != null);
-        NotificationHelper.scheduleNotification(App.getInstance(), System.currentTimeMillis() + 10000);
 
     }
 

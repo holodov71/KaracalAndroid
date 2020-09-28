@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.data.DownloadedToursCache;
+import app.karacal.data.LocationCache;
 import app.karacal.data.NotificationsCache;
 import app.karacal.data.NotificationsSchedule;
 import app.karacal.data.ProfileCache;
@@ -27,11 +28,13 @@ public class PreferenceHelper {
     private static final String DOWNLOADED_TOURS_KEY = "DOWNLOADED_TOURS";
     private static final String PREF_PROFILE_KEY = "PREF_PROFILE_KEY";
     private static final String NOTIFICATIONS_KEY = "NOTIFICATIONS_KEY";
+    private static final String LOCATIONS_KEY = "LOCATIONS_KEY";
     private static final String NOTIFICATION_SCHEDULE_KEY = "NOTIFICATION_SCHEDULE_KEY";
     private static final String PAYMENT_METHODS_KEY = "PAYMENT_METHODS_KEY";
     private static final String DOWNLOAD_ONLY_VIA_WIFI_KEY = "DOWNLOAD_ONLY_VIA_WIFI";
     private static final String PAUSE_AUDIO_AFTER_EACH_SEGMENT_KEY = "PAUSE_AUDIO_AFTER_EACH_SEGMENT";
     private static final String NOTIFICATIONS_ALLOW_KEY = "NOTIFICATIONS_ALLOW";
+    private static final String NOTIFICATION_SHOWN_LAST_TIME = "NOTIFICATION_SHOWN_LAST_TIME";
 
 
     private static SharedPreferences getSharedPreferences() {
@@ -138,5 +141,22 @@ public class PreferenceHelper {
 
     public static void setNotificationsAllowed(Context context, boolean value){
         getSharedPreferences(context).edit().putBoolean(NOTIFICATIONS_ALLOW_KEY, value).apply();
+    }
+
+    public static long getLastNotificationWasShownTime(Context context){
+        return getSharedPreferences(context).getLong(NOTIFICATION_SHOWN_LAST_TIME, 0);
+    }
+
+    public static void setLastNotificationWasShownTime(Context context, long value){
+        getSharedPreferences(context).edit().putLong(NOTIFICATION_SHOWN_LAST_TIME, value).apply();
+    }
+
+    public static String getLocationsCache(Context context) {
+        String defValue = LocationCache.getEmptyInstance().retrieveStringFormat();
+        return getSharedPreferences(context).getString(LOCATIONS_KEY, defValue);
+    }
+
+    public static void setLocationsCache(Context context, String locationsCache) {
+        getSharedPreferences(context).edit().putString(LOCATIONS_KEY, locationsCache).apply();
     }
 }

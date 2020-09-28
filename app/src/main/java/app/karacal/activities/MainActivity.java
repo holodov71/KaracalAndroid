@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
+import app.karacal.data.LocationCache;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.receivers.MyNotificationPublisher;
 import app.karacal.helpers.NotificationHelper;
@@ -78,50 +79,11 @@ public class MainActivity extends PermissionActivity {
     private void setupLocation() {
         permissionHelper.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION,
                 () -> viewModel.startObtainLocation(),
-                () -> Toast.makeText(this, R.string.permission_needed, Toast.LENGTH_SHORT).show());
+                () -> {
+                    LocationCache.getInstance(App.getInstance()).setHasPermission(false);
+                    Toast.makeText(this, R.string.permission_needed, Toast.LENGTH_SHORT).show();
+                });
     }
-
-    private AlarmManager alarmMgr;
-    private PendingIntent alarmIntent;
-
-    private void scheduleNotifications() {
-        alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, MyNotificationPublisher.class);
-//        intent.putExtra(MyNotificationPublisher. NOTIFICATION_ID , 1 ) ;
-        alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-
-//        // Set the alarm to start at approximately 2:00 p.m.
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(System.currentTimeMillis());
-//        calendar.set(Calendar.HOUR_OF_DAY, 14);
-//
-//        // With setInexactRepeating(), you have to use one of the AlarmManager interval
-//        // constants--in this case, AlarmManager.INTERVAL_DAY.
-//        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-//                AlarmManager.INTERVAL_DAY, alarmIntent);
-
-        //        // Set the alarm to start at 8:30 a.m.
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(System.currentTimeMillis());
-//        calendar.set(Calendar.HOUR_OF_DAY, 0);
-//        calendar.set(Calendar.MINUTE, 40);
-//
-//        // setRepeating() lets you specify a precise custom interval--in this case,
-//        // 20 minutes.
-        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 10000, alarmIntent);
-
-//        // Set the alarm to start at 8:30 a.m.
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTimeInMillis(System.currentTimeMillis());
-//        calendar.set(Calendar.HOUR_OF_DAY, 0);
-//        calendar.set(Calendar.MINUTE, 40);
-//
-//        // setRepeating() lets you specify a precise custom interval--in this case,
-//        // 20 minutes.
-//        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-//                1000 * 60 * 2, alarmIntent);
-    }
-
 
 
 }

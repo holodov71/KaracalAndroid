@@ -46,6 +46,7 @@ import app.karacal.helpers.FileHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.helpers.TextInputHelper;
 import app.karacal.helpers.ToastHelper;
+import app.karacal.models.ItemHelpfulInfo;
 import app.karacal.models.Tag;
 import app.karacal.models.Tour;
 import app.karacal.navigation.ActivityArgs;
@@ -325,7 +326,8 @@ public class AddEditTourActivity extends PermissionActivity {
     private void setupViewPager() {
 
         ViewPager viewPager = findViewById(R.id.viewPager);
-        HelpfulInformationPagerAdapter adapter = new HelpfulInformationPagerAdapter(getSupportFragmentManager());
+
+        HelpfulInformationPagerAdapter adapter = new HelpfulInformationPagerAdapter(getSupportFragmentManager(), obtainHelpfulInfoItems());
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -344,6 +346,18 @@ public class AddEditTourActivity extends PermissionActivity {
             }
         });
         setViewPagerPosition(viewPager.getCurrentItem() + 1, adapter.getCount());
+    }
+
+    private List<ItemHelpfulInfo> obtainHelpfulInfoItems(){
+        List<ItemHelpfulInfo> list = new ArrayList<>();
+        String[] titlesArray = getResources().getStringArray(R.array.helpful_items_titles);
+        String[] descriptionsArray = getResources().getStringArray(R.array.helpful_items_descriptions);
+
+        for (int i = 0; i < titlesArray.length; i ++){
+            list.add(new ItemHelpfulInfo(R.mipmap.image_helpful_information, titlesArray[i], descriptionsArray[i]));
+        }
+
+        return list;
     }
 
     private void setViewPagerPosition(int position, int count){

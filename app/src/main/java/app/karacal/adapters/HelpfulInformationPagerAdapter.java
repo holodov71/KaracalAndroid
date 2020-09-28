@@ -5,26 +5,31 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
+import java.util.List;
+
 import app.karacal.R;
 import app.karacal.fragments.ItemHelpfulInformationFragment;
+import app.karacal.models.ItemHelpfulInfo;
 
 public class HelpfulInformationPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final int COUNT = 10;
+    private final List<ItemHelpfulInfo> items;
 
-    public HelpfulInformationPagerAdapter(@NonNull FragmentManager fm) {
+    public HelpfulInformationPagerAdapter(@NonNull FragmentManager fm, List<ItemHelpfulInfo> items) {
         super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        this.items = items;
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        ItemHelpfulInformationFragment fragment = ItemHelpfulInformationFragment.getInstance(R.mipmap.image_helpful_information, "Lorem Ipsum", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum egestas hendrerit ex, non vestibulum velit efficitur eget. Etiam cursus eget metus a pulvinar. Proin lobortis laoreet magna, in eleifend risus dignissim id. Pellentesque accumsan eros non mattis elementum. Fusce semper orci sed leo interdum, quis hendrerit libero sodales.");
+        ItemHelpfulInformationFragment fragment = ItemHelpfulInformationFragment.getInstance(items.get(position));
         return fragment;
     }
 
     @Override
     public int getCount() {
-        return COUNT;
+        return items.size();
     }
 }

@@ -22,7 +22,7 @@ android {
 
     def versionMajor = 1
     def versionMinor = 1
-    def versionPatch = 6
+    def versionPatch = 9
 
     def code = versionMajor * 100 + versionMinor * 10 + versionPatch
 
@@ -146,6 +146,9 @@ dependencies {
 
     // Firebase Crashlytics
     implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
+
+    // Firebase Job dispatcher
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.6'
 
 
 

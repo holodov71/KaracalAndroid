@@ -145,7 +145,7 @@ public class MainMenuFragment extends Fragment {
         categoryRecommended.setVisibility(View.GONE);
 //        setupTourCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tourRepository.getRecommendedTours());
         View categoryRecommendedGuide = view.findViewById(R.id.categoryRecommendedGuides);
-        setupGuideCategory(categoryRecommendedGuide, getString(R.string.recommended_for_you));
+        setupGuideCategory(categoryRecommendedGuide, getString(R.string.all_guides_list));
 
         categoryDownloaded = view.findViewById(R.id.categoryDownloaded);
         if (getContext() != null) {

@@ -40,17 +40,20 @@ public class ShareImpressionPopup extends BasePopup {
 
         LinearLayout buttonPutGuideInFavor = view.findViewById(R.id.buttonPutGuideInFavor);
         buttonPutGuideInFavor.setOnClickListener(v -> callbacks.onButtonPutGuideInFavorClick(this));
+        buttonPutGuideInFavor.setVisibility(View.GONE);
+
         LinearLayout buttonWriteComment = view.findViewById(R.id.buttonWriteComment);
         if (needComment){
             buttonWriteComment.setOnClickListener(v -> callbacks.onButtonWriteCommentClick(this));
         } else {
             buttonWriteComment.setVisibility(View.GONE);
         }
+        buttonWriteComment.setVisibility(View.GONE);
+
         Button buttonSubmit = view.findViewById(R.id.buttonSubmit);
         RatingView ratingView = view.findViewById(R.id.ratingView);
         ratingView.setRatingChangeListener(rating -> buttonSubmit.setEnabled(rating > 0));
         buttonSubmit.setOnClickListener(v -> callbacks.onButtonSubmitRatingClick(this, ratingView.getRating()));
-
 
     }
 

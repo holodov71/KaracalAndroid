@@ -39,6 +39,7 @@
     <string name="what_we_do">Alors on fait quoi aujourd\'hui ?</string>
     <string name="see_around_me">Voir autour de moi</string>
     <string name="view_all">Voir tout</string>
+    <string name="all_guides_list">Tous les guides</string>
     <string name="recommended_for_you">Recommandé pour vous</string>
     <string name="meters_from_you">À 500m</string>
     <string name="originals">Originales</string>
@@ -233,6 +234,32 @@
     <string name="politique_protection">Politique de Protection des Données Personnelles</string>
     <string name="rating_saved">Votre note sera prise en compte</string>
     <string name="delete_album">Supprimer tous les albums</string>
+
+    <string-array name="helpful_items_titles">
+        <item>Choisis ton sujet pour savoir où tu vas</item>
+        <item>Elabore ton itinéraire</item>
+        <item>Soigne ton intro, tes transitions et ta conclusion !</item>
+        <item>Veille à respecter la durée</item>
+        <item>Le matériel</item>
+        <item>Que choisir si tu débutes ?</item>
+        <item>Test et identifie ta distance</item>
+        <item>Concrètement, comment faire ?</item>
+        <item>N\’oublies pas de captiver ton auditeur !</item>
+        <item>Un contenu impeccable ;)</item>
+    </string-array>
+
+    <string-array name="helpful_items_descriptions">
+        <item>Un podcast ça se prépare en amont : choisis un sujet/thème, construis ton propos et son évolution. Plus tu souhaites être spontané, plus tu auras besoin de te préparer en amont. Hé oui, la spontanéité, ça se travaille en fait ;) Ce qui se conçoit bien se nomme clairement (Nicolas Boileau, quasi).</item>
+        <item>Si tu choisis de faire une balade commentée n\’oublie pas de préparer ton itinéraire en amont pour guider parfaitement le visiteur. Lors de sa visite il n\'aura aucun autre support que ta voix. Certes, il aura google maps mais dans un musée ou dans la pampa, ce sera de peu d\'utilité. Il faudra donc bien préparer ton itinéraire afin d\'être en mesure, à chaque transition, d\'indiquer clairement où l\'auditeur doit se rendre pour la suite de ton parcours.</item>
+        <item>N\’oublies pas d\’accueillir le visiteur en te présentant et lui dire au revoir et à bientôt à la fin. Dans la même logique, chaque transition, qu\'elle indique l\'itinéraire à suivre ou non doit être soignée et amicale. N\'hésite pas à alpaguer l\'auditeur, l\'inviter encore plus à vivre sa visite. Il t\’appréciera d\’autant plus :)</item>
+        <item>Un podcast Karacal dépasse rarement les 45mn, surtout s\’il s\’agit d\’une balade commentée. Nous te conseillons de le découper en “segments” de 4mn environ. Au-delà, tu risques de perdre l\’auditeur.</item>
+        <item>Si tu es un as de l\'enregistrement et que tu as ton matériel de pro, bravissimo. Dans ce cas tu peux t\'accrocher à ton micro et commencer puis télécharger le tout sur notre plateforme. Si tu n\'es pas un pro de la radio mais plutôt un futur podcasteur amateur, direction le conseil suivant !</item>
+        <item>Nous te conseillons de te retourner tout simplement vers ton ami le téléphone. Aujourd\'hui la technologie permet de capter directement ta voix même au milieu d\'un carrefour parisien embouteillé où un camion de pompier essaie de se frayer un passage. C\’est parfait pour débuter, libre à toi ensuite d\’investir dans un petit micro. On en trouve à tous les prix, n\’hésite pas à nous contacter pour avoir des conseils ;)</item>
+        <item>Identifie bien la distance et l\’angle avec lesquels tu ne crées pas de bruits parasites en parlant. Pour rappel, ton souffle est capté par ton micro. Si tu viens heurter la membrane trop fort, ça crée un bruit parasite et désagréable pour l\’auditeur. Test donc bien en amont de tout enregistrement que le son est bon.</item>
+        <item>Tu vas devoir trouver le bon espacement entre ton téléphone et ta voix afin qu\'on t\'entende sans pour autant se faire assaillir de "pssss, brrrr, pshhh ffffchhh" lorsque tu articules. D\'ailleurs, n\'oublies pas d\'articuler. Ne sois pas trop rapide, l\'auditeur doit pouvoir te suivre et laisse lui le temps de respirer et de regarder ce que tu lui montres. Tu peux aussi mettre ton micro légèrement de biais pour éviter les bruits de souffle.</item>
+        <item>Hé oui, les auditeurs vont évoluer dans tes pas avec ta voix dans leurs oreilles pendant toute la visite, alors autant être sympathique et captivant ! Karacal est un compagnon culturel que tu incarnes, il faut donc que tu sois un guide amical, caché dans la poche de nos auditeurs. Enregistrer un audio est bien différent d\'une visite physique classique, ton attitude corporelle n\'est pas là pour attirer le regard de tes auditeurs et masquer tes tics de langage ! La seule chose qu\'ils ont, c\'est ta douce voix.</item>
+        <item>N\’oublie pas qu\’il doit être fiable et légal, respectueux (des auditeurs, des autres podcasteurs, …). Tu restes l\’unique propriétaire de ton contenu et responsable de ce que tu publies sur Karacal.</item>
+    </string-array>
 
 
     <!--    <string name="app_name">Karacal</string>-->

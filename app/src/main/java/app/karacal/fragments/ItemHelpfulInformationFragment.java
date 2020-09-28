@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import app.karacal.R;
+import app.karacal.models.ItemHelpfulInfo;
 import apps.in.android_logger.LogFragment;
 
 public class ItemHelpfulInformationFragment extends LogFragment {
@@ -23,12 +24,12 @@ public class ItemHelpfulInformationFragment extends LogFragment {
     private String title;
     private String caption;
 
-    public static ItemHelpfulInformationFragment getInstance(int imageId, String title, String caption){
+    public static ItemHelpfulInformationFragment getInstance(ItemHelpfulInfo item){
         ItemHelpfulInformationFragment fragment = new ItemHelpfulInformationFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(IMAGE_ID_KEY, imageId);
-        bundle.putString(TITLE_KEY, title);
-        bundle.putString(CAPTION_KEY, caption);
+        bundle.putInt(IMAGE_ID_KEY, item.getImageId());
+        bundle.putString(TITLE_KEY, item.getTitle());
+        bundle.putString(CAPTION_KEY, item.getCaption());
         fragment.setArguments(bundle);
         return fragment;
     }

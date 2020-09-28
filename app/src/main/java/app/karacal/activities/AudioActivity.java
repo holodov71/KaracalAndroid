@@ -247,13 +247,10 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
 
     @Override
     public void onPlayerPlayClicked(int tourId) {
-        Log.v(App.TAG, "onPlayerPlayClicked");
         if (serviceBound) {
             if (playerService.getPlayer() != null && playerService.getPlayer().getTourId() != tourId) {
-                Log.v(App.TAG, "onPlayerPlayClicked getTourId() != tourId");
                 playerService.releasePlayer();
                 playerService.getPlayer().pause();
-//                playerService.background();
             }
         }
     }

@@ -42,6 +42,7 @@ import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CategoryActivity;
 import app.karacal.adapters.DashboardTourListAdapter;
 import app.karacal.adapters.TourVerticalListAdapter;
+import app.karacal.data.LocationCache;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.LocationHelper;
 import app.karacal.helpers.PermissionHelper;
@@ -205,6 +206,7 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
                                     throwable -> Logger.log(this, "Error obtaining location", throwable));
                 },
                 () -> {
+                    LocationCache.getInstance(App.getInstance()).setHasPermission(false);
                     map.setMyLocationEnabled(false);
                     map.getUiSettings().setMyLocationButtonEnabled(false);
                     map.moveCamera(CameraUpdateFactory.newLatLng(parisLocation));
