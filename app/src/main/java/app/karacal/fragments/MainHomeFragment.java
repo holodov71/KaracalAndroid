@@ -29,7 +29,6 @@ import app.karacal.activities.CategoryActivity;
 import app.karacal.adapters.TourHorizontalListAdapter;
 import app.karacal.data.ProfileCache;
 import app.karacal.data.repository.TourRepository;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.CategoryViewMode;
 import app.karacal.models.Tour;
 import app.karacal.models.TourCategory;
@@ -44,9 +43,6 @@ public class MainHomeFragment extends Fragment {
     private View progressLoading;
 
     private MainActivityViewModel viewModel;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Inject
     TourRepository tourRepository;

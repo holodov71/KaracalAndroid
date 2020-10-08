@@ -159,11 +159,9 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
         try {
             String appLinkAction = intent.getAction();
             Uri appLinkData = intent.getData();
-            Log.v(TAG, "appLinkData = "+ (appLinkData != null ? appLinkData.toString() : null));
 
             if (Intent.ACTION_VIEW.equals(appLinkAction) && appLinkData != null){
                 tourId = Integer.parseInt(appLinkData.getLastPathSegment());
-                Log.v(TAG, "appLinkData.getLastPathSegment() = tourId = "+tourId);
                 return true;
             }
 
@@ -182,9 +180,6 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
             Intent playerIntent = new Intent(this, PlayerService.class);
             startService(playerIntent);
             bindService(playerIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-        } else {
-            //Service is active
-            //Send media with BroadcastReceiver
         }
     }
 
@@ -226,7 +221,6 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
                 if (url != null){
                     WebLinkHelper.openWebLink(this, url);
                 }
-                Log.v("onActivityResult", "Subscription opened");
             }
         }
     }
@@ -255,11 +249,9 @@ public class AudioActivity extends LogActivity implements AudioPlayerFragment.On
         }
     }
 
-    //Binding this Client to the AudioPlayer Service
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
             PlayerService.LocalBinder binder = (PlayerService.LocalBinder) service;
             playerService = binder.getService();
             playerService.background();

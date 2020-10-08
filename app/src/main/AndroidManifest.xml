@@ -146,8 +146,6 @@
             android:enabled="true"
             android:exported="true"/>
 
-        <receiver android:name= ".receivers.MyNotificationPublisher" />
-
         <service
             android:exported="false"
             android:name=".service.NotificationJobService">

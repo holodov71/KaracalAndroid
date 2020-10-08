@@ -4,11 +4,9 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
@@ -17,6 +15,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Calendar;
 import java.util.Random;
@@ -29,7 +29,6 @@ import app.karacal.R;
 import app.karacal.activities.AudioActivity;
 import app.karacal.data.LocationCache;
 import app.karacal.data.NotificationsCache;
-import app.karacal.data.NotificationsSchedule;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.LocationHelper;
 import app.karacal.helpers.NotificationHelper;
@@ -47,39 +46,29 @@ public class NotificationJobService extends JobService {
     public static String TAG = "NotificationJobService";
     public static String NOTIFICATION_CHANNEL_ID = "notification-chanel-id-karacal";
     public static int NOTIFICATION_ID = 3851;
-//    private static final long INTERVAL = 8 * 60 * 1000; // 8 minutes
     private static final long INTERVAL = 12 * 60 * 60 * 1000;// 12 hours
     private static final int GEO_CODING_TIMEOUT = 5;
 
     @Inject
     ApiHelper apiHelper;
 
-//    private BroadcastReceiver.PendingResult pendingResult = null;
     private CompositeDisposable mDisposable = new CompositeDisposable();
 
-
     @Override
-    public boolean onStartJob(JobParameters job) {
+    public boolean onStartJob(@NotNull JobParameters job) {
         App.getAppComponent().inject(this);
-        Log.v(TAG, "onStartJob");
         obtainLocation();
 
-        return true; // Answers the question: "Is there still work going on?"
+        return true;
     }
 
     @Override
-    public boolean onStopJob(JobParameters job) {
-        return true; // Answers the question: "Should this job be retried?"
+    public boolean onStopJob(@NotNull JobParameters job) {
+        return true;
     }
 
     private void showNotification(Context context, Tour tour){
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-//        NotificationScheduleModel model = getNotificationModel();
-//
-//        if (model == null ){
-//            return;
-//        }
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ) {
             int importance = NotificationManager.IMPORTANCE_HIGH ;
@@ -98,10 +87,8 @@ public class NotificationJobService extends JobService {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::loadNearTours, throwable -> {
-                    Log.v(TAG, "Error obtaining location");
                     Location location = LocationCache.getInstance(App.getInstance()).getLocation();
                     if (location != null) {
-                        Log.v(TAG, "LocationCache location = "+location);
                         loadNearTours(location);
                     } else {
                         finishWork();
@@ -110,21 +97,14 @@ public class NotificationJobService extends JobService {
     }
 
     private void loadNearTours(Location location){
-        Log.v(TAG, "loadNearTours");
-
-        Log.v(TAG, "location.getLatitude() = "+location.getLatitude());
-        Log.v(TAG, "location.getLongitude() = "+location.getLongitude());
-
         mDisposable.add(apiHelper.loadNearTours(PreferenceHelper.loadToken(),
                 new NearToursRequest(location.getLatitude(), location.getLongitude(), 0.5))
-//                new NearToursRequest(48.856613, 2.352222, 0.5))// центр Парижу
                 .flatMapIterable(list -> list)
                 .map(Tour::new)
                 .toList()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tours -> {
-                    Log.v("loadTours", "contentsLiveData.setValue(tours) size = " + tours.size());
                     if (tours.size() > 0){
                         Random random = new Random();
                         int index = random.nextInt(tours.size());
@@ -134,59 +114,13 @@ public class NotificationJobService extends JobService {
                         finishWork();
                     }
 
-                }, throwable -> {
-                    finishWork();
-                }));
+                }, throwable -> finishWork()));
     }
 
     private void finishWork(){
         if (!mDisposable.isDisposed()) mDisposable.dispose();
         NotificationHelper.scheduleNotification(App.getInstance(), System.currentTimeMillis() + INTERVAL);
     }
-
-//    private Notification getNotification (NotificationScheduleModel model) {
-//        RemoteViews contentView = new RemoteViews(App.getInstance().getPackageName() , R.layout.local_notification_layout);
-//
-//        contentView.setTextViewText(R.id.textViewTourTitle, model.getTitle());
-//        contentView.setTextViewText(R.id.textViewTourDescription, model.getMessage());
-//
-//        Intent notificationIntent = new Intent(App.getInstance(), AudioActivity.class);
-//        AudioActivity.Args args = new AudioActivity.Args(model.getTourId());
-//        notificationIntent.putExtras(args.toBundle());
-//        notificationIntent.setAction("played_tour");
-//
-//        PendingIntent pendingIntent = PendingIntent.getActivity(App.getInstance(),
-//                0, notificationIntent, 0);
-//
-//        Notification notification = new NotificationCompat.Builder(App.getInstance(), NOTIFICATION_CHANNEL_ID)
-//                .setShowWhen(false)
-//                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-//                .setContent(contentView)
-//                .setSmallIcon(R.drawable.ic_stat_onesignal_default)
-//                .setContentIntent(pendingIntent)
-//                .setPriority(Notification.PRIORITY_MAX)
-//                .setWhen(0)
-//                .setChannelId(NOTIFICATION_CHANNEL_ID)
-//                .setAutoCancel(true)
-//                .build();
-//
-//        NotificationTarget notificationTarget = new NotificationTarget(
-//                App.getInstance(),
-//                R.id.imageViewTour,
-//                contentView,
-//                notification,
-//                NOTIFICATION_ID);
-//
-//        Glide.with(App.getInstance())
-//                .asBitmap()
-//                .load(model.getLogo())
-//                .into(notificationTarget);
-//
-//        saveToCache(model);
-//
-//        return notification;
-//
-//    }
 
     private Notification getNotification (Tour model) {
         RemoteViews contentView = new RemoteViews(App.getInstance().getPackageName() , R.layout.local_notification_layout);
@@ -197,7 +131,7 @@ public class NotificationJobService extends JobService {
         Intent notificationIntent = new Intent(App.getInstance(), AudioActivity.class);
         AudioActivity.Args args = new AudioActivity.Args(model.getId());
         notificationIntent.putExtras(args.toBundle());
-        notificationIntent.setAction("played_tour");
+        notificationIntent.setAction("notification_karacal");
 
         PendingIntent pendingIntent = PendingIntent.getActivity(App.getInstance(),
                 0, notificationIntent, 0);
@@ -232,9 +166,6 @@ public class NotificationJobService extends JobService {
 
     }
 
-    private NotificationScheduleModel getNotificationModel(){
-        return NotificationsSchedule.getInstance(App.getInstance()).getNotificationByDay(getCurrentDay());
-    }
 
     private int getCurrentDay(){
         Calendar calendar = Calendar.getInstance();
@@ -254,8 +185,6 @@ public class NotificationJobService extends JobService {
                 calendar.getTime(),
                 model.getTourId()
         );
-
-        Log.d("MyNotificationPublisher", "Notification received: " + notificationInfo);//message
 
         notificationsCache.addNotification(App.getInstance(), notificationInfo);
     }

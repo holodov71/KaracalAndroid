@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -46,17 +45,12 @@ public class NetworkStateHelper {
                 }
             }
 
-
-            Log.v("isNetworkAvailable","availableInternet = "+availableInternet);
-
-
             if (desiredInternet == DesiredInternet.WIFI_INTERNET){
                 return availableInternet == DesiredInternet.WIFI_INTERNET;
             } else {
                 return availableInternet != null;
             }
         }
-        Log.v("isNetworkAvailable","Network is available : FALSE ");
         return false;
     }
 

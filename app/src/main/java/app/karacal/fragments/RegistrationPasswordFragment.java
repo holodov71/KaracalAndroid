@@ -1,5 +1,6 @@
 package app.karacal.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,12 +42,14 @@ public class RegistrationPasswordFragment extends LogFragment {
         return view;
     }
 
+    @SuppressLint("CheckResult")
     private void setupPasswordInput(View view){
         textInputLayoutPassword = view.findViewById(R.id.textInputLayoutPassword);
         textInputLayoutPassword.getEditText().setText(viewModel.getPassword() != null ? viewModel.getPassword() : "");
         TextInputHelper.editTextObservable(textInputLayoutPassword).subscribe((s) -> validateInputs());
     }
 
+    @SuppressLint("CheckResult")
     private void setupPasswordConfirmInput(View view){
         textInputLayoutConfirmPassword = view.findViewById(R.id.textInputLayoutConfirmPassword);
         textInputLayoutConfirmPassword.getEditText().setText(viewModel.getPassword() != null ? viewModel.getPassword() : "");

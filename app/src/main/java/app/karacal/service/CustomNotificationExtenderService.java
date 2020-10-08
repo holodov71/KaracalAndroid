@@ -27,7 +27,6 @@ public class CustomNotificationExtenderService extends NotificationExtenderServi
         OSNotificationDisplayedResult displayedResult = displayNotification(overrideSettings);
 
         saveToCache(displayedResult, receivedResult);
-        Log.d("OneSignalExample", "Notification received with id: " + displayedResult.androidNotificationId);
 
         return true;
     }
@@ -45,7 +44,6 @@ public class CustomNotificationExtenderService extends NotificationExtenderServi
                 0
         );
 
-        Log.d("OneSignalExample", "Notification received: " + notificationInfo);//message
 
         notificationsCache.addNotification(this, notificationInfo);
     }

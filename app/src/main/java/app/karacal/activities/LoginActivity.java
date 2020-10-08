@@ -20,7 +20,6 @@ import app.karacal.R;
 import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.TokenHelper;
 import app.karacal.models.Profile;
 import app.karacal.navigation.NavigationHelper;
 import apps.in.android_logger.LogActivity;
@@ -29,9 +28,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class LoginActivity extends LogActivity {
-
-    @Inject
-    TokenHelper tokenHelper;
 
     @Inject
     ApiHelper apiHelper;

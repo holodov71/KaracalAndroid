@@ -29,7 +29,6 @@ import app.karacal.fragments.PaymentMethodAddFragment;
 import app.karacal.fragments.PaymentMethodListFragment;
 import app.karacal.fragments.RegistrationContactsFragment;
 import app.karacal.fragments.RegistrationInterestsFragment;
-import app.karacal.receivers.MyNotificationPublisher;
 import app.karacal.service.NotificationJobService;
 import app.karacal.viewmodels.AudioActivityViewModel;
 import app.karacal.viewmodels.CategoryActivityViewModel;
@@ -119,8 +118,6 @@ public interface AppComponent {
     void inject (PaymentMethodViewModel viewModel);
 
     void inject (SubscriptionActivityViewModel viewModel);
-
-    void inject (MyNotificationPublisher notificationPublisher);
 
     void inject (NotificationJobService notificationJobService);
 

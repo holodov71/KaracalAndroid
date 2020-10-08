@@ -27,7 +27,6 @@ import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.LocationHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Tag;
 import app.karacal.models.Tour;
 import app.karacal.network.models.request.SaveTourRequest;
@@ -78,9 +77,6 @@ public class AddEditTourActivityViewModel extends ViewModel {
 
     @Inject
     TourRepository tourRepository;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Inject
     ApiHelper apiHelper;
@@ -224,10 +220,6 @@ public class AddEditTourActivityViewModel extends ViewModel {
                 .subscribe(loc -> {
                             locationCoordinates.setValue(loc);
                             isGeoCodingInProgress.postValue(false);
-//                            location = String.format(Locale.ROOT, "%f, %f", loc.getLatitude(), loc.getLongitude());
-//                            if (locationUpdateHandler != null) {
-//                                locationUpdateHandler.notifyLocationUpdate(location);
-//                            }
                         },
                         throwable -> {
                             isGeoCodingInProgress.postValue(false);
@@ -242,7 +234,7 @@ public class AddEditTourActivityViewModel extends ViewModel {
                 .subscribe(response -> {
                     tagsLiveData.setValue(response);
                 }, throwable -> {
-                    Log.v("loadTags", "throwable " + throwable.getMessage());
+                    Log.e("loadTags", "throwable " + throwable.getMessage());
                 }));
     }
 
@@ -287,14 +279,12 @@ public class AddEditTourActivityViewModel extends ViewModel {
                     }
                 }, throwable -> {
                     onErrorEvent.setValue(App.getResString(R.string.can_not_save_tour));
-                    Log.v("saveTour", "throwable " + throwable.getMessage());
                 }));
     }
 
     private void updateTour() {
 
         if (validateChanges()) {
-            Log.v(App.TAG, "validateChanges = true");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             String dateStr = dateFormat.format(Calendar.getInstance().getTime());
 
@@ -326,10 +316,8 @@ public class AddEditTourActivityViewModel extends ViewModel {
                         }
                     }, throwable -> {
                         onErrorEvent.setValue(App.getResString(R.string.can_not_save_tour));
-                        Log.v("saveTour", "throwable " + throwable.getMessage());
                     }));
         } else {
-            Log.v(App.TAG, "validateChanges = false");
             onTourSavedEvent.setValue(currentTour.getId());
         }
     }

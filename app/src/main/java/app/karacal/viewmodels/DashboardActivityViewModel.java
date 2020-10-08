@@ -14,16 +14,12 @@ import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.FileHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Profile;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class DashboardActivityViewModel extends ViewModel {
 
     private CompositeDisposable disposable = new CompositeDisposable();
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Inject
     ApiHelper apiHelper;
@@ -43,11 +39,6 @@ public class DashboardActivityViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getAvatarUploadingLiveData() {
         return avatarUploadingLiveData;
-    }
-
-
-    public SingleLiveEvent<String> getErrorAction() {
-        return errorAction;
     }
 
     public DashboardActivityViewModel() {

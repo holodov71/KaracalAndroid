@@ -1,7 +1,5 @@
 package app.karacal.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.widget.ImageView;
 

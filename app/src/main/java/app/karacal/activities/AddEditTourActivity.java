@@ -1,13 +1,12 @@
 package app.karacal.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +53,6 @@ import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.AddEditTourActivityViewModel;
 import apps.in.android_logger.Logger;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 public class AddEditTourActivity extends PermissionActivity {
 
@@ -85,16 +83,11 @@ public class AddEditTourActivity extends PermissionActivity {
     private ConstraintLayout placeholder;
     private ConstraintLayout constraintLayoutImage;
     private ImageView imageViewTitle;
-    private ImageView buttonDelete;
-    private TextInputLayout textInputLayoutTitle;
     private TextInputLayout textInputLayoutLatitude;
     private TextInputLayout textInputLayoutLongitude;
-    private TextInputLayout textInputLayoutDescription;
-    private TextInputLayout textInputLayoutAddress;
     private AutoCompleteTextView textInputTags;
     private ImageView buttonAddTag;
     private ChipGroup tagGroup;
-    private View progressLoading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +111,6 @@ public class AddEditTourActivity extends PermissionActivity {
         setupInputs();
         setupContinueButton();
         setupViewPager();
-        setupProgressLoading();
 
         observeViewModel();
     }
@@ -146,7 +138,7 @@ public class AddEditTourActivity extends PermissionActivity {
         placeholder = findViewById(R.id.imagePlaceholder);
         constraintLayoutImage = findViewById(R.id.constraintLayoutImage);
         imageViewTitle = findViewById(R.id.imageViewTitle);
-        buttonDelete = findViewById(R.id.buttonDelete);
+        ImageView buttonDelete = findViewById(R.id.buttonDelete);
         if (tour != null && tour.getImageUrl() != null) {
             ImageHelper.setImage(imageViewTitle, tour.getImageUrl(), tour.getImage(), false);
             constraintLayoutImage.setVisibility(View.VISIBLE);
@@ -180,8 +172,9 @@ public class AddEditTourActivity extends PermissionActivity {
         setupTagsInput();
     }
 
+    @SuppressLint("CheckResult")
     private void setupTitleInput() {
-        textInputLayoutTitle = findViewById(R.id.textInputLayoutTitle);
+        TextInputLayout textInputLayoutTitle = findViewById(R.id.textInputLayoutTitle);
         viewModel.setTitle(tour != null ? tour.getTitle() : null);
         textInputLayoutTitle.getEditText().setText(tour != null ? tour.getTitle() : "");
         TextInputHelper.editTextObservable(textInputLayoutTitle).subscribe((s) -> {
@@ -190,26 +183,15 @@ public class AddEditTourActivity extends PermissionActivity {
         });
     }
 
+    @SuppressLint("CheckResult")
     private void setupLocationInput() {
         ProgressBar progressBar = findViewById(R.id.progressBarGeoCoding);
         textInputLayoutLatitude = findViewById(R.id.textInputLayoutLatitude);
         textInputLayoutLongitude = findViewById(R.id.textInputLayoutLongitude);
 
-//        String latitude = "";
-//        String longitude = "";
-//
         if (tour != null){
-//            Location location = tour.getTourLocation();
             viewModel.setLocation(tour.getTourLocation());
-//
-//            if (location != null){
-//                latitude = String.valueOf(location.getLatitude());
-//                longitude = String.valueOf(location.getLongitude());
-//            }
         }
-//
-//        textInputLayoutLatitude.getEditText().setText(latitude);
-//        textInputLayoutLongitude.getEditText().setText(longitude);
 
         TextInputHelper.editTextObservable(textInputLayoutLatitude).subscribe((s) -> {
             viewModel.setLatitude(TextUtils.isEmpty(s) ? null : s);
@@ -226,13 +208,7 @@ public class AddEditTourActivity extends PermissionActivity {
         buttonLocation.setOnClickListener(v -> permissionHelper.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION,
                 () -> viewModel.obtainLocation(),
                 () -> Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_LONG).show()));
-//        viewModel.subscribeLocationUpdates(this, location -> {
-//            if (location != null) {
-//                textInputLayoutLocation.getEditText().setText(location);
-//            } else {
-//                Toast.makeText(this, R.string.error_obtaining_location, Toast.LENGTH_LONG).show();
-//            }
-//        });
+
         viewModel.getGeoCodingState().observe(this, isActive -> {
             textInputLayoutLongitude.setEnabled((!isActive));
             textInputLayoutLatitude.setEnabled((!isActive));
@@ -242,8 +218,9 @@ public class AddEditTourActivity extends PermissionActivity {
         });
     }
 
+    @SuppressLint("CheckResult")
     private void setupAddressInput() {
-        textInputLayoutAddress = findViewById(R.id.textInputLayoutAddress);
+        TextInputLayout textInputLayoutAddress = findViewById(R.id.textInputLayoutAddress);
         viewModel.setAddress(tour != null ? tour.getAddress() : null);
         textInputLayoutAddress.getEditText().setText(tour != null ? tour.getAddress() : "");
         TextInputHelper.editTextObservable(textInputLayoutAddress).subscribe((s) -> {
@@ -252,8 +229,9 @@ public class AddEditTourActivity extends PermissionActivity {
         });
     }
 
+    @SuppressLint("CheckResult")
     private void setupDescriptionInput() {
-        textInputLayoutDescription = findViewById(R.id.textInputLayoutDescription);
+        TextInputLayout textInputLayoutDescription = findViewById(R.id.textInputLayoutDescription);
         viewModel.setDescription(tour != null ? tour.getDescription() : null);
         textInputLayoutDescription.getEditText().setText(tour != null ? tour.getDescription() : "");
         TextInputHelper.editTextObservable(textInputLayoutDescription).subscribe((s) -> {
@@ -363,10 +341,6 @@ public class AddEditTourActivity extends PermissionActivity {
     private void setViewPagerPosition(int position, int count){
         TextView textView = findViewById(R.id.textViewHelpfulInformationPosition);
         textView.setText(String.format(Locale.getDefault(), "%02d / %02d", position, count));
-    }
-
-    private void setupProgressLoading(){
-        progressLoading = findViewById(R.id.progressLoading);
     }
 
     private void observeViewModel(){

@@ -68,16 +68,7 @@ public class CommentsListAdapter extends RecyclerView.Adapter<CommentsListAdapte
     private final Context context;
     private final LayoutInflater inflater;
 
-    private final ArrayList<Comment> comments = new ArrayList<>(
-//            Arrays.asList(
-//            new Comment("Angelika Red", new Date(2019, 11, 14), "Learn about the past of the bohemian hill, imbued with its romance and admire the snow-white temple."),
-//            new Comment("Alexander McQueen", new Date(2019, 11, 10), "Learn about the past of the bohemian hill, imbued with its romance."),
-//            new Comment("Angelika White", new Date(2019, 11, 8), "Learn about the past of the bohemian hill, imbued with its romance and admire the snow-white temple."),
-//            new Comment("Angelika Red", new Date(2019, 11, 6), "Learn about the past of the bohemian hill, imbued with its romance and admire the snow-white temple."),
-//            new Comment("Alexander McQueen", new Date(2019, 11, 4), "Learn about the past of the bohemian hill, imbued with its romance."),
-//            new Comment("Angelika White", new Date(2019, 11, 1), "Learn about the past of the bohemian hill, imbued with its romance and admire the snow-white temple.")
-//    )
-    );
+    private final ArrayList<Comment> comments = new ArrayList<>();
 
     private final NinePatchDrawable oddBackground;
     private final NinePatchDrawable evenBackground;

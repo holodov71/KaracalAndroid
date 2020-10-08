@@ -1,7 +1,6 @@
 package app.karacal.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +11,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import com.stripe.android.Stripe;
 import com.stripe.android.model.Card;
 import com.stripe.android.view.CardMultilineWidget;
-
-import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.data.ProfileCache;
 import app.karacal.helpers.KeyboardHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.CardDetails;
 import app.karacal.viewmodels.PaymentMethodViewModel;
 import io.reactivex.disposables.CompositeDisposable;
@@ -32,11 +27,6 @@ public class PaymentMethodAddFragment extends Fragment {
     private PaymentMethodViewModel viewModel;
 
     private CompositeDisposable disposable = new CompositeDisposable();
-
-    private Stripe stripe;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     private Button createButton;
     private ProgressBar progressLoading;
@@ -75,7 +65,6 @@ public class PaymentMethodAddFragment extends Fragment {
             Card card = cardInputWidget.getCard();
 
             if (card != null) {
-                Log.v("PaymentMethodCreate", "cardInputWidget.getCard() = "+card);
                 Integer expiryYear = card.getExpYear();
                 Integer expiryMonth = card.getExpMonth();
 
@@ -98,27 +87,6 @@ public class PaymentMethodAddFragment extends Fragment {
                         getActivity().onBackPressed();
                     }
                 }
-
-//                Card newCard = new Card.Builder(
-//                        card.getNumber(),
-//                        expiryMonth,
-//                        expiryYear,
-//                        card.getCvc()
-//                ).build();
-
-//                stripe.createCardToken(cardInputWidget.getCard(), new ApiResultCallback<Token>() {
-//                    @Override
-//                    public void onSuccess(Token token) {
-////                        makePayment(token.getId());
-//                    }
-//
-//                    @Override
-//                    public void onError(@NotNull Exception e) {
-//                        hideLoading();
-//                        ToastHelper.showToast(PaymentActivity.this, getString(R.string.common_error));
-//                    }
-//                });
-
             }
         });
     }

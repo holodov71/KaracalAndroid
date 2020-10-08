@@ -3,7 +3,6 @@ package app.karacal.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,22 +19,18 @@ public class PaymentMethodListAdapter extends RecyclerView.Adapter<PaymentMethod
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final View itemView;
         private final TextView textViewCardNumber;
         private final TextView textViewExpiryDate;
         private final TextView textViewCardOwner;
         private final TextView buttonMakeDefault;
         private final ImageView buttonDeletePaymentMethod;
-        private final View layoutPaymentMethod;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.itemView = itemView;
             textViewCardNumber = itemView.findViewById(R.id.tvCardNumber);
             textViewExpiryDate = itemView.findViewById(R.id.tvCardExpiry);
             textViewCardOwner = itemView.findViewById(R.id.tvCardOwner);
             buttonMakeDefault = itemView.findViewById(R.id.tvMakeDefault);
-            layoutPaymentMethod = itemView.findViewById(R.id.layoutPaymentMethod);
             buttonDeletePaymentMethod = itemView.findViewById(R.id.imgDeletePaymentMethod);
         }
 

@@ -11,7 +11,6 @@ public class EditAudioPopup extends BasePopup {
 
     public interface EditAudioPopupCallbacks{
         void onButtonRenameClick(BasePopup popup);
-        void onButtonEditClick(BasePopup popup);
         void onButtonDownloadClick(BasePopup popup);
         void onButtonDeleteClick(BasePopup popup);
     }
@@ -33,8 +32,6 @@ public class EditAudioPopup extends BasePopup {
     private void setup(View view) {
         LinearLayout buttonRename = view.findViewById(R.id.buttonRename);
         buttonRename.setOnClickListener(v -> callbacks.onButtonRenameClick(this));
-//        LinearLayout buttonEdit = view.findViewById(R.id.buttonEdit);
-//        buttonEdit.setOnClickListener(v -> callbacks.onButtonEditClick(this));
         LinearLayout buttonDownload = view.findViewById(R.id.buttonDownload);
         View downloadDivider = view.findViewById(R.id.downloadDivider);
 
@@ -44,7 +41,6 @@ public class EditAudioPopup extends BasePopup {
             buttonDownload.setVisibility(View.GONE);
             downloadDivider.setVisibility(View.GONE);
         }
-
 
         LinearLayout buttonDelete = view.findViewById(R.id.buttonDelete);
         buttonDelete.setOnClickListener(v -> callbacks.onButtonDeleteClick(this));

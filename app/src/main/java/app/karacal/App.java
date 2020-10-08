@@ -1,8 +1,6 @@
 package app.karacal;
 
 import android.app.Application;
-import android.location.Location;
-
 import app.karacal.dagger.AppComponent;
 import app.karacal.dagger.DaggerAppComponent;
 import apps.in.android_logger.Logger;
@@ -18,17 +16,6 @@ public class App extends Application {
     private static App instance;
 
     private AppComponent appComponent;
-
-    private Location lastLocation = null;
-
-    public Location getLastLocation() {
-        return lastLocation;
-    }
-
-    public void setLastLocation(Location lastLocation) {
-        this.lastLocation = lastLocation;
-
-    }
 
     @Override
     public void onCreate() {
@@ -69,6 +56,6 @@ public class App extends Application {
     }
 
     public static String getApiBaseUrl(){
-        return instance.API_BASE_URL;
+        return API_BASE_URL;
     }
 }

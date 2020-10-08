@@ -34,8 +34,6 @@ public class DatabaseModule {
                 KARACAL_DATABASE)
             .build();
 
-        populateInitialData(database);
-
         return database;
     }
 
@@ -44,22 +42,5 @@ public class DatabaseModule {
         return database.toursDao();
     }
 
-    /**
-     * Inserts the default data into the database if it is currently empty.
-     */
-    private void populateInitialData(AppDatabase database) {
-//        if (database.toursDao().count() == 0) {
-//            database.runInTransaction(new Runnable() {
-//                @Override
-//                public void run() {
-//                    for (TourEntity tourEntity: getDefaultTours()) {
-//                        database.toursDao().insert(tourEntity);
-//                    }
-//
-//
-//                }
-//            });
-//        }
-    }
 
 }

@@ -24,7 +24,6 @@ import app.karacal.data.ProfileCache;
 import app.karacal.dialogs.ForgotPasswordDialog;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.KeyboardHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.network.models.request.LoginRequest;
@@ -32,7 +31,6 @@ import app.karacal.network.models.request.ResetPasswordRequest;
 import apps.in.android_logger.LogFragment;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class EmailLoginFragment extends LogFragment {
@@ -45,9 +43,6 @@ public class EmailLoginFragment extends LogFragment {
 
     @Inject
     ApiHelper apiHelper;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,8 +108,6 @@ public class EmailLoginFragment extends LogFragment {
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(profile -> {
-//                                profileHolder.setProfile(profile);
-
                                 FragmentActivity activity = getActivity();
                                 if (activity != null) {
                                     ProfileCache.getInstance(activity).setProfile(activity, profile);

@@ -62,6 +62,8 @@ public class SearchFilterActivity extends LogActivity {
         Switch switchPaid = findViewById(R.id.switchPaid);
         switchPaid.setChecked(searchFilter.isPaid());
         switchPaid.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setPaid(isChecked));
+
+        // Temporary unused
 //        Switch switchOfficial = findViewById(R.id.switchOfficial);
 //        switchOfficial.setChecked(searchFilter.isOfficial());
 //        switchOfficial.setOnCheckedChangeListener((buttonView, isChecked) -> searchFilter.setOfficial(isChecked));

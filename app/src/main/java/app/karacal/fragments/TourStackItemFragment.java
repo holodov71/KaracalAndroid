@@ -11,10 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
-
-import java.util.Locale;
-
 import app.karacal.R;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.models.Tour;

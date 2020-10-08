@@ -73,7 +73,4 @@ public class PaymentMethodListFragment extends Fragment {
         });
     }
 
-    private void showTour(int tourId){
-    }
-
 }

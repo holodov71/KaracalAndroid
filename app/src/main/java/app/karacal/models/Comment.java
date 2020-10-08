@@ -10,12 +10,6 @@ public class Comment {
     private Date date;
     private String comment;
 
-    public Comment(String author, Date date, String comment) {
-        this.author = author;
-        this.date = date;
-        this.comment = comment;
-    }
-
     public Comment(CommentsResponse.CommentResponse commentResponse) {
         this.author = commentResponse.getClientName() + commentResponse.getClientSecondName();
         this.date = new Date();

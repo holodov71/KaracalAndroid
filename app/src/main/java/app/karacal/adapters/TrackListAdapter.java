@@ -72,9 +72,6 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
             if (duration == 0) {
                 try {
                     Uri mediaPath = Uri.parse("android.resource://" + context.getPackageName() + "/" + track.getResId());
-//                    metaRetriever.setDataSource(context, mediaPath);
-//                    String metadata = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-//                    duration = (int) (Long.parseLong(metadata) / 1000);
                     duration = FileHelper.getAudioDuration(context, mediaPath);
                 } catch (Exception e) {
                     textViewDuration.setVisibility(View.INVISIBLE);

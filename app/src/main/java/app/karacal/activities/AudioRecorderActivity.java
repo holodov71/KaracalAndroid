@@ -25,7 +25,6 @@ public class AudioRecorderActivity extends LogActivity {
 
     private AudioRecorderActivityViewModel viewModel;
 
-    private ImageView buttonBack;
     private ImageView buttonCancel;
     private ImageView buttonSave;
     private ImageView buttonApply;
@@ -50,7 +49,7 @@ public class AudioRecorderActivity extends LogActivity {
     }
 
     private void setupBackButton(){
-        buttonBack = findViewById(R.id.buttonBack);
+        ImageView buttonBack = findViewById(R.id.buttonBack);
         buttonBack.setOnClickListener(v -> onBackPressed());
     }
 

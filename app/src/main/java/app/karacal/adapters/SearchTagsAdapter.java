@@ -15,7 +15,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import app.karacal.R;
@@ -61,11 +60,6 @@ public class SearchTagsAdapter extends RecyclerView.Adapter<SearchTagsAdapter.Vi
     private TagClickListener listener;
 
     private ArrayList<SearchTagCategory> categories = new ArrayList<>();
-//    private ArrayList<SearchTagCategory> categories = new ArrayList<>(Arrays.asList(
-//            new SearchTagCategory("Visites originales", new ArrayList<>(Arrays.asList("Music", "Jazz", "Fantasy", "Humor", "Audio-Description", "Fantasy", "Jazz", "Fantasy", "Humor"))),
-//            new SearchTagCategory("Niveau", new ArrayList<>(Arrays.asList("Expert", "Newbie", "Amateur"))),
-//            new SearchTagCategory("Visites originales", new ArrayList<>(Arrays.asList("Music", "Jazz", "Fantasy", "Humor", "Audio-Description", "Fantasy", "Jazz", "Fantasy", "Humor"))))
-//    );
 
     public void setTags(List<Tag> tags) {
         categories.clear();

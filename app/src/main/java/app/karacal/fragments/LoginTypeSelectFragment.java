@@ -29,8 +29,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-import org.json.JSONException;
-
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -39,7 +37,6 @@ import app.karacal.App;
 import app.karacal.R;
 import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ApiHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.network.models.request.SocialLoginRequest;
@@ -62,9 +59,6 @@ public class LoginTypeSelectFragment extends LogFragment {
 
     @Inject
     ApiHelper apiHelper;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     private View progressLoading;
 
@@ -246,7 +240,6 @@ public class LoginTypeSelectFragment extends LogFragment {
                     .subscribe(profile -> {
                         FragmentActivity activity = getActivity();
                         if (activity != null) {
-//                            profileHolder.setProfile(profile);
                             ProfileCache.getInstance(activity).setProfile(activity, profile);
                             NavigationHelper.startMainActivity(getActivity());
                             activity.finish();

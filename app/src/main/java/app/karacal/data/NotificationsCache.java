@@ -38,15 +38,6 @@ public class NotificationsCache {
         saveChanges(context);
     }
 
-    public NotificationInfo getNotification(int position){
-        return notificationsList.get(position);
-    }
-
-    public void deleteDownloadedTour(Context context, int position){
-        notificationsList.remove(position);
-        saveChanges(context);
-    }
-
     private void saveChanges(Context context){
         PreferenceHelper.setNotificationsCache(context, new Gson().toJson(this));
     }

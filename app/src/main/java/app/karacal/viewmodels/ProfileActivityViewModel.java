@@ -1,7 +1,5 @@
 package app.karacal.viewmodels;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -15,11 +13,9 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
-import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Guide;
 import app.karacal.models.Tour;
 import io.reactivex.disposables.CompositeDisposable;
@@ -47,9 +43,6 @@ public class ProfileActivityViewModel extends ViewModel {
     }
 
     @Inject
-    ProfileHolder profileHolder;
-
-    @Inject
     TourRepository tourRepository;
 
     @Inject
@@ -66,7 +59,6 @@ public class ProfileActivityViewModel extends ViewModel {
 
 
     public ProfileActivityViewModel(int guideId) {
-        Log.v("ProfileViewModel", "guideId = "+guideId);
         App.getAppComponent().inject(this);
         this.guideId = guideId;
     }
@@ -107,7 +99,6 @@ public class ProfileActivityViewModel extends ViewModel {
                         throwable -> toursLiveData.setValue(new ArrayList<>())
                 ));
 
-//        toursLiveData.setValue(tourRepository.getToursByAuthor(guideId));
     }
 
     public void setRating(int rating) {

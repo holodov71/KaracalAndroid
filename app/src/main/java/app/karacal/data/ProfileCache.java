@@ -14,13 +14,13 @@ public class ProfileCache {
 
     private Profile profile;
 
-    private String subscriptionId = null;
+    private String subscriptionId;
 
-    private List<Integer> tourPurchases = new ArrayList<>();
+    private List<Integer> tourPurchases;
 
-    private boolean isGuide = false;
+    private boolean isGuide;
 
-    private Integer guideId = null;
+    private Integer guideId;
 
     public ProfileCache(Profile profile, String subscriptionId, List<Integer> tourPurchases, boolean isGuide, Integer guideId) {
         this.profile = profile;
@@ -96,10 +96,6 @@ public class ProfileCache {
     public void addTourPurchase(Context context, int tourId){
         tourPurchases.add(tourId);
         saveChanges(context);
-    }
-
-    public List<Integer> getTourPurchases() {
-        return tourPurchases;
     }
 
     public void setGuide(Context context, boolean guide, int guideId) {

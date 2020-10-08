@@ -34,10 +34,6 @@ public class GuideDashboardActivity extends LogActivity {
     private ProgressBar progressLoading;
     private DashboardActivityViewModel viewModel;
 
-//    @Inject
-//    ProfileHolder profileHolder;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +68,6 @@ public class GuideDashboardActivity extends LogActivity {
         buttonFollowListenings.setVisibility(View.GONE);
         buttonFollowListenings.setOnClickListener(v -> NavigationHelper.startFollowMyListeningsActivity(this));
         Button buttonCreateTour = findViewById(R.id.buttonCreateTour);
-//        buttonCreateTour.setVisibility(View.GONE);
         buttonCreateTour.setOnClickListener(v -> NavigationHelper.startEditGuideActivity(this,  new AddEditTourActivity.Args(null)));
     }
 

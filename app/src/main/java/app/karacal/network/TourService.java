@@ -52,9 +52,6 @@ public interface TourService {
     @GET("contents/by-guide/{guideId}")
     Observable<List<ContentResponse>> getToursByAuthor(@Header("Authorization") String token, @Path("guideId") int guideId);
 
-    @GET("contents")
-    Observable<List<ContentResponse>> getContentsPage(@Header("Authorization") String token);
-
     @POST("contents/by-location")
     Observable<List<ContentResponse>> loadNearTours(@Header("Authorization") String token, @Body NearToursRequest request);
 

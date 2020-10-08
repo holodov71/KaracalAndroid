@@ -40,7 +40,6 @@ import app.karacal.data.ProfileCache;
 import app.karacal.dialogs.DeleteAccountDialog;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.RestartAppHelper;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.WebLinkHelper;
@@ -78,9 +77,6 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
 
     private String email;
     private String location;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Inject
     ApiHelper apiHelper;
@@ -151,7 +147,6 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
         if(ProfileCache.getInstance(this).getProfile().getSocialId() != null){
             buttonChangePassword.setVisibility(View.GONE);
         }else {
-//            buttonChangePassword.setOnClickListener(v -> NavigationHelper.startChangePasswordActivity(this));
             buttonChangePassword.setOnClickListener(v -> resetPassword());
         }
     }
@@ -355,7 +350,6 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(profile -> {
-//                    profileHolder.setProfile(profile);
                     ProfileCache.getInstance(this).setProfile(this, profile);
                     onBackPressed();
                 }, throwable -> {
@@ -419,7 +413,6 @@ public class SettingsActivity extends PermissionActivity implements DatePickerDi
             LoginManager.getInstance().logOut();
             mGoogleApiClient.signOut();
             ProfileCache.getInstance(this).removeProfile(this);
-//            profileHolder.removeProfile(this);
             PreferenceHelper.deleteToken(this);
             PaymentsUpdateService.stopTimer();
         } catch (Exception ex){

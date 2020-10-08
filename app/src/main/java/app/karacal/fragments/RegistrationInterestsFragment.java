@@ -31,7 +31,6 @@ import app.karacal.R;
 import app.karacal.adapters.InterestsBubblePickerAdapter;
 import app.karacal.data.ProfileCache;
 import app.karacal.helpers.ApiHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.helpers.ToastHelper;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.network.models.request.LoginRequest;
@@ -57,9 +56,6 @@ public class RegistrationInterestsFragment extends LogFragment {
 
     @Inject
     ApiHelper apiHelper;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -188,7 +184,6 @@ public class RegistrationInterestsFragment extends LogFragment {
                             FragmentActivity activity = getActivity();
 
                             if (activity != null) {
-//                                profileHolder.setProfile(profile);
                                 ProfileCache.getInstance(activity).setProfile(activity, profile);
                                 NavigationHelper.startMainActivity(activity);
                                 activity.finishAffinity();

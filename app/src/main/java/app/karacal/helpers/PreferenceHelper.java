@@ -2,23 +2,13 @@ package app.karacal.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import androidx.core.content.ContextCompat;
-
-import java.util.HashMap;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.data.DownloadedToursCache;
 import app.karacal.data.LocationCache;
 import app.karacal.data.NotificationsCache;
-import app.karacal.data.NotificationsSchedule;
 import app.karacal.data.ProfileCache;
 import app.karacal.data.SavedPaymentMethods;
-import app.karacal.models.Tour;
 
 public class PreferenceHelper {
 
@@ -29,7 +19,6 @@ public class PreferenceHelper {
     private static final String PREF_PROFILE_KEY = "PREF_PROFILE_KEY";
     private static final String NOTIFICATIONS_KEY = "NOTIFICATIONS_KEY";
     private static final String LOCATIONS_KEY = "LOCATIONS_KEY";
-    private static final String NOTIFICATION_SCHEDULE_KEY = "NOTIFICATION_SCHEDULE_KEY";
     private static final String PAYMENT_METHODS_KEY = "PAYMENT_METHODS_KEY";
     private static final String DOWNLOAD_ONLY_VIA_WIFI_KEY = "DOWNLOAD_ONLY_VIA_WIFI";
     private static final String PAUSE_AUDIO_AFTER_EACH_SEGMENT_KEY = "PAUSE_AUDIO_AFTER_EACH_SEGMENT";
@@ -94,15 +83,6 @@ public class PreferenceHelper {
 
     public static void setNotificationsCache(Context context, String notificationsCache) {
         getSharedPreferences(context).edit().putString(NOTIFICATIONS_KEY, notificationsCache).apply();
-    }
-
-    public static String getNotificationsSchedule(Context context) {
-        String defValue = NotificationsSchedule.getEmptyInstance().retrieveStringFormat();
-        return getSharedPreferences(context).getString(NOTIFICATION_SCHEDULE_KEY, defValue);
-    }
-
-    public static void setNotificationsSchedule(Context context, String notificationsSchedule) {
-        getSharedPreferences(context).edit().putString(NOTIFICATION_SCHEDULE_KEY, notificationsSchedule).apply();
     }
 
     public static String getPaymentMethods(Context context) {

@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.Tour;

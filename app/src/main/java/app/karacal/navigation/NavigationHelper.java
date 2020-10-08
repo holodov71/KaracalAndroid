@@ -155,10 +155,4 @@ public class NavigationHelper {
         context.startActivity(intent);
     }
 
-//    public static void startPaymentActivity(Activity context, PaymentMethodActivity.Args args) {
-//        Intent intent = new Intent(context, PaymentMethodActivity.class);
-//        intent.putExtras(args.toBundle());
-//        context.startActivityForResult(intent, PaymentMethodActivity.REQUEST_CODE);
-//    }
-
 }

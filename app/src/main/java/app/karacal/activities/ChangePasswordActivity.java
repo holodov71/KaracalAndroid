@@ -1,5 +1,6 @@
 package app.karacal.activities;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -58,6 +59,7 @@ public class ChangePasswordActivity extends LogActivity {
         button.setOnClickListener(v -> onBackPressed());
     }
 
+    @SuppressLint("CheckResult")
     private void setupInputs() {
         textInputLayoutOldPassword = findViewById(R.id.textInputLayoutOldPassword);
         textInputLayoutNewPassword = findViewById(R.id.textInputLayoutNewPassword);

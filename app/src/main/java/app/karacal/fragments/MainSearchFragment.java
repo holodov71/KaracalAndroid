@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionManager;
 import android.util.ArraySet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,6 @@ import app.karacal.navigation.NavigationHelper;
 import app.karacal.viewmodels.MainActivityViewModel;
 
 import static android.app.Activity.RESULT_OK;
-import static app.karacal.App.TAG;
 
 public class MainSearchFragment extends Fragment {
 
@@ -103,11 +101,9 @@ public class MainSearchFragment extends Fragment {
         editTextSearch = view.findViewById(R.id.editTextSearch);
         buttonClear.setOnClickListener(v -> editTextSearch.setText(""));
         TextInputHelper.editTextObservable(editTextSearch).subscribe((search) -> {
-            //TODO implement
             TransitionManager.beginDelayedTransition(searchFieldLayout);
             buttonClear.setVisibility(search.length() < 2 ? View.GONE : View.VISIBLE);
             recyclerViewTags.setVisibility(search.length() < 2 ? View.VISIBLE : View.INVISIBLE);
-//            recyclerViewTags.setVisibility(View.INVISIBLE);
             searchByText(search);
         }, (throwable) -> {
             //TODO implement
@@ -180,19 +176,13 @@ public class MainSearchFragment extends Fragment {
 
         Guide guide = guideRepository.searchGuide(guideQuery);
 
-        Log.v(TAG, "searchToursByGuide Guide = "+guide);
-
         if (guide != null){
             for (Tour tour : allTours) {
-                Log.v(TAG, "searchToursByGuide tour.getAuthorId() = "+tour.getAuthorId());
-                Log.v(TAG, "guide.getId() = "+guide.getId());
-
                 if (tour.getAuthorId() == guide.getId()) {
                     result.add(tour);
                 }
             }
         }
-        Log.v(TAG, "searchToursByGuide result.size() = "+result.size());
 
         return result;
     }

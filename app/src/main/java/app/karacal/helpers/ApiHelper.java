@@ -160,9 +160,7 @@ public class ApiHelper implements EphemeralKeyProvider {
     }
 
     public Observable<ChangeAvatarResponse> changeAvatar(String token, String path){
-        Log.v("changeAvatar", "upload file " + path);
         File file = new File(path);
-        Log.d("changeAvatar", "file size "+ file.length());
         RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
         MultipartBody.Part image = MultipartBody.Part.createFormData("image", file.getName(), fileBody);
 
@@ -175,7 +173,6 @@ public class ApiHelper implements EphemeralKeyProvider {
     // Auth region
 
     public Single<String> login(LoginRequest model) {
-        Log.v(App.TAG, "login");
         return Single.create(emitter -> {
             Response<ResponseBody> response = initService.login(model).execute();
             if (response.isSuccessful()) {
@@ -291,12 +288,9 @@ public class ApiHelper implements EphemeralKeyProvider {
     }
 
     public Observable<SaveTourResponse> createTour(String token, SaveTourRequest request, String imagePath) {
-        Log.v("createTour", "upload file " + imagePath);
-
         MultipartBody.Part image = null;
         if (imagePath != null){
             File file = new File(imagePath);
-            Log.d("createTour", "file size "+ file.length());
             RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
             image = MultipartBody.Part.createFormData("img", file.getName(), fileBody);
         }
@@ -309,12 +303,9 @@ public class ApiHelper implements EphemeralKeyProvider {
     }
 
     public Observable<SaveTourResponse> updateTour(String token, int id, SaveTourRequest request, String imagePath) {
-        Log.v("createTour", "upload file " + imagePath);
-
         MultipartBody.Part image = null;
         if (imagePath != null){
             File file = new File(imagePath);
-            Log.d("createTour", "file size "+ file.length());
             RequestBody fileBody = RequestBody.create(MediaType.parse("image/*"), file);
             image = MultipartBody.Part.createFormData("img", file.getName(), fileBody);
         }
@@ -355,9 +346,7 @@ public class ApiHelper implements EphemeralKeyProvider {
     }
 
     public Observable<UploadTrackResponse> uploadAudioToServer(String token, String guideId, String tourId, Track track){
-        Log.v("uploadAudio", "upload file " + track.getFileUri());
         File file = new File(track.getFileUri());
-        Log.d("uploadAudio", "file size "+ file.length());
         RequestBody fileBody = RequestBody.create(MediaType.parse("audio/*"), file);
         MultipartBody.Part audio = MultipartBody.Part.createFormData("mp3", file.getName(), fileBody);
 

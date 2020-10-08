@@ -53,8 +53,6 @@ public class Tour implements Serializable {
     }
 
     public Tour(TourResponse tourResponse) {
-        Log.v("TourResponse", "Tour(TourResponse tourResponse)");
-        Log.v("TourResponse", "tourResponse = "+tourResponse);
         this.id = tourResponse.getId();
         this.image = -1;
         this.imageUrl = tourResponse.getImage();
@@ -67,12 +65,10 @@ public class Tour implements Serializable {
         this.lat = tourResponse.getLatitude();
         this.lng = tourResponse.getLongitude();
         this.address = tourResponse.getAddress();
-        Log.v("TourResponse", "Finish = "+this.toString());
 
     }
 
     public Tour(ContentResponse content) {
-        Log.v("ContentResponse", "content = "+content);
         this.id = content.getId();
         this.imageUrl = content.getImg();
         this.image = -1;
@@ -207,9 +203,7 @@ public class Tour implements Serializable {
     public Album getAlbum() {
         List<Track> tracks = new ArrayList<>();
         if (!audio.isEmpty()) {
-//            tracks.add(new Track("Bienvenue", R.raw.track_bienvenue));
             tracks.addAll(audio);
-//            tracks.add(new Track("Abientt", R.raw.track_abientt));
         }
         return new Album(title, imageUrl, tracks);
     }

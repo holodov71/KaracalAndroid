@@ -115,15 +115,6 @@ public class PlayerService extends LifecycleService {
         });
 
 
-//        player.getPositionInfoLiveData().observe(getViewLifecycleOwner(), positionInfo -> {
-//            if (positionInfo != null) {
-//                progressBar.setVisibility(View.VISIBLE);
-//                progressBar.setMax(positionInfo.getDuration());
-//                progressBar.setProgress(positionInfo.getCurrentPosition());
-//            } else {
-//                progressBar.setVisibility(View.INVISIBLE);
-//            }
-//        });
     }
 
     private void showNotification(){
@@ -282,7 +273,6 @@ public class PlayerService extends LifecycleService {
         try {
             return player != null && player.isPlaying();
         } catch (Exception ex){
-            Log.v(TAG, "isPlaying()");
             ex.printStackTrace();
         }
         return false;

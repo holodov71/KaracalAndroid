@@ -1,7 +1,6 @@
 package app.karacal.data;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -11,7 +10,6 @@ import java.util.List;
 import app.karacal.helpers.AESEncyption;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.CardDetails;
-import app.karacal.models.NotificationInfo;
 
 public class SavedPaymentMethods{
     private List<CardDetails> cardsList;
@@ -38,19 +36,12 @@ public class SavedPaymentMethods{
     }
 
     public List<CardDetails> addPaymentMethod(Context context, CardDetails cardDetails) throws Exception {
-        if (cardsList == null){
-            Log.v("addPaymentMethod", "cardsList == null");
-        }
         if (cardsList.isEmpty()){
             cardDetails.setDefault(true);
         }
         cardsList.add(cardDetails);
         saveChanges(context);
         return cardsList;
-    }
-
-    public CardDetails getPaymentMethod(int position){
-        return cardsList.get(position);
     }
 
     public CardDetails getDefaultPaymentMethod(){

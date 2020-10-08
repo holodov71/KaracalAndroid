@@ -39,32 +39,6 @@ public class FileHelper {
     public static String getRealAudioPathFromUri(Context context, Uri contentUri) {
         return getRealFilePathFromUri(context, contentUri, MediaStore.Audio.Media.DATA);
 
-//        String result = null;
-//        Cursor cursor = null;
-//        try {
-//            if (contentUri.getScheme().equals("content")) {
-//                String[] projection = {MediaStore.Audio.Media.DATA};
-//                cursor = context.getContentResolver().query(contentUri, projection, null, null, null);
-//                int column_index;
-//                if (cursor != null) {
-//                    column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-//                    cursor.moveToFirst();
-//                    result = cursor.getString(column_index);
-//                }
-//            }
-//
-//            if (result == null) {
-//                result = contentUri.getPath();
-//            }
-//            return result;
-//        }catch (IllegalArgumentException ex){
-//            ex.printStackTrace();
-//            return "";
-//        } finally {
-//            if (cursor != null) {
-//                cursor.close();
-//            }
-//        }
     }
 
     public static String getRealImagePathFromUri(Context context, Uri contentUri) {

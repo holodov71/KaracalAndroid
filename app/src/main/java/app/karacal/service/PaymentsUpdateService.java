@@ -30,8 +30,6 @@ public class PaymentsUpdateService extends Service {
             }
 
             public void onFinish() {
-
-//                TODO make api call
                 startTimer();
             }
         };

@@ -11,12 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import app.karacal.R;
-import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.ImageHelper;
 import app.karacal.models.Guide;
 
@@ -50,13 +48,11 @@ public class GuideHorizontalListAdapter extends RecyclerView.Adapter<GuideHorizo
         }
     }
 
-    private final Context context;
     private final LayoutInflater inflater;
     private final List<Guide> guides = new ArrayList<>();
     private GuideClickListener listener;
 
     public GuideHorizontalListAdapter(Context context) {
-        this.context = context;
         this.inflater = LayoutInflater.from(context);
     }
 

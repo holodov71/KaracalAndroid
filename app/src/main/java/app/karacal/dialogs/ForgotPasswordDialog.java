@@ -1,5 +1,6 @@
 package app.karacal.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -46,6 +47,7 @@ public class ForgotPasswordDialog extends LogDialogFragment {
         return dialog;
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void onStart() {
         super.onStart();

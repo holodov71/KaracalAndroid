@@ -11,7 +11,6 @@ import androidx.lifecycle.Observer;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,17 +18,14 @@ import javax.inject.Singleton;
 
 import app.karacal.App;
 import app.karacal.data.DownloadedToursCache;
-import app.karacal.data.NotificationsSchedule;
 import app.karacal.data.dao.ToursDao;
 import app.karacal.data.entity.TourEntity;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.NotificationHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.models.NotificationScheduleModel;
 import app.karacal.models.Tour;
 import app.karacal.network.models.request.NearToursRequest;
 import app.karacal.network.models.request.SaveTourRequest;
-import app.karacal.network.models.response.ContentResponse;
 import app.karacal.network.models.response.SaveTourResponse;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -110,7 +106,6 @@ public class TourRepository {
 
     @SuppressLint("CheckResult")
     public void updateTour(int tourId){
-        Log.v(App.TAG, "updateTour tourId = "+tourId);
         apiHelper.loadTourById(PreferenceHelper.loadToken(context), tourId)
                 .subscribe(tour -> {
                     if(originalToursLiveData.getValue() != null) {
@@ -135,8 +130,7 @@ public class TourRepository {
                     }
 
                 }, throwable -> {
-                    Log.v("loadTours", "throwable "+throwable.getMessage());
-                    // TODO: load list from DB
+                    Log.e("loadTours", "throwable "+throwable.getMessage());
                 });
     }
 
@@ -164,18 +158,6 @@ public class TourRepository {
         return filteredTours;
     }
 
-    public ArrayList<Tour> getToursByAuthor(int guideId) {
-        ArrayList<Tour> filteredTours = new ArrayList<>();
-        if(originalToursLiveData.getValue() != null) {
-            for (Tour tour : originalToursLiveData.getValue()) {
-                if (tour.getAuthorId() == guideId) {
-                    filteredTours.add(tour);
-                }
-            }
-        }
-        return filteredTours;
-    }
-
     @SuppressLint("CheckResult")
     public void loadTours() {
         apiHelper.loadTours(PreferenceHelper.loadToken(context))
@@ -185,13 +167,9 @@ public class TourRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tours -> {
-                    Log.v("loadTours", "toursLiveData.setValue(tours) size = "+tours.size());
                     toursLiveData.setValue(tours);
-                    // TODO: save to DB
-
                 }, throwable -> {
-                    Log.v("loadTours", "throwable "+throwable.getMessage());
-                    // TODO: load list from DB
+                    Log.e("loadTours", "throwable "+throwable.getMessage());
                 });
     }
 
@@ -204,19 +182,10 @@ public class TourRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tours -> {
-                    Log.v("loadTours", "contentsLiveData.setValue(tours) size = "+tours.size());
-//                    for (Tour tour: tours){
-//                        if (tour.getId() == 1 || tour.getId() == 2 || tour.getId() == 7 || tour.getId() == 8){
-//                            tour.setPrice(999);
-//                        }
-//                    }
                     originalToursLiveData.setValue(tours);
                     new Handler().postDelayed(this::scheduleNotifications, 1000);
-                    // TODO: save to DB
-
                 }, throwable -> {
-                    Log.v("loadTours", "throwable "+throwable.getMessage());
-                    // TODO: load list from DB
+                    Log.e("loadTours", "throwable "+throwable.getMessage());
                 });
     }
 
@@ -251,8 +220,6 @@ public class TourRepository {
         tmpLocation.setLatitude(latitude);
         tmpLocation.setLatitude(longitude);
 
-        Log.v(App.TAG, "tmpLocation.distanceTo(lastLocation) = "+tmpLocation.distanceTo(lastLocation));
-
         if (tmpLocation.distanceTo(lastLocation) > IMPORTANT_DISTANCE) {
             lastLocation = tmpLocation;
 
@@ -263,13 +230,9 @@ public class TourRepository {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(tours -> {
-                        Log.v("loadTours", "contentsLiveData.setValue(tours) size = " + tours.size());
                         nearToursLiveData.setValue(tours);
-                        // TODO: save to DB
-
                     }, throwable -> {
-                        Log.v("loadTours", "throwable " + throwable.getMessage());
-                        // TODO: load list from DB
+                        Log.e("loadTours", "throwable " + throwable.getMessage());
                     });
         }
     }

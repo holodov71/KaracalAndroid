@@ -21,7 +21,6 @@ import app.karacal.data.repository.GuideRepository;
 import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.Guide;
 import app.karacal.models.Tag;
 import app.karacal.models.Tour;
@@ -51,7 +50,6 @@ public class MainActivityViewModel extends BaseLocationViewModel {
 
     public static final int OBTAIN_LOCATION_INTERVAL = 60 * 1000;// one minute
 
-    private long lastObtainedLocation = 0;
     Handler locationTimerHandler = new Handler();
     Runnable locationTimerRunnable = new Runnable() {
         @Override
@@ -71,9 +69,6 @@ public class MainActivityViewModel extends BaseLocationViewModel {
 
     @Inject
     ApiHelper apiHelper;
-
-    @Inject
-    ProfileHolder profileHolder;
 
     private MutableLiveData<ArrayList<Tour>> nearTours = new MutableLiveData<>();
     private MutableLiveData<List<Tag>> tagsLiveData = new MutableLiveData<>();
@@ -128,7 +123,6 @@ public class MainActivityViewModel extends BaseLocationViewModel {
 
         disposable.add(apiHelper.getPurchases(serverToken)
                 .subscribe(response -> {
-                    Log.v("loadSubscriptions", "Success response = " + response);
                     if (response.getSubscriptions() != null && !response.getSubscriptions().isEmpty()){
                         for (SubscriptionWrapper subs: response.getSubscriptions()){
                             if (subs.getStatus().equalsIgnoreCase(STATUS_SUBSCRIPTION_ACTIVE)){
@@ -141,7 +135,7 @@ public class MainActivityViewModel extends BaseLocationViewModel {
                         ProfileCache.getInstance(App.getInstance()).setTourPurchases(App.getInstance(), response.getIdTours());
                     }
                 }, throwable -> {
-                    Log.v("loadSubscriptions", "Error loading");
+                    Log.e("loadSubscriptions", "Error loading");
                 }));
     }
 
@@ -153,9 +147,8 @@ public class MainActivityViewModel extends BaseLocationViewModel {
         disposable.add(apiHelper.getGuide(serverToken, request)
                 .subscribe(response -> {
                     ProfileCache.getInstance(App.getInstance()).setGuide(App.getInstance(), response.isGuide(), response.getId());
-//                    profileHolder.setGuide(response.isGuide(), response.getId());
                 }, throwable -> {
-                    Log.v("checkIsGuide", "Error loading");
+                    Log.e("checkIsGuide", "Error loading");
                 }));
     }
 
@@ -169,7 +162,7 @@ public class MainActivityViewModel extends BaseLocationViewModel {
                 .subscribe(response -> {
                     tagsLiveData.setValue(response);
                 }, throwable -> {
-                    Log.v("checkIsGuide", "Error loading");
+                    Log.e("checkIsGuide", "Error loading");
                 }));
     }
 

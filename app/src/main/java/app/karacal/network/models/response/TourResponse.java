@@ -5,14 +5,14 @@ public class TourResponse {
     private int clientId;
     private String placeName;
     private String placeCity;
-    private String placeCoordinates; //""48.858222, 2.2945",
-    private double latitude; // уточнити тип
-    private double longitude; // уточнити тип
+    private String placeCoordinates;
+    private double latitude;
+    private double longitude;
     private String image;
     private String title;
     private String description;
     private String address;
-    private String review; // уточнити тип
+    private String review;
     private String duration;
     private int stars;
     private String price;

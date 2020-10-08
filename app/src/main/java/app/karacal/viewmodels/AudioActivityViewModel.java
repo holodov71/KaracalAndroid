@@ -39,7 +39,6 @@ import app.karacal.data.repository.TourRepository;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.NetworkStateHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.interfaces.ActionCallback;
 import app.karacal.models.Album;
 import app.karacal.models.CardDetails;
@@ -82,9 +81,6 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     @Inject
-    ProfileHolder profileHolder;
-
-    @Inject
     TourRepository tourRepository;
 
     @Inject
@@ -99,8 +95,6 @@ public class AudioActivityViewModel extends ViewModel {
     private CompositeDisposable disposable = new CompositeDisposable();
 
     private final int tourId;
-
-    private String customerId;
 
     private SavedPaymentMethods savedPaymentMethods;
 
@@ -183,7 +177,6 @@ public class AudioActivityViewModel extends ViewModel {
     private boolean isAlbumLoaded = false;
 
     public AudioActivityViewModel(int tourId) {
-        Log.v("AudioActivityViewModel", "tourId = "+tourId);
         App.getAppComponent().inject(this);
         stripe = new Stripe(App.getInstance().getApplicationContext(), App.getResString(R.string.stripe_api_key));
         this.tourId = tourId;
@@ -198,7 +191,6 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public void setPlayer(Player player) {
-        Log.v(TAG, "setPlayer(Player player)");
         if(player.getTourId() == this.tourId) {
             this.player = player;
             this.album.postValue(player.getAlbumLiveData().getValue());
@@ -216,8 +208,6 @@ public class AudioActivityViewModel extends ViewModel {
         if (!isAlbumLoaded) {
             if (tour.getValue() != null && tour.getValue().getAudio() != null) {
                 album.setValue(tour.getValue().getAlbum());
-            } else {
-                albumRepository.loadTracksByTour(String.valueOf(tourId));
             }
         }
     }
@@ -227,10 +217,7 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     public String getTrackTitle(int position){
-        Log.v("AudioActivityViewModel", "getTrackTitle position = "+position);
         if (album.getValue() != null) {
-            Log.v("AudioActivityViewModel", "getTrackTitle album.getValue().getTracks() = "+album.getValue().getTracks());
-
             return album.getValue().getTracks().get(position).getTitle();
         } else {
             return "";
@@ -247,7 +234,6 @@ public class AudioActivityViewModel extends ViewModel {
                 successCallback.invoke();
             } else {
                 if (ProfileCache.getInstance(App.getInstance()).isHasSubscription() || ProfileCache.getInstance(App.getInstance()).isPurchasesContainsTour(tour.getValue().getId())) {
-                    Log.v("checkAccess", "has Subscription");
                     successCallback.invoke();
                 } else {
                     paymentAction.setValue(tour.getValue().getPrice());
@@ -363,7 +349,7 @@ public class AudioActivityViewModel extends ViewModel {
                 allTracksDownloaded = false;
                 break;
             } else {
-                Log.v("Tracks downloaded", track.getFileUri());
+                Log.d("Tracks downloaded", track.getFileUri());
             }
         }
         if (allTracksDownloaded) {
@@ -378,8 +364,6 @@ public class AudioActivityViewModel extends ViewModel {
     }
 
     private Observable<Track> downloadTrack(Track track){
-        Log.v("downloadTrack", track.getFilename());
-
         try {
             URL u = new URL(track.getFilename());
             InputStream is = u.openStream();
@@ -394,10 +378,6 @@ public class AudioActivityViewModel extends ViewModel {
                 imageDir.mkdirs();
             }
             File newFile = new File(imageDir, track.getTitle());
-
-
-            Log.v("downloadTrack", "Path file = "+newFile.getPath());
-
 
             FileOutputStream fos = new FileOutputStream(newFile);
             while ((length = dis.read(buffer))>0) {
@@ -452,7 +432,6 @@ public class AudioActivityViewModel extends ViewModel {
         disposable.dispose();
     }
 
-
     // Payment region
     private void createCustomer(){
         String serverToken = PreferenceHelper.loadToken(App.getInstance());
@@ -462,14 +441,9 @@ public class AudioActivityViewModel extends ViewModel {
         CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(mail);
         disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
                 .subscribe(response -> {
-                    Log.v("createCustomer", "Success response = " + response);
-                    if (response.isSuccess()) {
-                        customerId = response.getId();
-                    } else {
-                        Log.e(TAG, response.getErrorMessage());
-                    }
+                    Log.d("createCustomer", "Success response = " + response);
                 }, throwable -> {
-                    Log.v(TAG, "Can not create customer");
+                    Log.e(TAG, "Can not create customer");
                 }));
     }
 
@@ -511,7 +485,6 @@ public class AudioActivityViewModel extends ViewModel {
         PaymentRequest request = new PaymentRequest(tour.getValue().getPrice(), "eur", token, "Paris tour description", tourId);
         disposable.add(apiHelper.makePayment(PreferenceHelper.loadToken(App.getInstance()), request)
                 .subscribe(response -> {
-                    Log.v("makePayment", "Success response = " + response);
                     if (response.isSuccess()) {
                         ProfileCache.getInstance(App.getInstance()).addTourPurchase(App.getInstance(), tourId);
                         tourPayedAction.setValue(response.getReceiptUrl());

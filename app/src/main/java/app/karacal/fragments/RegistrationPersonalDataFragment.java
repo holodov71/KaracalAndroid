@@ -1,5 +1,6 @@
 package app.karacal.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -25,8 +26,6 @@ public class RegistrationPersonalDataFragment extends LogFragment{
 
     private RegistrationActivityViewModel viewModel;
 
-    private TextInputLayout textInputLayoutFirstName;
-    private TextInputLayout textInputLayoutSecondName;
     private Button buttonContinue;
 
     @Nullable
@@ -43,8 +42,9 @@ public class RegistrationPersonalDataFragment extends LogFragment{
         return view;
     }
 
+    @SuppressLint("CheckResult")
     private void setupFirstNameInput(View view){
-        textInputLayoutFirstName = view.findViewById(R.id.textInputLayoutFirstName);
+        TextInputLayout textInputLayoutFirstName = view.findViewById(R.id.textInputLayoutFirstName);
         textInputLayoutFirstName.getEditText().setText(viewModel.getFirstName() != null ? viewModel.getFirstName() : "");
         TextInputHelper.editTextObservable(textInputLayoutFirstName).subscribe((s) -> {
             viewModel.setFirstName(TextUtils.isEmpty(s) ? null : s);
@@ -52,8 +52,9 @@ public class RegistrationPersonalDataFragment extends LogFragment{
         });
     }
 
+    @SuppressLint("CheckResult")
     private void setupSecondNameInput(View view){
-        textInputLayoutSecondName = view.findViewById(R.id.textInputLayoutSecondName);
+        TextInputLayout textInputLayoutSecondName = view.findViewById(R.id.textInputLayoutSecondName);
         textInputLayoutSecondName.getEditText().setText(viewModel.getSecondName() != null ? viewModel.getSecondName() : "");
         TextInputHelper.editTextObservable(textInputLayoutSecondName).subscribe((s) -> {
             viewModel.setSecondName(TextUtils.isEmpty(s) ? null : s);

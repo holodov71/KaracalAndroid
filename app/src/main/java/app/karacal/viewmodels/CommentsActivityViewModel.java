@@ -1,7 +1,5 @@
 package app.karacal.viewmodels;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -84,9 +82,7 @@ public class CommentsActivityViewModel extends ViewModel {
         CreateCommentRequest request = new CreateCommentRequest(tourId, text);
         disposable.add(apiHelper.createNewComment(PreferenceHelper.loadToken(App.getInstance()), request)
                 .subscribe(response -> {
-                    Log.v("createNewComment", "Success response = " + response);
                     if (response.isSuccess()) {
-//                        newCommentEvent.setValue(new Comment("Me", new Date(), text));
                         loadComments();
                     } else {
                         errorEvent.setValue(App.getResString(R.string.common_error));

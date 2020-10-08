@@ -149,9 +149,6 @@ public class CategoryStackFragment extends Fragment {
     }
 
     private void setDurationText(Tour tour){
-//        int hours = tour.getDuration() / 60;
-//        int minutes = tour.getDuration() % 60;
-//        String duration = textViewDuration.getContext().getString(R.string.duration_format, hours, minutes);
         textViewDuration.setText(tour.getFormattedTourDuration(textViewDuration.getContext()));
     }
 

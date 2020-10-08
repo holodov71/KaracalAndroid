@@ -1,7 +1,5 @@
 package app.karacal.models;
 
-import android.util.Log;
-
 import java.io.Serializable;
 
 import app.karacal.network.models.response.TrackResponse;
@@ -27,7 +25,6 @@ public class Track implements Serializable {
         this.title = title;
         this.fileUri = fileUri;
         this.duration = duration;
-        Log.v("Track", "title = "+title+" fileUri = "+fileUri+" duration = "+duration);
     }
 
     public Track(TrackResponse trackResponse){

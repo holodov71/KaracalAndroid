@@ -2,25 +2,20 @@ package app.karacal.data.repository;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import app.karacal.App;
-import app.karacal.R;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
 import app.karacal.models.Guide;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-
-import static app.karacal.App.TAG;
 
 @Singleton
 public class GuideRepository {

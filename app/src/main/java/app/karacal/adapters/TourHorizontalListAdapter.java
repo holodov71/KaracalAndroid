@@ -10,11 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import app.karacal.R;
 import app.karacal.helpers.ImageHelper;

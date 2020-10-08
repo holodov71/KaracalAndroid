@@ -7,7 +7,6 @@ import com.google.android.gms.location.LocationServices;
 
 import app.karacal.App;
 import app.karacal.data.LocationCache;
-import app.karacal.data.NotificationsSchedule;
 import io.reactivex.Single;
 
 public class LocationHelper {
@@ -20,7 +19,6 @@ public class LocationHelper {
                     if (!emitter.isDisposed()) {
                         if (location != null) {
                             LocationCache.getInstance(App.getInstance()).setLocation(App.getInstance(), location);
-                            App.getInstance().setLastLocation(location);
                             emitter.onSuccess(location);
                         } else {
                             emitter.onError(new Exception("Location provider returned NULL"));

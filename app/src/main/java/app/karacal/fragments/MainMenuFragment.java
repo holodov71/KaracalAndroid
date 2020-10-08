@@ -1,12 +1,10 @@
 package app.karacal.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,8 +38,6 @@ import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.DummyHelper;
 import app.karacal.helpers.EmailHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
-import app.karacal.helpers.ToastHelper;
 import app.karacal.helpers.WebLinkHelper;
 import app.karacal.models.CategoryViewMode;
 import app.karacal.models.Tour;
@@ -49,7 +45,6 @@ import app.karacal.models.TourCategory;
 import app.karacal.navigation.NavigationHelper;
 import app.karacal.service.PaymentsUpdateService;
 import app.karacal.viewmodels.MainActivityViewModel;
-import io.reactivex.disposables.Disposable;
 
 public class MainMenuFragment extends Fragment {
 
@@ -64,12 +59,7 @@ public class MainMenuFragment extends Fragment {
     GuideRepository guideRepository;
 
     @Inject
-    ProfileHolder profileHolder;
-
-    @Inject
     ApiHelper apiHelper;
-
-    private Disposable disposable;
 
     private TourHorizontalListAdapter.TourClickListener tourClickListener = this::showTour;
 
@@ -101,12 +91,6 @@ public class MainMenuFragment extends Fragment {
     public void onResume() {
         super.onResume();
         updateDownloadedCategory();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (disposable != null) disposable.dispose();
     }
 
     private void setupButtons(View view) {
@@ -143,7 +127,6 @@ public class MainMenuFragment extends Fragment {
     private void setupCategories(View view) {
         View categoryRecommended = view.findViewById(R.id.categoryRecommended);
         categoryRecommended.setVisibility(View.GONE);
-//        setupTourCategory(categoryRecommended, 0, getString(R.string.recommended_for_you), tourRepository.getRecommendedTours());
         View categoryRecommendedGuide = view.findViewById(R.id.categoryRecommendedGuides);
         setupGuideCategory(categoryRecommendedGuide, getString(R.string.all_guides_list));
 
@@ -225,7 +208,6 @@ public class MainMenuFragment extends Fragment {
             mGoogleApiClient.signOut();
 
             if (getActivity() != null){
-//                profileHolder.removeProfile(getActivity());
                 ProfileCache.getInstance(getActivity()).removeProfile(getActivity());
                 PreferenceHelper.deleteToken(getActivity());
                 PaymentsUpdateService.stopTimer();

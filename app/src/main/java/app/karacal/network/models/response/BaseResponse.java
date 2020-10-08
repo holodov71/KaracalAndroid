@@ -1,14 +1,10 @@
 package app.karacal.network.models.response;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 import app.karacal.App;
 import app.karacal.R;
 import app.karacal.helpers.JsonHelper;
 
 public class BaseResponse {
-//    private JsonObject errorMessage;
     private Object errorMessage;
     private boolean isSuccess;
 

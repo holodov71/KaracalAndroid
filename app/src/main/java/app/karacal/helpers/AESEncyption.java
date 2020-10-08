@@ -46,9 +46,7 @@ public class AESEncyption {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(secretKeyInstance);
             KeySpec spec = new PBEKeySpec(plainText.toCharArray(), salt.getBytes(), pswdIterations, keySize);
             return factory.generateSecret(spec).getEncoded();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return new byte[0];

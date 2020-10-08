@@ -41,7 +41,6 @@ public class EmailHelper {
         final Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{mailTo});
         if (subject != null) {
-            Log.v(App.TAG, "subject = "+subject);
             emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         }
         if (text != null) {

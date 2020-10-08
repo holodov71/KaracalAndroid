@@ -1,7 +1,5 @@
 package app.karacal.viewmodels;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -14,35 +12,10 @@ import app.karacal.network.models.request.RegisterRequest;
 
 public class RegistrationActivityViewModel extends ViewModel {
 
-    public interface LocationObtainListener {
-        void onLocationUpdated(String location);
-    }
-
-    private class LocationUpdateHandler {
-        private final LocationObtainListener locationObtainListener;
-        private final LifecycleOwner locationObtainListenerOwner;
-
-        private LocationUpdateHandler(LifecycleOwner locationObtainListenerOwner, LocationObtainListener locationObtainListener) {
-            this.locationObtainListener = locationObtainListener;
-            this.locationObtainListenerOwner = locationObtainListenerOwner;
-        }
-
-        private void notifyLocationUpdate(String location) {
-            Lifecycle.State currentState = locationObtainListenerOwner.getLifecycle().getCurrentState();
-            if (currentState == Lifecycle.State.STARTED || currentState == Lifecycle.State.RESUMED) {
-                locationObtainListener.onLocationUpdated(location);
-            }
-        }
-    }
-
     public static final int MAX_INTERESTS = 10;
-    private static final int GEO_CODING_TIMEOUT = 5;
     private MutableLiveData<String> activityTitle = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isGeoCodingInProgress = new MutableLiveData<>(false);
 
     private MutableLiveData<Integer> interestCount = new MutableLiveData<>();
-
-    private LocationUpdateHandler locationUpdateHandler;
 
     private String firstName;
     private String secondName;
@@ -73,20 +46,8 @@ public class RegistrationActivityViewModel extends ViewModel {
         return activityTitle;
     }
 
-    public LiveData<Boolean> getGeoCodingState() {
-        return isGeoCodingInProgress;
-    }
-
     public LiveData<Integer> getInterestCount() {
         return interestCount;
-    }
-
-    public boolean isGeoCodingInProgress() {
-        return isGeoCodingInProgress.getValue() != null ? isGeoCodingInProgress.getValue() : false;
-    }
-
-    public void subscribeLocationUpdates(LifecycleOwner lifecycleOwner, LocationObtainListener listener) {
-        locationUpdateHandler = new LocationUpdateHandler(lifecycleOwner, listener);
     }
 
     public void setActivityTitle(String title) {

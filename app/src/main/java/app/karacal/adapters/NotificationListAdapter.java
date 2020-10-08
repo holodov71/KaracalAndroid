@@ -16,7 +16,6 @@ import java.util.List;
 
 import app.karacal.R;
 import app.karacal.data.NotificationsCache;
-import app.karacal.helpers.DummyHelper;
 import app.karacal.models.NotificationInfo;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<NotificationListAdapter.ViewHolder> {

@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -82,9 +81,6 @@ public class DonateActivity extends LogActivity {
     @Inject
     ApiHelper apiHelper;
 
-//    @Inject
-//    ProfileHolder profileHolder;
-
     private CompositeDisposable disposable = new CompositeDisposable();
 
     private TextWatcher watcher = new TextWatcher() {
@@ -104,7 +100,6 @@ public class DonateActivity extends LogActivity {
             try {
                 Double d = Double.parseDouble(amount);
                 unCheckAmountButtons();
-//                donation = d;
                 validate();
             } catch (Exception e) {
                 donation = -1;
@@ -173,7 +168,6 @@ public class DonateActivity extends LogActivity {
     private void setupAmountInput(){
         inputLayoutAmount = findViewById(R.id.textInputLayoutDonateAmount);
         inputLayoutAmount.setVisibility(View.GONE);
-//        inputLayoutAmount.getEditText().addTextChangedListener(watcher);
     }
 
     private void setupDonateButton(){
@@ -197,9 +191,7 @@ public class DonateActivity extends LogActivity {
         unCheckAmountButtons();
         v.setSelected(true);
         donation = amount;
-//        inputLayoutAmount.getEditText().removeTextChangedListener(watcher);
         inputLayoutAmount.getEditText().setText(String.valueOf(amount));
-//        inputLayoutAmount.getEditText().addTextChangedListener(watcher);
         validate();
     }
 
@@ -228,14 +220,14 @@ public class DonateActivity extends LogActivity {
         CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(mail);
         disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
                 .subscribe(response -> {
-                    Log.v("createCustomer", "Success response = " + response);
+                    Log.d("createCustomer", "Success response = " + response);
                     if (response.isSuccess()) {
                         customerId = response.getId();
                     } else {
                         Log.e(App.TAG, response.getErrorMessage());
                     }
                 }, throwable -> {
-                    Log.v(App.TAG, "Can not create customer");
+                    Log.e(App.TAG, "Can not create customer");
                 }));
     }
 
@@ -265,12 +257,9 @@ public class DonateActivity extends LogActivity {
     }
 
     public void donate(String cardToken) {
-        Log.v("donateAuthor", "customerId = " + customerId);
-
         DonateAuthorRequest request = new DonateAuthorRequest(guideId, cardToken, (long)(donation * 100));
         disposable.add(apiHelper.donateAuthor(PreferenceHelper.loadToken(this), request)
                 .subscribe(response -> {
-                    Log.v("donateAuthor", "Success response = " + response);
                     if (response.isSuccess()) {
                         ToastHelper.showToast(this, getString(R.string.payment_success));
                         WebLinkHelper.openWebLink(this, response.getReceiptUrl());

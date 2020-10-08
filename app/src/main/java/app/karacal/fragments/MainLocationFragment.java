@@ -3,10 +3,8 @@ package app.karacal.fragments;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.location.Location;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +36,7 @@ import javax.inject.Inject;
 
 import app.karacal.App;
 import app.karacal.R;
-import app.karacal.activities.AudioActivity;
 import app.karacal.activities.CategoryActivity;
-import app.karacal.adapters.DashboardTourListAdapter;
 import app.karacal.adapters.TourVerticalListAdapter;
 import app.karacal.data.LocationCache;
 import app.karacal.data.repository.TourRepository;
@@ -69,11 +65,9 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     PermissionHelper permissionHelper;
 
     private ConstraintLayout layoutRoot;
-    private ImageView buttonSearch;
-    private ImageView buttonToggle;
     private RecyclerView recyclerView;
     private ConstraintLayout layoutSearchField;
-    private ConstraintLayout layourSearchEditText;
+    private ConstraintLayout layoutSearchEditText;
     private EditText editTextSearch;
     private ImageView buttonClear;
 
@@ -105,15 +99,14 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
 
     @SuppressLint("CheckResult")
     private void setupSearchField(View view) {
-        buttonSearch = view.findViewById(R.id.buttonSearch);
+        ImageView buttonSearch = view.findViewById(R.id.buttonSearch);
         layoutSearchField = view.findViewById(R.id.layoutSearchField);
-        layourSearchEditText = view.findViewById(R.id.layoutSearchEditText);
+        layoutSearchEditText = view.findViewById(R.id.layoutSearchEditText);
         buttonClear = view.findViewById(R.id.buttonClear);
         editTextSearch = view.findViewById(R.id.editTextSearch);
         buttonClear.setOnClickListener(v -> editTextSearch.setText(""));
         buttonSearch.setOnClickListener(v -> toggleSearchField());
         TextInputHelper.editTextObservable(editTextSearch).subscribe((search) -> {
-            //TODO implement
             TransitionManager.beginDelayedTransition(layoutSearchField);
             buttonClear.setVisibility(TextUtils.isEmpty(search) ? View.GONE : View.VISIBLE);
             searchByText(search);
@@ -125,7 +118,7 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
     }
 
     private void setupToggleButton(View view) {
-        buttonToggle = view.findViewById(R.id.buttonToggle);
+        ImageView buttonToggle = view.findViewById(R.id.buttonToggle);
         buttonToggle.setOnClickListener(v -> toggleSearchResults());
     }
 
@@ -234,16 +227,16 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
         TransitionManager.beginDelayedTransition(layoutRoot);
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.clone(layoutRoot);
-        if (layourSearchEditText.getVisibility() == View.VISIBLE) {
+        if (layoutSearchEditText.getVisibility() == View.VISIBLE) {
             InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (inputMethodManager != null) {
                 inputMethodManager.hideSoftInputFromWindow(getView().getRootView().getWindowToken(), 0);
             }
             constraintSet.clear(R.id.layoutSearchField, ConstraintSet.START);
-            layourSearchEditText.setVisibility(View.GONE);
+            layoutSearchEditText.setVisibility(View.GONE);
         } else {
             constraintSet.connect(R.id.layoutSearchField, ConstraintSet.START, R.id.layoutRoot, ConstraintSet.START, ((ConstraintLayout.LayoutParams) layoutSearchField.getLayoutParams()).getMarginEnd());
-            layourSearchEditText.setVisibility(View.VISIBLE);
+            layoutSearchEditText.setVisibility(View.VISIBLE);
         }
         constraintSet.applyTo(layoutRoot);
     }
@@ -253,19 +246,12 @@ public class MainLocationFragment extends Fragment implements OnMapReadyCallback
         adapter.setTours(tours);
         setMarkers(tours);
         clusterManager.cluster();
-//        recyclerView.setVisibility(query.length() < 2 ? View.INVISIBLE : View.VISIBLE);
     }
-
-//    private void showTour(int tourId){
-//        AudioActivity.Args args = new AudioActivity.Args(tourId);
-//        NavigationHelper.startAudioActivity(getActivity(), args);
-//    }
 
     private void showTours(int tourId){
         CategoryActivity.Args args = new CategoryActivity.Args(TourCategory.CATEGORY_ORIGINAL, getString(R.string.originals), CategoryViewMode.STACK, tourId);
         NavigationHelper.startCategoryActivity(getActivity(), args);
     }
-
 
     @Override
     public boolean onClusterItemClick(TourMarker tourMarker) {

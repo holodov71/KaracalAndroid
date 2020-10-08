@@ -48,7 +48,7 @@ public class SelectActionPopup extends BasePopup {
 
         LinearLayout buttonShareTrack = view.findViewById(R.id.buttonShareThisTrack);
         buttonShareTrack.setVisibility(View.GONE);
-//        buttonShareTrack.setOnClickListener(v -> callbacks.onButtonShareTrackClick(this));
+        buttonShareTrack.setOnClickListener(v -> callbacks.onButtonShareTrackClick(this));
         LinearLayout buttonReportProblem = view.findViewById(R.id.buttonReportProblem);
         buttonReportProblem.setOnClickListener(v -> callbacks.onButtonReportProblemClick(this));
     }

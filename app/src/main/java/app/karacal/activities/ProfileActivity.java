@@ -44,28 +44,6 @@ public class ProfileActivity extends LogActivity {
 
     }
 
-//    private SelectActionPopup.SelectActionPopupCallbacks selectActionPopupCallbacks = new SelectActionPopup.SelectActionPopupCallbacks() {
-//        @Override
-//        public void onButtonLikeClick(BasePopup popup) {
-//            showShareImpressionPopup();
-//        }
-//
-//        @Override
-//        public void onButtonDownloadAlbumClick(BasePopup popup) {
-//            DummyHelper.dummyAction(ProfileActivity.this);
-//        }
-//
-//        @Override
-//        public void onButtonShareTrackClick(BasePopup popup) {
-//            DummyHelper.dummyAction(ProfileActivity.this);
-//        }
-//
-//        @Override
-//        public void onButtonReportProblemClick(BasePopup popup) {
-//            showReportProblemPopup();
-//        }
-//    };
-
     private ShareImpressionPopup.ShareImpressionPopupCallbacks shareImpressionPopupCallbacks = new ShareImpressionPopup.ShareImpressionPopupCallbacks() {
         @Override
         public void onButtonDonateClick(BasePopup popup) {
@@ -206,17 +184,6 @@ public class ProfileActivity extends LogActivity {
             finish();
         }
     }
-
-//    public void showSelectActionPopup() {
-//        SelectActionPopup popup = new SelectActionPopup(layoutRoot, selectActionPopupCallbacks);
-//        popup.show();
-//    }
-//
-//    public void showReportProblemPopup() {
-//        ReportProblemPopup popup = new ReportProblemPopup(layoutRoot, new ReportProblemPopup.ReportProblemPopupDefaultCallbacks(this));
-//        popup.show();
-//    }
-
 
     public void showShareImpressionPopup() {
         ShareImpressionPopup popup = new ShareImpressionPopup(layoutRoot, shareImpressionPopupCallbacks, false);

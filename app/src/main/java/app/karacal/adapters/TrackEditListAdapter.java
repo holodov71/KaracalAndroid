@@ -1,7 +1,6 @@
 package app.karacal.adapters;
 
 import android.content.Context;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +65,6 @@ public class TrackEditListAdapter extends RecyclerView.Adapter<TrackEditListAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final View itemView;
         private final TextView textViewPosition;
         private final TextView textViewTitle;
         private final TextView textViewDuration;
@@ -76,7 +74,6 @@ public class TrackEditListAdapter extends RecyclerView.Adapter<TrackEditListAdap
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.itemView = itemView;
             textViewPosition = itemView.findViewById(R.id.textViewPosition);
             textViewTitle = itemView.findViewById(R.id.textViewTitle);
             textViewDuration = itemView.findViewById(R.id.textViewDuration);
@@ -130,7 +127,6 @@ public class TrackEditListAdapter extends RecyclerView.Adapter<TrackEditListAdap
     private final LayoutInflater layoutInflater;
     private final TrackEditTouchHelperCallback callback;
     private final ArrayList<Track> tracks = new ArrayList<>();
-    private final MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
 
     private ItemClickListener clickListener;
 
@@ -144,8 +140,7 @@ public class TrackEditListAdapter extends RecyclerView.Adapter<TrackEditListAdap
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = layoutInflater.inflate(R.layout.item_track_edit_list, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override

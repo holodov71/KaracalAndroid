@@ -81,8 +81,6 @@ public class ImageHelper {
 
         }catch (Exception ex){
             ex.printStackTrace();
-            Log.v("Exceptionex", "onLoadFailed");
-
             imageView.setImageResource(R.drawable.fade);
         }
     }

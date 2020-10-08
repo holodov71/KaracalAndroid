@@ -22,7 +22,6 @@ import app.karacal.data.ProfileCache;
 import app.karacal.data.SavedPaymentMethods;
 import app.karacal.helpers.ApiHelper;
 import app.karacal.helpers.PreferenceHelper;
-import app.karacal.helpers.ProfileHolder;
 import app.karacal.models.CardDetails;
 import app.karacal.network.models.request.CreateCardRequest;
 import app.karacal.network.models.request.CreateCustomerRequest;
@@ -30,9 +29,6 @@ import app.karacal.network.models.request.CreateSubscriptionRequest;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class SubscriptionActivityViewModel extends ViewModel {
-
-    @Inject
-    ProfileHolder profileHolder;
 
     @Inject
     ApiHelper apiHelper;
@@ -92,7 +88,6 @@ public class SubscriptionActivityViewModel extends ViewModel {
         CreateCustomerRequest createCustomerRequest = new CreateCustomerRequest(email);
         disposable.add(apiHelper.createCustomer(serverToken, createCustomerRequest)
                 .subscribe(response -> {
-                    Log.v("createCustomer", "Success response = " + response);
                     isLoading.setValue(false);
                     if (response.isSuccess()) {
                         customerId = response.getId();
@@ -119,7 +114,6 @@ public class SubscriptionActivityViewModel extends ViewModel {
 
         disposable.add(apiHelper.cancelSubscription(PreferenceHelper.loadToken(), ProfileCache.getInstance(App.getInstance()).getSubscriptionId())
                 .subscribe(response -> {
-                    Log.v("cancelSubscription", "Success response = " + response);
                     if (response.isSuccess()) {
                         ProfileCache.getInstance(App.getInstance()).setSubscriptionId(App.getInstance(), null);
                         subscriptionCanceledEvent.call();
@@ -165,7 +159,6 @@ public class SubscriptionActivityViewModel extends ViewModel {
         CreateCardRequest createCardRequest = new CreateCardRequest(customerId, cardToken);
         disposable.add(apiHelper.createCard(serverToken, createCardRequest)
                 .subscribe(response -> {
-                    Log.v("createCard", "Success response = " + response);
                     if (response.isSuccess()) {
                         openSubscription(customerId);
                     } else {
@@ -182,7 +175,6 @@ public class SubscriptionActivityViewModel extends ViewModel {
         CreateSubscriptionRequest createSubscriptionRequest = new CreateSubscriptionRequest(customerId, subscriptionId);
         disposable.add(apiHelper.createSubscription(PreferenceHelper.loadToken(App.getInstance()), createSubscriptionRequest)
                 .subscribe(response -> {
-                    Log.v("createCustomer", "Success response = " + response);
                     if (response.isSuccess()) {
                         ProfileCache.getInstance(App.getInstance()).setSubscriptionId(App.getInstance(), response.getSubscriptionId());
                         subscriptionOpenedEvent.setValue(response.getSubscription());

@@ -1,6 +1,5 @@
 package app.karacal.helpers;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 
@@ -12,8 +11,6 @@ import java.util.Random;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import io.reactivex.functions.Action;
 
 @Singleton
 public class PermissionHelper {

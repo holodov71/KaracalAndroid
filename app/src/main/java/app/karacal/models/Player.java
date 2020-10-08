@@ -116,13 +116,11 @@ public class Player implements MediaPlayer.OnPreparedListener{
 
     @SuppressLint("CheckResult")
     public void playTrack(int position) {
-        Log.v("Player", "Play position = "+position);
         currentPosition = position;
         Completable.fromAction(() -> {
             mediaPlayer.reset();
             if (album.getValue() != null) {
                 Track track = album.getValue().getTracks().get(position);
-                Log.v("Player", "Play track = "+track.getTitle());
                 Context context = App.getInstance();
                 Uri mediaPath;
                 if (track.getResId() != -1) { // audio from network
@@ -133,14 +131,9 @@ public class Player implements MediaPlayer.OnPreparedListener{
                         file = new File(track.getFileUri());
                     }
                     if (file != null && file.exists()){
-                        Log.v("Player", "Play track from file");
-                        Log.v("Player", "path = "+ file.getPath());
                         mediaPath = Uri.fromFile(file);
                     } else {
-                        Log.v("Player", "Play track from url");
                         mediaPath = Uri.parse(track.getFilename());
-                        Log.v("Player", "Play track from url = "+mediaPath);
-                        Log.v("Player", "Play track from url = "+mediaPath.getPath());
 
                     }
                 }

@@ -74,7 +74,6 @@ public class PaymentMethodViewModel extends ViewModel {
     }
 
     public void makePaymentMethodDefault(Context context, int position){
-        Log.v(App.TAG, "makePaymentMethodDefault");
         try {
             paymentMethods.setValue(savedPaymentMethods.makePaymentMethodDefault(context, position));
         } catch (Exception e) {

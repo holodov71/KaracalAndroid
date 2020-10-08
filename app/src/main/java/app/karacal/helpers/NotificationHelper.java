@@ -20,15 +20,6 @@ public class NotificationHelper {
 
     public static final String JOB_UNIQUE_TAG = "karacal_notification_job_tag";
 
-//    public static void scheduleNotification(Context context, long time) {
-//        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        Intent intent = new Intent(context, MyNotificationPublisher.class);
-//        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-//
-//        if (alarmMgr != null)
-//            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time, alarmIntent);
-//    }
-
     public static void scheduleNotification(Context context, long time){
 
         if(! PreferenceHelper.isNotificationsAllowed(context)) return;
@@ -46,9 +37,6 @@ public class NotificationHelper {
 
         int startWindow = (hour - 1) * 60 * 60;
         int endWindow = (hour + 1) * 60 * 60;
-
-//        int startWindow = 1 * 60;
-//        int endWindow = 2 * 60;
 
         if (startWindow < 0){
             startWindow = 0;

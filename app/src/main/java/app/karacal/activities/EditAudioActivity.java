@@ -71,9 +71,6 @@ public class EditAudioActivity extends PermissionActivity {
     @Inject
     TourRepository tourRepository;
 
-//    @Inject
-//    ProfileHolder profileHolder;
-
     @Inject
     ApiHelper apiHelper;
 
@@ -141,11 +138,6 @@ public class EditAudioActivity extends PermissionActivity {
                         renameTrack(position, title);
                     });
                     dialog.show(getSupportFragmentManager(), AudioTitleDialog.DIALOG_TAG);
-                }
-
-                @Override
-                public void onButtonEditClick(BasePopup popup) {
-                    DummyHelper.dummyAction(EditAudioActivity.this);
                 }
 
                 @Override
@@ -299,8 +291,6 @@ public class EditAudioActivity extends PermissionActivity {
             for (Track track: tracks){
                 if (track.getFilename() == null){
                     tracksToUpload.add(track);
-                    Log.v(App.TAG, "tracksToUpload track = "+track);
-
                 }
             }
 

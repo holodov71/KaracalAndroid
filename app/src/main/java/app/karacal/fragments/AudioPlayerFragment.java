@@ -39,10 +39,8 @@ public class AudioPlayerFragment extends LogFragment {
 
     private TrackListAdapter adapter;
 
-//    private ProgressBar progressDownloading;
     private View progressLoading;
     private ImageView imageViewTour;
-    private ImageView buttonOptions;
     private ImageView playButton;
     private ImageView buttonPause;
     private TextView tracksTextView;
@@ -55,7 +53,6 @@ public class AudioPlayerFragment extends LogFragment {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate");
         viewModel = new ViewModelProvider(getActivity()).get(AudioActivityViewModel.class);
-//        viewModel.getPlayer().bindLifecycle(this);
     }
 
     @Nullable
@@ -98,12 +95,9 @@ public class AudioPlayerFragment extends LogFragment {
     }
 
     private void setupDownloadButton(View view) {
-        buttonOptions = view.findViewById(R.id.buttonOptions);
-//        progressDownloading = view.findViewById(R.id.progressDownloading);
+        ImageView buttonOptions = view.findViewById(R.id.buttonOptions);
         buttonOptions.setOnClickListener(v -> {
             ((AudioActivity) getActivity()).showSelectActionPopup(viewModel.isTourDownloaded(requireContext()));
-
-//            viewModel.downloadTour(requireContext());
         });
     }
 
@@ -116,10 +110,8 @@ public class AudioPlayerFragment extends LogFragment {
     }
 
     private void hideLoading(){
-        Log.v("hideLoading", "hideLoading");
         progressLoading.setVisibility(View.GONE);
     }
-
 
     private void setupBackground(View view){
         imageViewTour = view.findViewById(R.id.imageViewTitle);
@@ -174,11 +166,9 @@ public class AudioPlayerFragment extends LogFragment {
             TransitionManager.beginDelayedTransition(view.findViewById(R.id.layoutRoot));
             constraintLayoutPlayer.setVisibility(playerState == Player.PlayerState.IDLE ? View.GONE : View.VISIBLE);
             if (playerState == Player.PlayerState.PLAY){
-                Log.v(TAG, "getPlayerState() == Player.PlayerState.PLAY");
                 buttonPause.setImageResource(R.drawable.ic_pause);
                 playButton.setImageResource(R.drawable.ic_pause);
             }else {
-                Log.v(TAG, "getPlayerState() == Another");
                 buttonPause.setImageResource(R.drawable.ic_play);
                 playButton.setImageResource(R.drawable.ic_play);
             }
@@ -205,10 +195,8 @@ public class AudioPlayerFragment extends LogFragment {
     private void onPlayPauseClick(){
         onPlayerScreenListener.onPlayerPlayClicked(viewModel.getPlayer().getTourId());
         if (viewModel.getPlayer().getPlayerState() == Player.PlayerState.PLAY){
-            Log.v(TAG, "getPlayerState() == Player.PlayerState.PLAY");
             viewModel.getPlayer().pause();
         }else {
-            Log.v(TAG, "getPlayerState() == Another");
             viewModel.getPlayer().playTrack();
         }
     }
@@ -237,7 +225,6 @@ public class AudioPlayerFragment extends LogFragment {
 
     private void observeTracks(){
         viewModel.getAlbum().observe(getViewLifecycleOwner(), album -> {
-            Log.v("observeTracks", "album = "+album);
             adapter.setTracks(album.getTracks());
             int count = album.getTracks().size();
             tracksTextView.setText(getString(R.string.tracks_count_format, count, getString(count != 1 ? R.string.tracks : R.string.track)));
@@ -273,14 +260,6 @@ public class AudioPlayerFragment extends LogFragment {
             }
         });
 
-//        viewModel.isTourDownloaded().observe(getViewLifecycleOwner(), isDownloaded -> {
-//
-//            if (isDownloaded){
-//                buttonDownload.setImageResource(R.drawable.ic_delete);
-//            } else {
-//                buttonDownload.setImageResource(R.drawable.ic_download);
-//            }
-//        });
     }
 
     private void onDownloadingStarted(){
